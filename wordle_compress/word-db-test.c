@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../word-db.h"
+#include "../src/word-db.h"
 
 int main() {
     char word1[6] = "";

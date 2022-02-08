@@ -2,4 +2,6 @@ WORDLE.gb
 *.cdb
 *.map
 *.noi
+build
+obj
 

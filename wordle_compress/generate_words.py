@@ -146,7 +146,7 @@ const index_entry guesses_index[] = {
 
     words2_hex = ', '.join(f'{x:#04x}' for x in words2_compressed)
 
-    with open('../words.c', 'w') as fout:
+    with open('../src/words.c', 'w') as fout:
         fout.write(template % (
             len(words1_compressed), words1_hex, len(words1_buckets), words1_buckets_c,
             len(words2_compressed), words2_hex, len(words2_buckets), words2_buckets_c,
