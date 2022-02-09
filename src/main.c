@@ -13,7 +13,144 @@
 #include <stdint.h>
 #include <rand.h>
 
+#include <gbdk/incbin.h>
+#include <gb/gbdecompress.h>
+
 #include "word-db.h"
+
+// Sprite Data
+#include "../res/letter_cursor_tiles.h"
+
+// Cursor sprite flipping flags to allow use of same tile for all 4 corners
+const uint8_t sp_cursor_props[] = { 0x00, S_FLIPX, S_FLIPY, S_FLIPX | S_FLIPY };
+const uint8_t sp_cursor_offset_x[] = { 0, 8, 0, 8 };
+const uint8_t sp_cursor_offset_y[] = { 0, 0, 8, 8 };
+
+#define SP_TILES_CURSOR_START 0
+#define SP_TILES_CURSOR_LEN   1
+
+#define SP_ID_CURSOR_START 0
+#define SP_ID_CURSOR_LEN   4
+
+
+
+// Map Data
+#include "../res/board_grid_tiles_gbcompress.h"
+#include "../res/font_tiles_gbcompress.h"
+INCBIN(board_grid_map, "res/board_grid_map_gbcompress.bin")
+INCBIN_EXTERN(board_grid_map)
+
+// Blank tile, could be optimized
+const uint8_t tile_blank[] = {0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00};
+
+
+#define MAP_BUF_SIZE (20 * 18)
+uint8_t map_scratch[MAP_BUF_SIZE];
+
+#define BOARD_GRID_X 2
+#define BOARD_GRID_Y 1
+#define BOARD_GRID_W 11
+#define BOARD_GRID_H 13
+
+#define BG_TILES_BLANK_START 0
+#define BG_TILES_BLANK_LEN   1
+#define BG_TILES_FONT_START  (BG_TILES_BLANK_START + BG_TILES_BLANK_LEN)
+#define BG_TILES_FONT_LEN    26
+#define BG_TILES_BOARD_START (BG_TILES_FONT_START + BG_TILES_FONT_LEN)
+#define BG_TILES_BOARD_LEN   15
+
+
+
+uint8_t * print_vram_addr = NULL;
+
+void print_gotoxy(uint8_t x, uint8_t y) {
+    print_vram_addr = get_bkg_xy_addr(x,y);
+}
+
+// Draws a character (only handles A - Z)
+// Advances to next VRAM location
+void print_char(char letter) {
+
+    if (letter == ' ') {
+        set_vram_byte( print_vram_addr, BG_TILES_BLANK_START );
+    }
+    else if ((letter >= 'A') && (letter <= 'Z')) {
+        set_vram_byte( print_vram_addr, (letter - 'A') + BG_TILES_FONT_START);
+    }
+    print_vram_addr++;
+}
+
+
+void print_str(char * txt) {
+
+    uint8_t letter;
+
+    while(*txt) {
+
+        if(*txt >= 'A' && *txt <= 'Z'){
+            letter = BG_TILES_FONT_START + (unsigned char)(*txt - 'A');
+        } else if(*txt >= 'a' && *txt <= 'z') {
+            letter = BG_TILES_FONT_START + (unsigned char)(*txt - 'a');
+        // } else if(*txt >= '0' && *txt <= '9') {
+        //     c = BG_TILES_FONT_NUMS_START + (unsigned char)(*txt - '0');
+        } else {
+            // Default is blank tile for Space or any other unknown chars
+            letter = BG_TILES_BLANK_START;
+        }
+
+        set_vram_byte(print_vram_addr++, letter);
+        txt++; // Next character
+    }
+}
+
+
+void init_gfx_gameplay(void) {
+
+
+    // Map Data
+
+    // Clear screen
+    fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
+
+    // Load 2bpp blank tile
+    gb_decompress_bkg_data((BG_TILES_BLANK_START), tile_blank);
+
+    // Load 2bpp font tiles
+    gb_decompress_bkg_data((BG_TILES_FONT_START), font_tiles);
+
+    // Load 2bpp board tiles
+    gb_decompress_bkg_data((BG_TILES_BOARD_START), board_grid_tiles);
+
+    // Decompress board map and render it to screen
+    gb_decompress(board_grid_map, map_scratch);
+    set_bkg_based_tiles(BOARD_GRID_X, BOARD_GRID_Y, BOARD_GRID_W, BOARD_GRID_H,
+                        map_scratch, BG_TILES_BOARD_START);
+
+    print_gotoxy(2,0);
+    print_str("GAME BOY WORDLE");
+
+    // Sprite Data
+    // Load 2bpp blank tile
+    set_sprite_data((SP_TILES_CURSOR_START), SP_TILES_CURSOR_LEN, letter_cursor_tiles);
+
+    SPRITES_8x8;
+
+    for (uint8_t i = 0; i < SP_ID_CURSOR_LEN; i++) {
+        set_sprite_tile(SP_ID_CURSOR_START + i, SP_TILES_CURSOR_START);
+        set_sprite_prop(SP_ID_CURSOR_START + i, sp_cursor_props[i]);
+    }
+
+    // Center screen
+    move_bkg(252, 252); // TODO: handle offsets for sprites and raw bkg display
+
+    SHOW_BKG;
+    SHOW_SPRITES;
+    DISPLAY_ON;
+}
+
+
+
+
 
 #define MAX_GUESSES 6
 
@@ -48,6 +185,7 @@ char guessed_correct[30];
 char word[WORD_LENGTH+1];
 
 void draw_word_rect(int x, int y, char *guess) {
+/*
     int gx = x/8;
     int gy = y/8;
     x -= 3;
@@ -65,9 +203,10 @@ void draw_word_rect(int x, int y, char *guess) {
             color(BLACK, WHITE, M_NOFILL);
             box(x, y, x+14, y+14, M_NOFILL);
         }
-        
+
         x += 16;
     }
+*/
 }
 
 
@@ -76,7 +215,7 @@ int contains(char *str, char c) {
     for(int i=0; i < l; i++) {
         if(str[i] == c) {
             return 1;
-        } 
+        }
     }
     return 0;
 }
@@ -84,6 +223,7 @@ int contains(char *str, char c) {
 
 
 void set_box_color_for_letter(char *word, int position, char letter) {
+/*
     if(word[position] == letter) {
         color(BLACK, BLACK, M_FILL);
     } else if(contains(word, letter)) {
@@ -91,20 +231,22 @@ void set_box_color_for_letter(char *word, int position, char letter) {
     } else {
         color(BLACK, WHITE, M_NOFILL);
     }
+*/
 }
 
 void set_letter_color_for_letter(char *word, int position, char letter) {
-    if(word[position] == letter) {
+/*    if(word[position] == letter) {
         color(WHITE, BLACK, M_NOFILL);
     } else if(contains(word, letter)) {
         color(WHITE, DKGREY, M_NOFILL);
     } else {
         color(BLACK, WHITE, M_NOFILL);
     }
+*/
 }
 
 void set_color_for_gletter(char letter) {
-    if(letter == ' ') {
+/*    if(letter == ' ') {
         color(BLACK, WHITE, M_NOFILL);
     } else if (contains(guessed_wrong, letter)) {
         color(BLACK, WHITE, M_NOFILL);
@@ -115,11 +257,32 @@ void set_color_for_gletter(char letter) {
     } else {
         color(BLACK, WHITE, M_NOFILL);
     }
+*/
 }
 
 
 void set_color_for_letter(char letter) {
-    if(letter == ' ') {
+    if(letter == ' ')
+    {
+        set_1bpp_colors(DMG_BLACK, DMG_WHITE);
+    }
+    else if (contains(guessed_wrong, letter))
+    {
+        set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE);
+    }
+    else if(contains(guessed_position, letter))
+    {
+        set_1bpp_colors(DMG_DARK_GRAY, DMG_WHITE);
+    }
+    else if(contains(guessed_correct, letter))
+    {
+        set_1bpp_colors(DMG_DARK_GRAY, DMG_WHITE);
+    }
+    else {
+        set_1bpp_colors(DMG_BLACK, DMG_WHITE);
+    }
+
+/*    if(letter == ' ') {
         color(BLACK, WHITE, M_NOFILL);
     } else if (contains(guessed_wrong, letter)) {
         color(LTGREY, WHITE, M_NOFILL);
@@ -130,9 +293,22 @@ void set_color_for_letter(char letter) {
     } else {
         color(BLACK, WHITE, M_NOFILL);
     }
+*/
 }
 
 void draw_keyboard(int x, int y) {
+
+    for(int i=0; i < 3; i++) {
+        print_gotoxy(x, y + i);
+        int kbl = strlen(kb[i]);
+        for(int j=0; j < kbl; j++) {
+            char letter = kb[i][j];
+            set_color_for_letter(letter);
+            print_char(letter);
+        }
+    }
+
+/*
     for(int i=0; i < 3; i++) {
         gotogxy(x, y + i);
         int kbl = strlen(kb[i]);
@@ -142,18 +318,30 @@ void draw_keyboard(int x, int y) {
             wrtchr(letter);
         }
     }
+*/
 }
 
 int kb_vert_offset = 14;
 
+// Move the cursor to highlight a key
 void highlight_key() {
+
+    uint8_t x = (kb_x * 16) + (kb_offsets[kb_y] * 8) + DEVICE_SPRITE_PX_OFFSET_X;
+    uint8_t y = ((kb_vert_offset + kb_y) * 8) + DEVICE_SPRITE_PX_OFFSET_Y;
+
+    for (uint8_t i = 0; i < SP_ID_CURSOR_LEN; i++) {
+        move_sprite(SP_ID_CURSOR_START + i, x + sp_cursor_offset_x[i], y + sp_cursor_offset_y[i] );
+    }
+/*
     int x = (kb_x * 16) + (kb_offsets[kb_y] * 8);
     int y = (kb_vert_offset + kb_y) * 8;
     color(BLACK, WHITE, M_NOFILL);
     box(x, y-1, x+8, y+7, M_NOFILL);
+*/
 }
 
 void dehighlight_key() {
+/*
     int x = (kb_x * 16) + (kb_offsets[kb_y] * 8);
     int y = (kb_vert_offset + kb_y) * 8;
     color(WHITE, WHITE, M_NOFILL);
@@ -166,14 +354,34 @@ void dehighlight_key() {
     char letter = kb[kb_y][kb_offsets[kb_y]+ (kb_x*2)];
     set_color_for_letter(letter);
     wrtchr(letter);
+*/
 }
 
 char getletter() {
     return kb[kb_y][kb_offsets[kb_y] + (kb_x*2)];
 }
 
+
+#define BOARD_ENTRIES_START_X  3
+#define BOARD_ENTRIES_START_Y  2
+
 void render_guess() {
     // first box is at 5, 2
+    int line = BOARD_ENTRIES_START_Y + (guess_nr * 2);
+    int x = BOARD_ENTRIES_START_X;
+
+    for(int i=0; i < 5; i++) {
+        set_1bpp_colors(DMG_BLACK, DMG_WHITE);
+        print_gotoxy(x, line);
+        if(guess[i] != 0) {
+            print_char(guess[i]);
+        } else {
+            print_char(' ');
+        }
+
+        x += 2;
+    }
+/*    // first box is at 5, 2
     int line = 2 + (guess_nr * 2);
     int x = 5;
     for(int i=0; i < 5; i++) {
@@ -187,9 +395,11 @@ void render_guess() {
 
         x += 2;
     }
+*/
 }
 
 void draw_board() {
+/*
     for(int i=0; i < MAX_GUESSES; i++) {
         char *g = NULL;
         if(i < guess_nr) {
@@ -197,12 +407,12 @@ void draw_board() {
         }
         draw_word_rect(40, 16+(i*16), g);
     }
-
+*/
 }
 
 
 void show_win() {
-    
+/*
     color(BLACK, BLACK, M_FILL);
     box(0, 0, SCREENWIDTH, SCREENHEIGHT, M_FILL);
     gotogxy(0, 8);
@@ -210,17 +420,35 @@ void show_win() {
     gprint("     You won!!!");
     gotogxy(0, 9);
     gprintf("   %d/6 - Congrats!", guess_nr);
+*/
     waitpad(J_START | J_A);
     reset();
 }
 
-void show_loose() {
+/*void show_loose() {
     // cls();
     color(BLACK, BLACK, M_FILL);
     box(0, 0, SCREENWIDTH, SCREENHEIGHT, M_FILL);
     gotogxy(0, 8);
     color(WHITE, BLACK, M_NOFILL);
     gprint(" You lost. Sorry!");
+
+    waitpad(J_START | J_A);
+    reset();
+}
+*/
+void show_lose(char *correct_word) {
+/*    // cls();
+    char ans[12] = " Answer: ";
+    color(BLACK, BLACK, M_FILL);
+    box(0, 0, 160, 144, M_FILL);
+    gotogxy(0, 8);
+    color(WHITE, BLACK, M_NOFILL);
+    gprint(" You lost. Sorry!");
+    gotogxy(0, 10);
+    color(WHITE, BLACK, M_NOFILL);
+    gprint(strncat(ans, correct_word, 5));
+*/
     waitpad(J_START | J_A);
     reset();
 }
@@ -238,11 +466,14 @@ void analyze_guess(char *guess) {
     }
 }
 
+
 void run_wordle(void)
 {
+    init_gfx_gameplay();
+
     strcpy(word, "EMPTY");
     int has_random = 0;
-    
+
     guess_nr = 0;
     memset(guess, 0, sizeof(guess));
     memset(guessed_wrong, 0, sizeof(guessed_wrong));
@@ -252,15 +483,19 @@ void run_wordle(void)
     for(int i=0; i < MAX_GUESSES; i++) {
         strcpy(guesses[i], "");
     }
+/*
     for(int i=0; i < MAX_GUESSES; i++) {
         draw_word_rect(40, 16+(i*16), NULL);
     }
-
+*/
+/*
     gotogxy(2, 0);
     gprint("GameBoy  WORDLE");
-    draw_keyboard(0, kb_vert_offset);
+*/    draw_keyboard(0, kb_vert_offset);
 
+/*
     color(LTGREY, WHITE, M_NOFILL);
+*/
     highlight_key();
     while(1) {
         int j = joypad();
@@ -335,7 +570,8 @@ void run_wordle(void)
                     break;
                 }
                 if(guess_nr == MAX_GUESSES) {
-                    show_loose();
+                    // show_loose();
+                    show_lose(word);
                     return;
                     break;
                 }
@@ -365,6 +601,6 @@ void run_wordle(void)
 
 void main() {
     while(1) {
-        run_wordle();    
+        run_wordle();
     }
 }
