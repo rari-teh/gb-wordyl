@@ -359,31 +359,6 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
     }
 }
 
-void draw_word_rect(int x, int y, char *guess) {
-/*
-    int gx = x/8;
-    int gy = y/8;
-    x -= 3;
-    y -= 4;
-    for(int i=0; i < 5; i++) {
-        if(guess) {
-            char letter = guess[i];
-            set_box_color_for_letter(word, i, letter);
-            box(x, y, x+14, y+14, M_FILL);
-            set_board_color_for_letter(word, i, letter);
-            gotogxy(gx, gy);
-            wrtchr(letter);
-            gx += 2;
-        } else {
-            color(BLACK, WHITE, M_NOFILL);
-            box(x, y, x+14, y+14, M_NOFILL);
-        }
-
-        x += 16;
-    }
-*/
-}
-
 
 int contains(char *str, char c) {
     int l = strlen(str);
@@ -604,16 +579,6 @@ void draw_board() {
             p_guess = NULL;
         board_draw_word(i, p_guess, BOARD_HIGHLIGHT_YES);
     }
-
-/*
-    for(int i=0; i < MAX_GUESSES; i++) {
-        char *g = NULL;
-        if(i < guess_nr) {
-            g = guesses[i];
-        }
-        draw_word_rect(40, 16+(i*16), g);
-    }
-*/
 }
 
 
@@ -643,6 +608,7 @@ void show_win() {
     reset();
 }
 */
+
 void show_lose(char *correct_word) {
 /*    // cls();
     char ans[12] = " Answer: ";
@@ -702,9 +668,7 @@ void run_wordle(void)
     draw_keyboard_map();
     draw_keyboard();
 
-/*
-    color(LTGREY, WHITE, M_NOFILL);
-*/
+    // Show cursor on default keyboard key
     highlight_key();
     while(1) {
         int j = joypad();
