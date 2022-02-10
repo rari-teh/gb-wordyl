@@ -21,6 +21,10 @@
 // Sprite Data
 #include "../res/letter_cursor_tiles.h"
 
+
+// #define DEBUG_ON
+
+
 // Cursor sprite flipping flags to allow use of same tile for all 4 corners
 const uint8_t sp_cursor_props[] = { 0x00, S_FLIPX, S_FLIPY, S_FLIPX | S_FLIPY };
 const uint8_t sp_cursor_offset_x[] = { 0, 8, 0, 8 };
@@ -46,21 +50,6 @@ const uint8_t sp_cursor_offset_y[] = { 0, 0, 8, 8 };
 const uint8_t tile_blank[] = {0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00};
 
 
-// #define MAP_BUF_SIZE (20 * 18)
-// uint8_t map_scratch[MAP_BUF_SIZE];
-
-// #define BOARD_GRID_X 2
-// #define BOARD_GRID_Y 1
-// #define BOARD_GRID_W 11
-// #define BOARD_GRID_H 13
-
-#define BG_TILES_BLANK_START 0
-#define BG_TILES_BLANK_LEN   1
-#define BG_TILES_FONT_START  (BG_TILES_BLANK_START + BG_TILES_BLANK_LEN)
-#define BG_TILES_FONT_LEN    26
-// #define BG_TILES_BOARD_START (BG_TILES_FONT_START + BG_TILES_FONT_LEN)
-// #define BG_TILES_BOARD_LEN   15
-
 
 // TODO: COUNT needs to be BOARD SIZE IN TILES (5 * 6 * 4)
 #define BOARD_LETTERS_BYTES_PER_TILE 8 // 1bpp tiles = 8 bytes per 8x8 tile
@@ -71,6 +60,12 @@ const uint8_t tile_blank[] = {0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x0
 
 uint8_t board_letters_decomp_buf[BOARD_LETTERS_COUNT * BOARD_LETTERS_TILES_PER * BOARD_LETTERS_BYTES_PER_TILE];
 
+#define FONT_LETTERS_COUNT           27 // Last entry is blank space
+#define FONT_LETTERS_BYTES_PER_TILE  8  // 1bpp tiles = 8 bytes per 8x8 tile
+
+uint8_t font_letters_decomp_buf[BOARD_LETTERS_COUNT * FONT_LETTERS_BYTES_PER_TILE];
+
+
 #define BOARD_GRID_X  2 // Start x,y in Tiles
 #define BOARD_GRID_Y  1
 #define BOARD_GRID_W  5 // Size in Tiles
@@ -78,18 +73,32 @@ uint8_t board_letters_decomp_buf[BOARD_LETTERS_COUNT * BOARD_LETTERS_TILES_PER *
 #define BOARD_TILE_W  2
 #define BOARD_TILE_H  2
 #define BOARD_GRID_TILES_PER_LETTER 4
-#define BOARD_GRID_BYTES_PER_LETTER (BOARD_LETTERS_BYTES_PER_TILE * BOARD_GRID_TILES_PER_LETTER)
+#define BOARD_GRID_VRAM_BYTES_PER_LETTER (BOARD_LETTERS_BYTES_PER_TILE * BOARD_GRID_TILES_PER_LETTER)
 #define BOARD_GRID_TILES_PER_ROW    (BOARD_GRID_W * BOARD_GRID_TILES_PER_LETTER)
 #define BOARD_GRID_TILE_W (BOARD_GRID_W * BOARD_TILE_W)
 #define BOARD_GRID_TILE_H (BOARD_GRID_H * BOARD_TILE_H)
 
 #define BOARD_TILE_X_START (BOARD_GRID_X)
 #define BOARD_TILE_Y_START (BOARD_GRID_Y)
-// #define BOARD_TILE_X_END   (BOARD_GRID_X + (BOARD_GRID_W * BOARD_TILE_W))
-// #define BOARD_TILE_Y_END   (BOARD_GRID_Y + (BOARD_GRID_H * BOARD_TILE_H))
 
-#define BG_TILES_BOARD_LETTERS_START (BG_TILES_FONT_START + BG_TILES_FONT_LEN)
+
+// ==== VRAM tile assignment for Gameplay Screen ====
+#define BG_TILES_BLANK_START 0
+#define BG_TILES_BLANK_LEN   1
+
+// TODO: this can be removed eventually if/once all printing is switched to VRAM on demand
+// #define BG_TILES_FONT_START  (BG_TILES_BLANK_START + BG_TILES_BLANK_LEN)
+// #define BG_TILES_FONT_LEN    26
+// #define BG_TILES_BOARD_LETTERS_START (BG_TILES_FONT_START + BG_TILES_FONT_LEN)
+// #define BG_TILES_BOARD_LETTERS_LEN   (BOARD_GRID_W * BOARD_GRID_H * BOARD_GRID_TILES_PER_LETTER)
+
+#define BG_TILES_KEYBD_START  (BG_TILES_BLANK_START + BG_TILES_BLANK_LEN)
+#define BG_TILES_KEYBD_LEN    26
+
+#define BG_TILES_BOARD_LETTERS_START (BG_TILES_KEYBD_START + BG_TILES_KEYBD_LEN)
 #define BG_TILES_BOARD_LETTERS_LEN   (BOARD_GRID_W * BOARD_GRID_H * BOARD_GRID_TILES_PER_LETTER)
+
+
 
 // 5 x 6 array of metatiles arranged as first row:0,1 second row: 2,3
 const uint8_t board_map[]  = {
@@ -112,17 +121,34 @@ const uint8_t board_map[]  = {
 102,103, 106,107, 110,111, 114,115, 118,119
 };
 
+/*
+// Board Letter box colors: Foreground, Background
+// Standard color scheme
+// Board
+#define SET_BOARD_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)     // Full contrast text
+#define SET_BOARD_COLOR_CONTAINS     set_1bpp_colors(DMG_BLACK, DMG_LITE_GRAY) // Filled in box text
+#define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)     // Inverted text
+// #define SET_BOARD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)  // Inverted text
+// Keyboard
+#define SET_KEYBD_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)  // Faded text
+#define SET_KEYBD_COLOR_CONTAINS     set_1bpp_colors(DMG_BLACK, DMG_LITE_GRAY)      // Full contrast text
+#define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)  // Inverted text
+#define SET_KEYBD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)  // Inverted text
+*/
 
-// Board Letter box colors
-// #define LETTER_COLOR_NORMAL   set_1bpp_colors(DMG_BLACK, DMG_WHITE)     // Full contrast text
-// #define LETTER_COLOR_CONTAINS set_1bpp_colors(DMG_BLACK, DMG_LITE_GRAY) // Filled in box text
-// #define LETTER_COLOR_MATCHED  set_1bpp_colors(DMG_WHITE, DMG_BLACK)     // Inverted text
-//
-// Board Letter box colors
-// Alt color scheme
-#define LETTER_COLOR_NORMAL   set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)  // Faded text
-#define LETTER_COLOR_CONTAINS set_1bpp_colors(DMG_BLACK, DMG_WHITE)      // Full contrast text
-#define LETTER_COLOR_MATCHED  set_1bpp_colors(DMG_BLACK, DMG_LITE_GRAY)  // Inverted text
+// Board Letter box colors: Foreground, Background
+// Alt color scheme (lighter board, less inversion)
+// Board
+#define SET_BOARD_COLOR_NORMAL       set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)  // Faded text
+#define SET_BOARD_COLOR_CONTAINS     set_1bpp_colors(DMG_BLACK, DMG_WHITE)      // Full contrast text
+#define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(DMG_BLACK, DMG_LITE_GRAY)  // Inverted text
+// #define SET_BOARD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)  // Inverted text
+// Keyboard
+#define SET_KEYBD_COLOR_NORMAL       set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)  // Faded text
+#define SET_KEYBD_COLOR_CONTAINS     set_1bpp_colors(DMG_BLACK, DMG_WHITE)      // Full contrast text
+#define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_BLACK, DMG_LITE_GRAY)  // Inverted text
+#define SET_KEYBD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)  // Inverted text
+
 
 
 
@@ -138,24 +164,27 @@ void print_gotoxy(uint8_t x, uint8_t y) {
 
 // gfx_print.c
 
-// TODO: OPTIMZIE
+
+// TODO: DELETE IF NOT IN USE ANYMORE - switch to on-demand printinf to vram or, re-add the font tiles if there is space
+// TODO: OPTIMIZE?
 // Draws a character (only handles A - Z)
 // Advances to next VRAM location
 void print_char(char letter) {
-
+/*
     if (letter == ' ') {
         set_vram_byte( print_vram_addr, BG_TILES_BLANK_START );
     }
     else if ((letter >= 'A') && (letter <= 'Z')) {
         set_vram_byte( print_vram_addr, (letter - 'A') + BG_TILES_FONT_START);
     }
-    print_vram_addr++;
+    print_vram_addr++;*/
 }
 
 // gfx_print.c
 
+// TODO: DELETE IF NOT IN USE ANYMORE - switch to on-demand printinf to vram or, re-add the font tiles if there is space
 void print_str(char * txt) {
-
+/*
     uint8_t letter;
 
     while(*txt) {
@@ -173,7 +202,7 @@ void print_str(char * txt) {
 
         set_vram_byte(print_vram_addr++, letter);
         txt++; // Next character
-    }
+    }*/
 }
 
 
@@ -190,7 +219,8 @@ void init_gfx_gameplay(void) {
     gb_decompress_bkg_data((BG_TILES_BLANK_START), tile_blank);
 
     // Load 2bpp font tiles
-    gb_decompress_bkg_data((BG_TILES_FONT_START), font_tiles);
+    // gb_decompress_bkg_data((BG_TILES_FONT_START), font_tiles);
+    gb_decompress(font_tiles, font_letters_decomp_buf);
 
     // // Load 2bpp board tiles
     // gb_decompress_bkg_data((BG_TILES_BOARD_START), board_grid_tiles);
@@ -254,19 +284,20 @@ void init_gfx_gameplay(void) {
 #define MAX_GUESSES 6
 
 void set_box_color_for_letter(char *word, int position, char letter);
-void set_letter_color_for_letter(char *word, int position, char letter);
+void set_board_color_for_letter(char *word, int position, char letter);
 
+// Keyboard map
 const char *kb[3] = {
-"Q W E R T Y U I O P",
-" A S D F G H J K L",
-"  Z X C V B N M"};
-
+"QWERTYUIOP",
+ "ASDFGHJKL",
+  "ZXCVBNM"};
+// 
 int kb_coords[3] = {
     10,
     9,
     7
 };
-
+// Horizontal offsets for which tile column a given keyboard row starts on
 int kb_offsets[3] = {
     0,
     1,
@@ -295,13 +326,13 @@ void board_draw_letter(uint8_t row, uint8_t col, uint8_t letter) {
     else if (letter >= 'A')
         letter -= 'A';
 
-    // Draw letter into VRAM address for resired board tile
+    // Draw letter into VRAM address for desired board tile
     // From offset into 1bpp letter source of 4x4 metatiles
     set_bkg_1bpp_data(BG_TILES_BOARD_LETTERS_START
                         + (col * BOARD_GRID_TILES_PER_LETTER)
                         + (row * BOARD_GRID_TILES_PER_ROW),
                       BOARD_GRID_TILES_PER_LETTER,
-                      board_letters_decomp_buf + (letter * BOARD_GRID_BYTES_PER_LETTER));
+                      board_letters_decomp_buf + (letter * BOARD_GRID_VRAM_BYTES_PER_LETTER));
 }
 
 
@@ -310,14 +341,20 @@ const uint8_t empty_word_buf[] = {' ', ' ', ' ', ' ', ' '};
 // Render a word at * p_guess onto the board
 void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
 
-    if (p_guess == NULL)
+    if (p_guess == NULL) {
         p_guess = empty_word_buf;
+        SET_BOARD_COLOR_NORMAL;
+    }
 
-do_highlight = true;
+    // Cheat Mode: Highlight word letters as typed in debug mode
+    #ifdef DEBUG_ON
+        do_highlight = true;
+    #endif
+
     // col maps to the individual letters in the word/guess
     for (uint8_t col = 0; col < BOARD_GRID_W; col ++) {
         if (do_highlight)
-            set_letter_color_for_letter(word, col, p_guess[col]);
+            set_board_color_for_letter(word, col, p_guess[col]);
         board_draw_letter(row, col, p_guess[col]);
     }
 }
@@ -333,7 +370,7 @@ void draw_word_rect(int x, int y, char *guess) {
             char letter = guess[i];
             set_box_color_for_letter(word, i, letter);
             box(x, y, x+14, y+14, M_FILL);
-            set_letter_color_for_letter(word, i, letter);
+            set_board_color_for_letter(word, i, letter);
             gotogxy(gx, gy);
             wrtchr(letter);
             gx += 2;
@@ -385,16 +422,19 @@ void set_box_color_for_letter(char *word, int position, char letter) {
 }
 
 
-void set_letter_color_for_letter(char *word, int position, char letter) {
+void set_board_color_for_letter(char *word, int position, char letter) {
 
     if(word[position] == letter) {
-        LETTER_COLOR_MATCHED;
+        SET_BOARD_COLOR_MATCHED;
 
-    } else if(contains(word, letter)) {
-        LETTER_COLOR_CONTAINS;
+    // } else if (contains(guessed_wrong, letter)) {
+    //     SET_BOARD_COLOR_NOT_IN_WORD;
+
+    } else if (contains(word, letter)) {
+        SET_BOARD_COLOR_CONTAINS;
 
     } else {
-        LETTER_COLOR_NORMAL;
+        SET_BOARD_COLOR_NORMAL;
     }
 
 /*    if(word[position] == letter) {
@@ -425,25 +465,31 @@ void set_color_for_gletter(char letter) {
 }
 
 
+// TODO: keyboard.c
+
 void set_color_for_letter(char letter) {
-    if(letter == ' ')
+    // if(letter == ' ')
+    // {
+    //     set_1bpp_colors(DMG_BLACK, DMG_WHITE);
+    // }
+    if (contains(guessed_wrong, letter))
     {
-        set_1bpp_colors(DMG_BLACK, DMG_WHITE);
-    }
-    else if (contains(guessed_wrong, letter))
-    {
-        set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE);
+        SET_KEYBD_COLOR_NOT_IN_WORD;
+        //set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE);
     }
     else if(contains(guessed_position, letter))
     {
-        set_1bpp_colors(DMG_DARK_GRAY, DMG_WHITE);
+        SET_KEYBD_COLOR_CONTAINS;
+        // set_1bpp_colors(DMG_DARK_GRAY, DMG_WHITE);
     }
     else if(contains(guessed_correct, letter))
     {
-        set_1bpp_colors(DMG_DARK_GRAY, DMG_WHITE);
+        SET_KEYBD_COLOR_MATCHED;
+        // set_1bpp_colors(DMG_DARK_GRAY, DMG_WHITE);
     }
     else {
-        set_1bpp_colors(DMG_BLACK, DMG_WHITE);
+        SET_KEYBD_COLOR_NORMAL;
+        // set_1bpp_colors(DMG_BLACK, DMG_WHITE);
     }
 
 /*    if(letter == ' ') {
@@ -460,92 +506,87 @@ void set_color_for_letter(char letter) {
 */
 }
 
-void draw_keyboard(int x, int y) {
+#define KEYBD_START_X     0u // Starting Tile Col of Keyboard
+#define KEYBD_START_Y    14u // Starting Tile Row of Keyboard
 
-    for(int i=0; i < 3; i++) {
-        print_gotoxy(x, y + i);
-        int kbl = strlen(kb[i]);
-        for(int j=0; j < kbl; j++) {
-            char letter = kb[i][j];
-            set_color_for_letter(letter);
-            print_char(letter);
+// keyboard.c
+//
+// Draw a map of incrementing VRAM tiles for the keyboard
+// These get drawn into later
+void draw_keyboard_map(void) {
+
+    uint8_t tile_id = BG_TILES_KEYBD_START;
+
+    for(uint8_t row = 0; row < 3; row++) {
+        uint8_t kbl = strlen(kb[row]);
+
+        // Add a blank space between every horizontal letter
+        for(uint8_t col=0; col < kbl * 2; col += 2) {
+            set_bkg_tile_xy(KEYBD_START_X + col + kb_offsets[row], KEYBD_START_Y + row, tile_id);
+            tile_id++;
         }
     }
-
-/*
-    for(int i=0; i < 3; i++) {
-        gotogxy(x, y + i);
-        int kbl = strlen(kb[i]);
-        for(int j=0; j < kbl; j++) {
-            char letter = kb[i][j];
-            set_color_for_letter(letter);
-            wrtchr(letter);
-        }
-    }
-*/
 }
 
-int kb_vert_offset = 14;
+
+// gfx.c
+
+// Direct render a keyboard letter to VRAM to fill a keyboard entry
+// Previous calls to set_1bpp_colors() will affect colors produced here
+// Keyboard entries are 1 byte per entry on the map
+void draw_letter_to_tileid(uint8_t letter, uint8_t index) {
+
+    // if ((letter == ' ') || (letter == 0x00)) letter = BOARD_LETTERS_SPACE_CHAR;
+    if (letter >= 'a') letter -= 'a';
+    else if (letter >= 'A') letter -= 'A';
+
+    // Draw letter into VRAM address for desired keyboard tile
+    set_bkg_1bpp_data(index, 1, font_letters_decomp_buf + (letter * FONT_LETTERS_BYTES_PER_TILE));
+}
+
+// keyboard.c
+
+// TODO: remove x,y from keyboard parameters
+// Redraw they keyboard with letters highlighted based on guess data
+void draw_keyboard() {
+
+    uint8_t tile_id = BG_TILES_KEYBD_START;
+    for(uint8_t row = 0; row < 3; row++) {
+
+        uint8_t kbl = strlen(kb[row]);
+        for(uint8_t col=0; col < kbl; col++) {
+
+            char letter = kb[row][col];
+            set_color_for_letter(letter);
+            draw_letter_to_tileid(letter, tile_id);
+            tile_id++;
+        }
+    }
+}
+
+
 
 // Move the cursor to highlight a key
 void highlight_key() {
 
     uint8_t x = (kb_x * 16) + (kb_offsets[kb_y] * 8) + DEVICE_SPRITE_PX_OFFSET_X;
-    uint8_t y = ((kb_vert_offset + kb_y) * 8) + DEVICE_SPRITE_PX_OFFSET_Y;
+    uint8_t y = ((KEYBD_START_Y + kb_y) * 8) + DEVICE_SPRITE_PX_OFFSET_Y;
 
     for (uint8_t i = 0; i < SP_ID_CURSOR_LEN; i++) {
         move_sprite(SP_ID_CURSOR_START + i, x + sp_cursor_offset_x[i], y + sp_cursor_offset_y[i] );
     }
-/*
-    int x = (kb_x * 16) + (kb_offsets[kb_y] * 8);
-    int y = (kb_vert_offset + kb_y) * 8;
-    color(BLACK, WHITE, M_NOFILL);
-    box(x, y-1, x+8, y+7, M_NOFILL);
-*/
-}
-
-void dehighlight_key() {
-/*
-    int x = (kb_x * 16) + (kb_offsets[kb_y] * 8);
-    int y = (kb_vert_offset + kb_y) * 8;
-    color(WHITE, WHITE, M_NOFILL);
-    box(x, y-1, x+8, y+7, M_NOFILL);
-
-
-    int gx = (kb_x * 2) + (kb_offsets[kb_y]);
-    int gy = (kb_vert_offset + kb_y);
-    gotogxy(gx, gy);
-    char letter = kb[kb_y][kb_offsets[kb_y]+ (kb_x*2)];
-    set_color_for_letter(letter);
-    wrtchr(letter);
-*/
 }
 
 char getletter() {
-    return kb[kb_y][kb_offsets[kb_y] + (kb_x*2)];
+    return kb[kb_y][kb_x];
+    //return kb[kb_y][kb_offsets[kb_y] + (kb_x*2)];
 }
 
 
 void render_guess() {
 
-    LETTER_COLOR_NORMAL;
+    SET_BOARD_COLOR_NORMAL;
     board_draw_word(guess_nr, guess, BOARD_HIGHLIGHT_NO); // guess_nr is row
-
-/*    // first box is at 5, 2
-    int line = 2 + (guess_nr * 2);
-    int x = 5;
-    for(int i=0; i < 5; i++) {
-        color(BLACK, WHITE, M_NOFILL);
-        gotogxy(x, line);
-        if(guess[i] != 0) {
-            wrtchr(guess[i]);
-        } else {
-            wrtchr(' ');
-        }
-
-        x += 2;
-    }
-*/
 }
 
 
@@ -655,14 +696,11 @@ void run_wordle(void)
     }
 
 /*
-    for(int i=0; i < MAX_GUESSES; i++) {
-        draw_word_rect(40, 16+(i*16), NULL);
-    }
-*/
-/*
     gotogxy(2, 0);
     gprint("GameBoy  WORDLE");
-*/    draw_keyboard(0, kb_vert_offset);
+*/
+    draw_keyboard_map();
+    draw_keyboard();
 
 /*
     color(LTGREY, WHITE, M_NOFILL);
@@ -684,7 +722,6 @@ void run_wordle(void)
 
         switch(j) {
             case J_RIGHT:
-                dehighlight_key();
                 kb_x += 1;
                 if(kb_x >= kb_coords[kb_y]) {
                     kb_x = 0;
@@ -693,7 +730,6 @@ void run_wordle(void)
                 waitpadup();
                 break;
             case J_LEFT:
-                dehighlight_key();
                 kb_x -= 1;
                 if(kb_x < 0) {
                     kb_x = kb_coords[kb_y] - 1;
@@ -702,7 +738,6 @@ void run_wordle(void)
                 waitpadup();
                 break;
             case J_UP:
-                dehighlight_key();
                 kb_y -= 1;
                 if(kb_y < 0) {
                     kb_y = 2;
@@ -714,7 +749,6 @@ void run_wordle(void)
                 waitpadup();
                 break;
             case J_DOWN:
-                dehighlight_key();
                 kb_y += 1;
                 if(kb_y > 2) {
                     kb_y = 0;
@@ -733,7 +767,7 @@ void run_wordle(void)
                 strcpy(guesses[guess_nr], guess);
                 guess_nr += 1;
                 draw_board();
-                draw_keyboard(0, kb_vert_offset);
+                draw_keyboard();
                 highlight_key();
                 if(strcmp(word, guess) == 0) {
                     show_win();
