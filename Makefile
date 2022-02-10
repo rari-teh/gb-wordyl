@@ -1,6 +1,7 @@
 # If you move this project you can change the directory
 # to match your GBDK root directory (ex: GBDK_HOME = "C:/GBDK/"
-GBDK_HOME = ../../../
+GBDK_HOME = ../../../../gbdk2020/gbdk-2020-git/build/gbdk/
+# GBDK_HOME = ../../../
 LCC = $(GBDK_HOME)bin/lcc
 
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
@@ -20,13 +21,14 @@ LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Fla
 
 # No autobanking needed for 32k ROM
 # LCCFLAGS += -Wl-j -Wm-yoA -Wm-ya4 -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
-# LCCFLAGS += -debug # Uncomment to enable debug output
-# LCCFLAGS += -v     # Uncomment for lcc verbose output
+LCCFLAGS += -debug # Uncomment to enable debug output
+LCCFLAGS += -v     # Uncomment for lcc verbose output
 
 # You can set the name of the ROM file here
 PROJECTNAME = WORDLE
 
-CFLAGS = -Wf-MMD
+CFLAGS += -debug
+CFLAGS += -Wf-MMD
 
 # EXT?=gb # Only sets extension to default (game boy .gb) if not populated
 SRCDIR      = src
