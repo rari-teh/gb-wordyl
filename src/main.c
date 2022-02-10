@@ -401,21 +401,21 @@ const char *kb[3] = {
 "QWERTYUIOP",
  "ASDFGHJKL",
   "ZXCVBNM"};
-// TODO: replace with strlen(kb[n])
+// Length of each keyboard row in characters
 int kb_coords[3] = {
     10,
     9,
     7
 };
-// Horizontal offsets for which tile column a given keyboard row starts on
+// Which tile column each keyboard row starts on
 int kb_offsets[3] = {
     0,
     1,
     2
 };
 
-uint8_t kb_x = 0;
-uint8_t kb_y = 0;
+int8_t kb_x = 0;
+int8_t kb_y = 0;
 uint8_t guess_nr;
 char guess[WORD_LENGTH+1];
 char guesses[WORD_LENGTH+1][MAX_GUESSES];
