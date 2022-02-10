@@ -1,6 +1,6 @@
 /*
 
- BOARD_LETTER_1BPP_TILES.H
+ BOARD_LETTER_TILES_8X8_1BPP_GBCOMP.H
 
  Include File.
 
@@ -22,8 +22,8 @@
 
 */
 
-#ifndef __board_letter_1bpp_tiles_h_INCLUDE
-#define __board_letter_1bpp_tiles_h_INCLUDE
+#ifndef __board_letter_tiles_8x8_1bpp_gbcomp_h_INCLUDE
+#define __board_letter_tiles_8x8_1bpp_gbcomp_h_INCLUDE
 
 /* Bank of tiles. */
 #define board_letter_tilesBank 0
@@ -104,4 +104,4 @@ extern const unsigned char board_letter_tiles[];
 
 #endif
 
-/* End of BOARD_LETTER_1BPP_TILES.H */
+/* End of BOARD_LETTER_TILES_8X8_1BPP_GBCOMP.H */

@@ -9,7 +9,6 @@
 #include <gbdk/console.h>
 #include <gbdk/font.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdint.h>
 #include <rand.h>
 
@@ -21,29 +20,35 @@
 // Sprite Data
 #include "../res/letter_cursor_tiles.h"
 
+// Map Data
+//#include "../res/board_grid_tiles_gbcompress.h"
+#include "../res/font_tiles_1bpp_gbcompress.h"
+#include "../res/font_num_tiles_1bpp_gbcompressed.h"
+// INCBIN(board_grid_map, "res/board_grid_map_gbcompress.bin")
+// INCBIN_EXTERN(board_grid_map)
+#include "../res/board_letter_tiles_8x8_1bpp_gbcomp.h"
+
+// Window / Dialog data
+#include "../res/dialog_tiles_2bpp_gbcompressed.h"
 
 // #define DEBUG_ON
 
+// Hardware correction factor for X position of Window when displayed on screen
+#define WIN_X_OFFSET 7
 
 // Cursor sprite flipping flags to allow use of same tile for all 4 corners
 const uint8_t sp_cursor_props[] = { 0x00, S_FLIPX, S_FLIPY, S_FLIPX | S_FLIPY };
 const uint8_t sp_cursor_offset_x[] = { 0, 8, 0, 8 };
 const uint8_t sp_cursor_offset_y[] = { 0, 0, 8, 8 };
 
-#define SP_TILES_CURSOR_START 0
-#define SP_TILES_CURSOR_LEN   1
+#define SP_TILES_CURSOR_START 0u
+#define SP_TILES_CURSOR_LEN   1u
 
-#define SP_ID_CURSOR_START 0
-#define SP_ID_CURSOR_LEN   4
+#define SP_ID_CURSOR_START 0u
+#define SP_ID_CURSOR_LEN   4u
 
 
 
-// Map Data
-//#include "../res/board_grid_tiles_gbcompress.h"
-#include "../res/font_tiles_gbcompress.h"
-// INCBIN(board_grid_map, "res/board_grid_map_gbcompress.bin")
-// INCBIN_EXTERN(board_grid_map)
-#include "../res/board_letter_1bpp_tiles.h"
 
 
 // Blank tile, could be optimized
@@ -52,27 +57,27 @@ const uint8_t tile_blank[] = {0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x0
 
 
 // TODO: COUNT needs to be BOARD SIZE IN TILES (5 * 6 * 4)
-#define BOARD_LETTERS_BYTES_PER_TILE 8 // 1bpp tiles = 8 bytes per 8x8 tile
-#define BOARD_LETTERS_COUNT     27 // Last entry is blank space
-#define BOARD_LETTERS_TILES_PER 4 // Last entry is blank space
+#define BOARD_LETTERS_BYTES_PER_TILE  8u // 1bpp tiles = 8 bytes per 8x8 tile
+#define BOARD_LETTERS_COUNT          27u // Last entry is blank space
+#define BOARD_LETTERS_TILES_PER       4u // Last entry is blank space
 // Empty space is last char in board font tile set
 #define BOARD_LETTERS_SPACE_CHAR (BOARD_LETTERS_COUNT - 1)
 
 uint8_t board_letters_decomp_buf[BOARD_LETTERS_COUNT * BOARD_LETTERS_TILES_PER * BOARD_LETTERS_BYTES_PER_TILE];
 
-#define FONT_LETTERS_COUNT           27 // Last entry is blank space
-#define FONT_LETTERS_BYTES_PER_TILE  8  // 1bpp tiles = 8 bytes per 8x8 tile
+#define FONT_LETTERS_COUNT           29u // 26 letters + 3 special chars: ".", "!", ":"
+#define FONT_LETTERS_BYTES_PER_TILE   8u // 1bpp tiles = 8 bytes per 8x8 tile
 
 uint8_t font_letters_decomp_buf[BOARD_LETTERS_COUNT * FONT_LETTERS_BYTES_PER_TILE];
 
 
-#define BOARD_GRID_X  2 // Start x,y in Tiles
-#define BOARD_GRID_Y  1
-#define BOARD_GRID_W  5 // Size in Tiles
-#define BOARD_GRID_H  6
-#define BOARD_TILE_W  2
-#define BOARD_TILE_H  2
-#define BOARD_GRID_TILES_PER_LETTER 4
+#define BOARD_GRID_X  2u // Start x,y in Tiles
+#define BOARD_GRID_Y  1u
+#define BOARD_GRID_W  5u // Size in Tiles
+#define BOARD_GRID_H  6u
+#define BOARD_TILE_W  2u
+#define BOARD_TILE_H  2u
+#define BOARD_GRID_TILES_PER_LETTER 4u
 #define BOARD_GRID_VRAM_BYTES_PER_LETTER (BOARD_LETTERS_BYTES_PER_TILE * BOARD_GRID_TILES_PER_LETTER)
 #define BOARD_GRID_TILES_PER_ROW    (BOARD_GRID_W * BOARD_GRID_TILES_PER_LETTER)
 #define BOARD_GRID_TILE_W (BOARD_GRID_W * BOARD_TILE_W)
@@ -83,20 +88,33 @@ uint8_t font_letters_decomp_buf[BOARD_LETTERS_COUNT * FONT_LETTERS_BYTES_PER_TIL
 
 
 // ==== VRAM tile assignment for Gameplay Screen ====
-#define BG_TILES_BLANK_START 0
-#define BG_TILES_BLANK_LEN   1
-
-// TODO: this can be removed eventually if/once all printing is switched to VRAM on demand
-// #define BG_TILES_FONT_START  (BG_TILES_BLANK_START + BG_TILES_BLANK_LEN)
-// #define BG_TILES_FONT_LEN    26
-// #define BG_TILES_BOARD_LETTERS_START (BG_TILES_FONT_START + BG_TILES_FONT_LEN)
-// #define BG_TILES_BOARD_LETTERS_LEN   (BOARD_GRID_W * BOARD_GRID_H * BOARD_GRID_TILES_PER_LETTER)
+#define BG_TILES_BLANK_START 0u
+#define BG_TILES_BLANK_LEN   1u
 
 #define BG_TILES_KEYBD_START  (BG_TILES_BLANK_START + BG_TILES_BLANK_LEN)
-#define BG_TILES_KEYBD_LEN    26
+#define BG_TILES_KEYBD_LEN    26u // 26 letters
 
 #define BG_TILES_BOARD_LETTERS_START (BG_TILES_KEYBD_START + BG_TILES_KEYBD_LEN)
 #define BG_TILES_BOARD_LETTERS_LEN   (BOARD_GRID_W * BOARD_GRID_H * BOARD_GRID_TILES_PER_LETTER)
+
+#define BG_TILES_DIALOG_START (BG_TILES_BOARD_LETTERS_START + BG_TILES_BOARD_LETTERS_LEN)
+#define BG_TILES_DIALOG_LEN   5u
+
+#define BG_TILES_FONT_START   (BG_TILES_DIALOG_START + BG_TILES_DIALOG_LEN)
+#define BG_TILES_FONT_LEN     29u // 26 letters + 3 special chars: ".", "!", ":"
+#define BG_TILES_FONT_PERIOD  (BG_TILES_FONT_START + 26u)
+#define BG_TILES_FONT_EXCLAIM (BG_TILES_FONT_START + 27u)
+#define BG_TILES_FONT_COLON   (BG_TILES_FONT_START + 28u)
+
+#define BG_TILES_FONT_NUM_START   (BG_TILES_FONT_START + BG_TILES_FONT_LEN)
+#define BG_TILES_FONT_NUM_LEN     10u // 10 digits
+
+
+#define DIALOG_TILE_L    4u
+#define DIALOG_TILE_UL   0u
+#define DIALOG_TILE_R    3u
+#define DIALOG_TILE_UR   2u
+#define DIALOG_TILE_TOP  1u
 
 
 
@@ -121,9 +139,13 @@ const uint8_t board_map[]  = {
 102,103, 106,107, 110,111, 114,115, 118,119
 };
 
+
+
 /*
 // Board Letter box colors: Foreground, Background
 // Standard color scheme
+// Printing
+#define SET_PRINT_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)     // Full contrast text
 // Board
 #define SET_BOARD_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)     // Full contrast text
 #define SET_BOARD_COLOR_CONTAINS     set_1bpp_colors(DMG_BLACK, DMG_LITE_GRAY) // Filled in box text
@@ -138,6 +160,8 @@ const uint8_t board_map[]  = {
 
 // Board Letter box colors: Foreground, Background
 // Alt color scheme (lighter board, less inversion)
+// Printing
+#define SET_PRINT_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)     // Full contrast text
 // Board
 #define SET_BOARD_COLOR_NORMAL       set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)  // Faded text
 #define SET_BOARD_COLOR_CONTAINS     set_1bpp_colors(DMG_BLACK, DMG_WHITE)      // Full contrast text
@@ -153,10 +177,17 @@ const uint8_t board_map[]  = {
 
 
 
+#define PRINT_BKG 0
+#define PRINT_WIN 1
 uint8_t * print_vram_addr = NULL;
 
-void print_gotoxy(uint8_t x, uint8_t y) {
-    print_vram_addr = get_bkg_xy_addr(x,y);
+
+
+void print_gotoxy(uint8_t x, uint8_t y, uint8_t target) {
+    if (target == PRINT_BKG)
+        print_vram_addr = get_bkg_xy_addr(x,y);
+    else
+        print_vram_addr = get_win_xy_addr(x,y);
 }
 
 #define BOARD_HIGHLIGHT_NO  false
@@ -164,45 +195,127 @@ void print_gotoxy(uint8_t x, uint8_t y) {
 
 // gfx_print.c
 
-
+/*
 // TODO: DELETE IF NOT IN USE ANYMORE - switch to on-demand printinf to vram or, re-add the font tiles if there is space
 // TODO: OPTIMIZE?
 // Draws a character (only handles A - Z)
 // Advances to next VRAM location
 void print_char(char letter) {
-/*
+
     if (letter == ' ') {
         set_vram_byte( print_vram_addr, BG_TILES_BLANK_START );
     }
     else if ((letter >= 'A') && (letter <= 'Z')) {
         set_vram_byte( print_vram_addr, (letter - 'A') + BG_TILES_FONT_START);
     }
-    print_vram_addr++;*/
-}
+    print_vram_addr++;
+}*/
 
 // gfx_print.c
 
 // TODO: DELETE IF NOT IN USE ANYMORE - switch to on-demand printinf to vram or, re-add the font tiles if there is space
 void print_str(char * txt) {
-/*
+
     uint8_t letter;
+    uint8_t line_wrap_x_addr = (((uint8_t)print_vram_addr) & 0x1Fu);// (uint8_t)((uint16_t)print_vram_addr & 0x001Fu);
 
     while(*txt) {
 
-        if(*txt >= 'A' && *txt <= 'Z'){
+        if (*txt == '\n') {
+            // Mask out X location, reset it to line wrap location, move to next line
+            print_vram_addr = (uint16_t *)(((uint16_t)print_vram_addr & 0xFFE0u) + (line_wrap_x_addr + 0x20u));
+            txt++;
+            continue;
+        }
+        else if(*txt >= 'A' && *txt <= 'Z') {
             letter = BG_TILES_FONT_START + (unsigned char)(*txt - 'A');
         } else if(*txt >= 'a' && *txt <= 'z') {
             letter = BG_TILES_FONT_START + (unsigned char)(*txt - 'a');
-        // } else if(*txt >= '0' && *txt <= '9') {
-        //     c = BG_TILES_FONT_NUMS_START + (unsigned char)(*txt - '0');
-        } else {
+        } else if(*txt >= '0' && *txt <= '9') {
+            letter = BG_TILES_FONT_NUM_START + (unsigned char)(*txt - '0');
+        } else if(*txt == '.')
+            letter = BG_TILES_FONT_PERIOD;
+        else if(*txt == '!')
+            letter = BG_TILES_FONT_EXCLAIM;
+        else if(*txt == ':')
+            letter = BG_TILES_FONT_COLON;
+        else {
             // Default is blank tile for Space or any other unknown chars
             letter = BG_TILES_BLANK_START;
         }
 
         set_vram_byte(print_vram_addr++, letter);
         txt++; // Next character
-    }*/
+    }
+}
+
+
+// Draw dialog box outline on the window
+void win_dialog_draw(void) {
+
+    // Top corners
+    set_win_tile_xy(0,0, BG_TILES_DIALOG_START + DIALOG_TILE_UL);
+    set_win_tile_xy(DEVICE_SCREEN_WIDTH - 1,0, BG_TILES_DIALOG_START + DIALOG_TILE_UR);
+    // Top bar
+    fill_win_rect(1, 0, DEVICE_SCREEN_WIDTH - 2, 1, BG_TILES_DIALOG_START + DIALOG_TILE_TOP);
+    // Left and right edges
+    fill_win_rect(0, 1, 1, DEVICE_SCREEN_HEIGHT - 1, BG_TILES_DIALOG_START + DIALOG_TILE_L);
+    fill_win_rect(DEVICE_SCREEN_WIDTH - 1, 1, 1, DEVICE_SCREEN_HEIGHT - 1, BG_TILES_DIALOG_START + DIALOG_TILE_R);
+}
+
+
+// Draw dialog box outline on the window
+void win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * str_2) {
+    uint8_t win_y_save = WY_REG;
+    uint8_t scroll_amt;
+
+    // Clear dialog content area
+    fill_win_rect(1, 1, DEVICE_SCREEN_WIDTH-2, DEVICE_SCREEN_HEIGHT-1, BG_TILES_BLANK_START );
+
+    HIDE_SPRITES;
+
+    // Show message
+    print_gotoxy(1,1, PRINT_WIN);
+    print_str(str_1);
+
+    // Optional second message
+    if (str_2)
+        print_str(str_2);
+
+    // Scroll window into view (with a small ease-in)
+    while (WY_REG > win_y_moveto) {
+        if ((WY_REG - win_y_moveto) > 20u)
+            scroll_amt = 6u;
+        else if ((WY_REG - win_y_moveto) > 10u)
+            scroll_amt = 2u;
+        else
+            scroll_amt = 1u;
+
+        WY_REG -= scroll_amt;
+        wait_vbl_done();
+    }
+
+    // Wait for button press and then release
+    while (!(joypad() & (J_A | J_B | J_START))) {
+        wait_vbl_done();
+    }
+    while ((joypad() & (J_A | J_B | J_START))) {
+        wait_vbl_done();
+    }
+
+    // Scroll window out of view (with a small ease-out)
+    while (WY_REG < win_y_save) {
+        if ((WY_REG - win_y_moveto) <= 8u)
+            scroll_amt = 1u;
+        else if ((WY_REG - win_y_moveto) <= 18u)
+            scroll_amt = 2u;
+        else
+            scroll_amt = 6u;
+
+        WY_REG += scroll_amt;
+        wait_vbl_done();
+    }
+    SHOW_SPRITES;
 }
 
 
@@ -211,6 +324,7 @@ void init_gfx_gameplay(void) {
 
 
     // Map Data
+    SET_PRINT_COLOR_NORMAL;
 
     // Clear screen
     fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
@@ -218,32 +332,27 @@ void init_gfx_gameplay(void) {
     // Load 2bpp blank tile
     gb_decompress_bkg_data((BG_TILES_BLANK_START), tile_blank);
 
-    // Load 2bpp font tiles
-    // gb_decompress_bkg_data((BG_TILES_FONT_START), font_tiles);
+    // == Font Numbers ==
+    // Load 1bpp font num tiles - borrow font_letters_decomp_buf for a moment
+    gb_decompress(font_num_tiles, font_letters_decomp_buf);
+    // Load tiles into vram for font printing
+    set_bkg_1bpp_data(BG_TILES_FONT_NUM_START, BG_TILES_FONT_NUM_LEN, font_letters_decomp_buf);
+
+    // == Font Letters ==
+    // Load 1bpp font tiles (used by both keyboard for VRAM drawing and print as a VRAM tileset)
     gb_decompress(font_tiles, font_letters_decomp_buf);
+    // Load tiles into vram for font printing
+    set_bkg_1bpp_data(BG_TILES_FONT_START, BG_TILES_FONT_LEN, font_letters_decomp_buf);
 
-    // // Load 2bpp board tiles
-    // gb_decompress_bkg_data((BG_TILES_BOARD_START), board_grid_tiles);
-
-    // // Decompress board map and render it to screen
-    // gb_decompress(board_grid_map, map_scratch);
-    // set_bkg_based_tiles(BOARD_GRID_X, BOARD_GRID_Y, BOARD_GRID_W, BOARD_GRID_H,
-    //                     map_scratch, BG_TILES_BOARD_START);
-
-    // set_1bpp_colors(DMG_WHITE, DMG_BLACK);
-    // set_1bpp_colors(DMG_DARK_GRAY, DMG_LITE_GRAY);
-    // set_bkg_1bpp_data(BG_TILES_BOARD_LETTERS_START, BG_TILES_BOARD_LETTERS_LEN, board_letter_tiles);
-
-    // Decompress board letter tiles
+    // == Game Board Letter Tiles / Squares ==
+    // Decompress board letter tiles into a buffer, they get written to VRAM later as needed
     gb_decompress(board_letter_tiles, board_letters_decomp_buf);
 
-    // // Test: render them to screen
-    // set_1bpp_colors(DMG_BLACK, DMG_WHITE);
-    // set_1bpp_colors(DMG_BLACK, DMG_WHITE);
-    // set_1bpp_colors(DMG_BLACK, DMG_WHITE);
-    // // set_1bpp_colors(DMG_DARK_GRAY, DMG_LITE_GRAY);
-    // set_bkg_1bpp_data(BG_TILES_BOARD_LETTERS_START, BG_TILES_BOARD_LETTERS_LEN, board_letters_decomp_buf);
+    // == Dialog Window Tiles / Squares ==
+    // Load 2bpp window dialog tiles
+    gb_decompress_bkg_data((BG_TILES_DIALOG_START), dialog_tiles);
 
+    // TODO: or, move this into a function draw_board_map()
     // TODO: this + map takes up about 300 bytes, optimize further? seems like setup call for this is what costs the most
     // Set up Board Letter map in VRAM
     // (direct addressable for rewriting letters via changing tile contents)
@@ -252,10 +361,8 @@ void init_gfx_gameplay(void) {
                         board_map,
                         BG_TILES_BOARD_LETTERS_START);
 
-
-
-
-    print_gotoxy(2,0);
+    // TODO: fixme, broken
+    print_gotoxy(2,0, PRINT_BKG);
     print_str("GAME BOY WORDLE");
 
     // Sprite Data
@@ -272,11 +379,14 @@ void init_gfx_gameplay(void) {
     // Center screen
     move_bkg(252, 252); // TODO: handle offsets for sprites and raw bkg display
 
+    move_win(0 + WIN_X_OFFSET, DEVICE_SCREEN_PX_HEIGHT); // Window is offscreen by default
+    fill_win_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START );
+    SHOW_WIN;
+
     SHOW_BKG;
     SHOW_SPRITES;
     DISPLAY_ON;
 }
-
 
 
 
@@ -291,7 +401,7 @@ const char *kb[3] = {
 "QWERTYUIOP",
  "ASDFGHJKL",
   "ZXCVBNM"};
-// 
+// TODO: replace with strlen(kb[n])
 int kb_coords[3] = {
     10,
     9,
@@ -304,9 +414,9 @@ int kb_offsets[3] = {
     2
 };
 
-int kb_x = 0;
-int kb_y = 0;
-int guess_nr;
+uint8_t kb_x = 0;
+uint8_t kb_y = 0;
+uint8_t guess_nr;
 char guess[WORD_LENGTH+1];
 char guesses[WORD_LENGTH+1][MAX_GUESSES];
 char guessed_wrong[30];
@@ -582,47 +692,30 @@ void draw_board() {
 }
 
 
-void show_win() {
-/*
-    color(BLACK, BLACK, M_FILL);
-    box(0, 0, SCREENWIDTH, SCREENHEIGHT, M_FILL);
-    gotogxy(0, 8);
-    color(WHITE, BLACK, M_NOFILL);
-    gprint("     You won!!!");
-    gotogxy(0, 9);
-    gprintf("   %d/6 - Congrats!", guess_nr);
-*/
-    waitpad(J_START | J_A);
-    reset();
+
+#define DIALOG_WON_MESSAGE_WIN_Y  (DEVICE_SCREEN_PX_HEIGHT - (8 * 4.5)) // 4.5 rows tall
+#define DIALOG_LOSE_MESSAGE_WIN_Y  (DIALOG_WON_MESSAGE_WIN_Y)
+
+uint8_t game_won_str[] = "You won!\n\nOn Guess X of 6";
+
+// Show a popup message: You Won
+void show_win_message(uint8_t guess_count) {
+
+    // Patch the number of guesses into the string at char 'X'
+    uint8_t * p_str = game_won_str;
+    while (*p_str != 'X') p_str++;
+    *p_str = guess_count + '0';
+
+    win_dialog_show_message(DIALOG_WON_MESSAGE_WIN_Y, game_won_str, NULL);
+    reset(); // TODO: replace and improve, move to function calling this
 }
 
-/*void show_loose() {
-    // cls();
-    color(BLACK, BLACK, M_FILL);
-    box(0, 0, SCREENWIDTH, SCREENHEIGHT, M_FILL);
-    gotogxy(0, 8);
-    color(WHITE, BLACK, M_NOFILL);
-    gprint(" You lost. Sorry!");
 
-    waitpad(J_START | J_A);
-    reset();
-}
-*/
+// Show a popup message: You Lost
+void show_lose_message(char *correct_word) {
 
-void show_lose(char *correct_word) {
-/*    // cls();
-    char ans[12] = " Answer: ";
-    color(BLACK, BLACK, M_FILL);
-    box(0, 0, 160, 144, M_FILL);
-    gotogxy(0, 8);
-    color(WHITE, BLACK, M_NOFILL);
-    gprint(" You lost. Sorry!");
-    gotogxy(0, 10);
-    color(WHITE, BLACK, M_NOFILL);
-    gprint(strncat(ans, correct_word, 5));
-*/
-    waitpad(J_START | J_A);
-    reset();
+    win_dialog_show_message(DIALOG_LOSE_MESSAGE_WIN_Y, "You lost. Sorry!\n\nAnswer is: ", correct_word);
+    reset(); // TODO: replace and improve, move to function calling this
 }
 
 
@@ -655,6 +748,9 @@ void run_wordle(void)
     for(int i=0; i < MAX_GUESSES; i++) {
         strcpy(guesses[i], "");
     }
+
+    // Initialize Window dialog box
+    win_dialog_draw();
 
     // Draws initial empty board
     for(int i=0; i < MAX_GUESSES; i++) {
@@ -734,13 +830,13 @@ void run_wordle(void)
                 draw_keyboard();
                 highlight_key();
                 if(strcmp(word, guess) == 0) {
-                    show_win();
+                    show_win_message(guess_nr);
                     return;
                     break;
                 }
                 if(guess_nr == MAX_GUESSES) {
                     // show_loose();
-                    show_lose(word);
+                    show_lose_message(word);
                     return;
                     break;
                 }

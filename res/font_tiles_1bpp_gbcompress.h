@@ -1,6 +1,6 @@
 /*
 
- FONT_TILES_GBCOMPRESS.H
+ FONT_TILES_1BPP_GBCOMPRESS.H
 
  Include File.
 
@@ -10,7 +10,7 @@
   Compression          : GB-Compress.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 26
+  Tiles                : 0 to 28
 
   Palette colors       : Included.
   SGB Palette          : None.
@@ -22,8 +22,8 @@
 
 */
 
-#ifndef __font_tiles_gbcompress_h_INCLUDE
-#define __font_tiles_gbcompress_h_INCLUDE
+#ifndef __font_tiles_1bpp_gbcompress_h_INCLUDE
+#define __font_tiles_1bpp_gbcompress_h_INCLUDE
 
 /* Bank of tiles. */
 #define font_tilesBank 0
@@ -104,4 +104,4 @@ extern const unsigned char font_tiles[];
 
 #endif
 
-/* End of FONT_TILES_GBCOMPRESS.H */
+/* End of FONT_TILES_1BPP_GBCOMPRESS.H */
