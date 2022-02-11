@@ -190,9 +190,9 @@ void board_initgfx(void) {
     if (IS_CGB)
         board_initgfx_cgb();
 
-    // TODO: fixme, broken
+    // TODO: replace me
     print_gotoxy(2,0, PRINT_BKG);
-    print_str("GAME BOY WORDLE");
+    print_str("GAME BOY WORDYL");
 
     // Sprite Data
     // Load 2bpp blank tile

@@ -25,7 +25,7 @@ LCCFLAGS += -debug # Uncomment to enable debug output
 LCCFLAGS += -v     # Uncomment for lcc verbose output
 
 # You can set the name of the ROM file here
-PROJECTNAME = GBWORDLE
+PROJECTNAME = GBWORDYL
 
 CFLAGS += -debug
 CFLAGS += -Wf-MMD

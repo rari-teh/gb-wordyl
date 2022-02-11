@@ -1,7 +1,11 @@
-/* Wordle for Game Boy.
+/* Wordle clone for Game Boy.
  * A weekend project by stacksmashing.
  * Contact: twitter.com/ghidraninja
  *          code@stacksmashing.net
+ *
+ * Dictionary improvements by zeta_two
+ *
+ * CGB + GFX refactor improvement by bbbbbr
  */
 #include <gbdk/platform.h>
 // #include <gbdk/font.h>
@@ -60,7 +64,7 @@ void analyze_guess(char *guess) {
 }
 
 
-void run_wordle(void)
+void run_wordyl(void)
 {
     board_initgfx();
 
@@ -200,6 +204,6 @@ void main() {
     cgb_check_and_init();
 
     while(1) {
-        run_wordle();
+        run_wordyl();
     }
 }

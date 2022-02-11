@@ -1,4 +1,5 @@
-WORDLE.gb
+*.gb
+*.pocket
 *.cdb
 *.map
 *.noi
