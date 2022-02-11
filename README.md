@@ -1,13 +1,17 @@
 # gb-wordyl
 
-A WORDLE clone for the Nintendo Game Boy!
+A Wordle clone for the Nintendo Game Boy / Color and Analogue Pocket!
 
-You can play it online [here](https://nezza.github.io/gbwordle/)!
+- Original source by [stacksmashing](https://github.com/stacksmashing/gb-wordle)  ([twitter](http://twitter.com/ghidraninja))
+- Dictionary improvements by [zeta_two](https://github.com/ZetaTwo/gb-wordle)
+- Game Boy Color support + GFX refactor and improvement by [bbbbbr](https://github.com/bbbbbr/gb-wordle)
 
-Or download ready-made ROMs [here](https://nezza.github.io/gbwordle/roms.html)!
+TODO:
+- 2-Player versus over serial link
 
-This ROM was build using the awesome [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020)!
+See Releases for ROMS
 
+Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020)
 
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo.gif)
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo_cgb.gif)
