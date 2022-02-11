@@ -10,5 +10,5 @@ This ROM was build using the awesome [GBDK-2020](https://github.com/gbdk-2020/gb
 
 
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo.gif)
-![GB-Wordyl gameplay](/info/gb-wordyl_demo.gif)
+![GB-Wordyl gameplay](/info/gb-wordyl_demo_cgb.gif)
 
