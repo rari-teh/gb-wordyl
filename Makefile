@@ -10,8 +10,8 @@ LCC = $(GBDK_HOME)bin/lcc
 TARGETS=gb pocket
 
 # Configure platform specific LCC flags here:
-LCCFLAGS_gb      = # No MBC  Wl-yt0x1B # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
-LCCFLAGS_pocket  = # No MBC -Wl-yt0x1B # Usually the same as required for .gb
+LCCFLAGS_gb      = -Wm-yc # ColorNo MBC  Wl-yt0x1B # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
+LCCFLAGS_pocket  = -Wm-yc # No MBC -Wl-yt0x1B # Usually the same as required for .gb
 LCCFLAGS_duck    = # No MBC -Wl-yt0x1B # Usually the same as required for .gb
 LCCFLAGS_gbc     = # No MBC -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
 LCCFLAGS_sms     =
@@ -25,7 +25,7 @@ LCCFLAGS += -debug # Uncomment to enable debug output
 LCCFLAGS += -v     # Uncomment for lcc verbose output
 
 # You can set the name of the ROM file here
-PROJECTNAME = WORDLE
+PROJECTNAME = GBWORDLE
 
 CFLAGS += -debug
 CFLAGS += -Wf-MMD

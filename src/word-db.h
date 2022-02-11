@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define WORD_LENGTH 5
+#include "common.h"
 
 typedef uint32_t word_number_t;
 typedef uint16_t wordlist_size_t;
