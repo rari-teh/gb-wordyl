@@ -11,16 +11,17 @@
 
 // Cheats for testing
 // #define DEBUG_REVEAL_WHILE_TYPE
-#define DEBUG_FORCE_WORD "AMPLE"
-#define DEBUG_REVEAL_WORD
+// #define DEBUG_FORCE_WORD "AMPLE"
+// #define DEBUG_REVEAL_WORD
 
 #define BOARD_HIGHLIGHT_NO  false
 #define BOARD_HIGHLIGHT_YES true
 
 // Order of values is important and relied on for sorting, do not change
-#define LETTER_RIGHT_PLACE 2
-#define LETTER_WRONG_PLACE 1
-#define LETTER_NOT_MATCHED 0
+#define LETTER_RIGHT_PLACE 3
+#define LETTER_WRONG_PLACE 2
+#define LETTER_NOT_MATCHED 1
+#define LETTER_NOT_SET     0
 
 
 extern uint8_t guess_eval[5];

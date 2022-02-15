@@ -18,6 +18,10 @@ const char *kb[3] = {
  "ASDFGHJKL",
   "ZXCVBNM"};
 
+// Stores color coding for keyboard basde on guess data
+uint8_t kb_status[3][10];
+
+
 // Length of each keyboard row in characters
 int8_t kb_coords[3] = {
     10,
@@ -64,8 +68,17 @@ void keyboard_fill_letter_cgb_pal(uint8_t row, uint8_t col, uint8_t palnum) {
 
 
 // Set highlight color for a letter on the keyboard based on guess status
-void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type) {
+void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type, uint8_t tile_id) {
 
+    // Reject color letter downgrades (only allowed after a keyboard status reset)
+    // Otherwise update status
+    if (match_type < kb_status[row][col])
+        return;
+    else
+        (kb_status[row][col] = match_type);
+
+    // CGB doesn't use DMG style VRAM tile redrawing except on
+    // clean redraw where it uses normal print style
     if (IS_CGB)
         SET_PRINT_COLOR_NORMAL;
 
@@ -83,20 +96,24 @@ void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type)
         else
             SET_KEYBD_COLOR_CONTAINS;
     }
-    else // implied: if (match_type == LETTER_NOT_MATCHED) {
+    else if (match_type == LETTER_NOT_MATCHED) {
         if (IS_CGB)
             keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_NOT_IN_WORD);
         else
             SET_KEYBD_COLOR_NOT_IN_WORD;
-}
+    }
+    else { // implied: if (match_type == LETTER_NOT_SET) {
 
+        // Keyboard default: no highlight
+        if (IS_CGB)
+            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_NORMAL);
+        else
+            SET_KEYBD_COLOR_NORMAL;
+    }
 
-// Set default non-highlighted color for a letter on the keyboard
-inline void keyboard_set_default_color_letter(uint8_t row, uint8_t col) {
-    if (IS_CGB)
-        keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_NORMAL);
-    else
-        SET_KEYBD_COLOR_NORMAL;
+    // Only needed for DMG unless it's a clean redraw since CGB just updates the attribute map
+    if ((!IS_CGB) || (match_type == LETTER_NOT_SET))
+        draw_letter_to_tileid(kb[row][col], tile_id);
 }
 
 
@@ -126,11 +143,7 @@ void keyboard_update_from_guess(void) {
                     if (guess_eval[c] > highest_match_type)
                         highest_match_type = guess_eval[c];
 
-                    keyboard_set_color_for_letter(row, col, highest_match_type);
-
-                    // Only needed for DMG which does a full redraw, CGB just touches the attribs
-                    if (IS_CGB)
-                        draw_letter_to_tileid(letter, tile_id);
+                    keyboard_set_color_for_letter(row, col, highest_match_type, tile_id);
                 }
             }
             tile_id++;
@@ -148,9 +161,10 @@ void keyboard_redraw_clean(void) {
         uint8_t kbl = strlen(kb[row]);
         for(uint8_t col=0; col < kbl; col++) {
 
-            char letter = kb[row][col];
-            keyboard_set_default_color_letter(row, col);
-            draw_letter_to_tileid(letter, tile_id);
+            // Reset keyboard status
+            kb_status[row][col] = LETTER_NOT_SET;
+
+            keyboard_set_color_for_letter(row, col, LETTER_NOT_SET, tile_id);
             tile_id++;
         }
     }
