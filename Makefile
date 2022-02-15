@@ -22,7 +22,7 @@ LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Fla
 # No autobanking needed for 32k ROM
 # LCCFLAGS += -Wl-j -Wm-yoA -Wm-ya4 -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
 LCCFLAGS += -debug # Uncomment to enable debug output
-LCCFLAGS += -v     # Uncomment for lcc verbose output
+# LCCFLAGS += -v     # Uncomment for lcc verbose output
 
 # You can set the name of the ROM file here
 PROJECTNAME = GBWORDYL
@@ -70,6 +70,11 @@ $(OBJDIR)/%.s:	$(SRCDIR)/%.c
 # Link the compiled object files into a .gb ROM file
 $(BINS):	$(OBJS)
 	$(LCC) $(LCCFLAGS) $(CFLAGS) -o $(BINDIR)/$(PROJECTNAME).$(EXT) $(OBJS)
+
+
+romusage:
+# Ignores failure if romusage not in path
+	-romusage build/gb/GBWORDYL.gb; romusage build/gb/GBWORDYL.gb > romusage.txt
 
 clean:
 	@echo Cleaning
