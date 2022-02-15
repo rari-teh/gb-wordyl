@@ -37,7 +37,7 @@ const uint8_t board_map[]  = {
 102,103, 106,107, 110,111, 114,115, 118,119
 };
 
-const uint8_t empty_word_buf[] = {' ', ' ', ' ', ' ', ' '};
+char empty_word_buf[WORD_LENGTH + 1] = "     ";
 
 
 // Draw the currently entered letters for the guess on to the board
@@ -92,6 +92,7 @@ void board_draw_letter(uint8_t row, uint8_t col, uint8_t letter) {
 // Render a word at * p_guess onto the board
 void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
 
+    // If it's a request to draw an empty word, use a shim empty string
     if (p_guess == NULL) {
         p_guess = empty_word_buf;
         SET_BOARD_COLOR_NORMAL;
