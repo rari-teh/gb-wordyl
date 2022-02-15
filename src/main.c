@@ -26,8 +26,6 @@
 #include "window.h"
 
 
-// ---------------------------------------------- FIX ME
-
 uint8_t game_won_str[] = "You won!\n\nOn Guess X of 6";
 
 // Show a popup message: You Won
@@ -50,7 +48,8 @@ void show_lose_message(char *correct_word) {
     reset(); // TODO: replace and improve, move to function calling this
 }
 
-
+/*
+// TODO: DEAD CODE?
 void analyze_guess(char *guess) {
     for(int i = 0; i < WORD_LENGTH; i++) {
         if(guess[i] == word[i]) {
@@ -62,7 +61,7 @@ void analyze_guess(char *guess) {
         }
     }
 }
-
+*/
 
 void run_wordyl(void)
 {
@@ -76,24 +75,23 @@ void run_wordyl(void)
 
     guess_num = 0;
     memset(guess, 0, sizeof(guess));
-    memset(guessed_wrong, 0, sizeof(guessed_wrong));
-    memset(guessed_position, 0, sizeof(guessed_position));
-    memset(guessed_correct, 0, sizeof(guessed_correct));
+    // TODO: DEAD CODE?
+    // memset(guessed_wrong, 0, sizeof(guessed_wrong));
+    // memset(guessed_position, 0, sizeof(guessed_position));
+    // memset(guessed_correct, 0, sizeof(guessed_correct));
 
     for(int i=0; i < MAX_GUESSES; i++) {
         strcpy(guesses[i], "");
     }
 
     // Draws initial empty board
-    for(int i=0; i < MAX_GUESSES; i++) {
-        board_draw_word(i, NULL, BOARD_HIGHLIGHT_NO);
-    }
+    board_redraw_clean();
 
     keyboard_draw_map();
-    keyboard_redraw();
+    keyboard_redraw_clean();
 
     // Show cursor on default keyboard key
-    keyboard_highlight_letter();
+    keyboard_update_cursor();
     while(1) {
         int j = joypad();
         if((has_random == 0) && (j != 0)) {
@@ -105,9 +103,14 @@ void run_wordyl(void)
                 r = rand();
             }
             get_word(r, word);
+
+            #ifdef DEBUG_FORCE_WORD
+                strcpy(word, DEBUG_FORCE_WORD);
+            #endif
+
             has_random = 1;
 
-            #ifdef DEBUG_ON
+            #ifdef DEBUG_REVEAL_WORD
                 // Cheat Mode: Display answer word in debug mode
                 print_gotoxy(0,0, PRINT_BKG);
                 print_str(word);
@@ -120,7 +123,7 @@ void run_wordyl(void)
                 if(kb_x >= kb_coords[kb_y]) {
                     kb_x = 0;
                 }
-                keyboard_highlight_letter();
+                keyboard_update_cursor();
                 waitpadup();
                 break;
             case J_LEFT:
@@ -128,7 +131,7 @@ void run_wordyl(void)
                 if(kb_x < 0) {
                     kb_x = kb_coords[kb_y] - 1;
                 }
-                keyboard_highlight_letter();
+                keyboard_update_cursor();
                 waitpadup();
                 break;
             case J_UP:
@@ -139,7 +142,7 @@ void run_wordyl(void)
                 if(kb_x >= kb_coords[kb_y]) {
                     kb_x = kb_coords[kb_y] - 1;
                 }
-                keyboard_highlight_letter();
+                keyboard_update_cursor();
                 waitpadup();
                 break;
             case J_DOWN:
@@ -150,19 +153,25 @@ void run_wordyl(void)
                 if(kb_x >= kb_coords[kb_y]) {
                     kb_x = kb_coords[kb_y] - 1;
                 }
-                keyboard_highlight_letter();
+                keyboard_update_cursor();
                 waitpadup();
                 break;
             case J_SELECT:
             case J_START:
-                if(strlen(guess) != WORD_LENGTH) break;
-                if(!query_word(guess)) break;
-                analyze_guess(guess);
+                if(strlen(guess) != WORD_LENGTH) {
+                    // TODO: indicate insufficient length
+                    break;
+                }
+                else if(!query_word(guess)) {
+                    // TODO: indicate not a matched word
+                    break;
+                }
+                // analyze_guess(guess); // TODO: DEAD CODE?
                 strcpy(guesses[guess_num], guess);
+                board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
                 guess_num += 1;
-                board_redraw();
-                keyboard_redraw();
-                keyboard_highlight_letter();
+                keyboard_update_from_guess();
+                keyboard_update_cursor();
                 if(strcmp(word, guess) == 0) {
                     show_win_message(guess_num);
                     return;
@@ -175,19 +184,19 @@ void run_wordyl(void)
                     break;
                 }
                 // empty guess
-                memset(guess, 0, 5);
+                memset(guess, 0, WORD_LENGTH);
                 // TODO
                 break;
             case J_A:
-                if(strlen(guess) == WORD_LENGTH) break;
+                if (strlen(guess) == WORD_LENGTH) break; // TODO: replace with counter
                 guess[strlen(guess)] = keyboard_get_letter();
-                board_render_guess();
+                board_render_guess_entry();
                 waitpadup();
                 break;
             case J_B:
-                if(strlen(guess) == 0) break;
+                if (strlen(guess) == 0) break;
                 guess[strlen(guess)-1] = 0;
-                board_render_guess();
+                board_render_guess_entry();
                 waitpadup();
                 break;
             default:

@@ -18,11 +18,13 @@ extern const uint8_t sp_cursor_offset_y[];
 inline char keyboard_get_letter(void);
 
 void keyboard_fill_letter_cgb_pal(uint8_t row, uint8_t col, uint8_t palnum);
-void keyboard_set_color_for_letter(uint8_t row, uint8_t col, char letter);
+void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type);
+inline void keyboard_set_default_color_letter(uint8_t row, uint8_t col);
 
-void keyboard_redraw(void);
+void keyboard_update_from_guess(void);
+void keyboard_redraw_clean(void);
 void keyboard_draw_map(void);
 
-void keyboard_highlight_letter(void);
+void keyboard_update_cursor(void);
 
 #endif

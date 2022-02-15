@@ -40,26 +40,30 @@ const uint8_t board_map[]  = {
 const uint8_t empty_word_buf[] = {' ', ' ', ' ', ' ', ' '};
 
 
-// Draw the current guessed word to the board
-void board_render_guess(void) {
+// Draw the currently entered letters for the guess on to the board
+void board_render_guess_entry(void) {
 
     SET_BOARD_COLOR_NORMAL; // TODO: remove?
     board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_NO); // guess_num is row
+
+// TODO: OPTIMIZE: convert to adding/removing letters instead of a full word redraw
+/*    // Cheat Mode: Highlight word letters as typed in debug mode
+    #ifdef DEBUG_REVEAL_WHILE_TYPE
+        board_set_color_for_letter(row, col, BOARD_HIGHLIGHT_YES);
+    #else
+        // No highlighting during guess entry
+        SET_BOARD_COLOR_NORMAL;
+    #endif
+    // board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_NO); // guess_num is row
+    board_draw_letter(guess_num, guess, guess[col]);
+*/
 }
 
-
 // Redraw the board for all current guesses
-void board_redraw(void) {
+void board_redraw_clean(void) {
 
-    char * p_guess;
-
-    for(uint8_t i = 0; i < MAX_GUESSES; i++) {
-        // Draw words up to end of guesses, then blank words after
-        if (i < guess_num)
-            p_guess = guesses[i];
-        else
-            p_guess = NULL;
-        board_draw_word(i, p_guess, BOARD_HIGHLIGHT_YES);
+    for(int i=0; i < MAX_GUESSES; i++) {
+        board_draw_word(i, NULL, BOARD_HIGHLIGHT_NO);
     }
 }
 
@@ -93,54 +97,66 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
         SET_BOARD_COLOR_NORMAL;
     }
 
-    // Cheat Mode: Highlight word letters as typed in debug mode
-    #ifdef DEBUG_ON
-        do_highlight = true;
-    #endif
+    // Flag guess letters as: LETTER_NOT_IN_WORD, LETTER_WRONG_PLACE or LETTER_RIGHT_PLACE
+    evaluate_letters(guess);
 
     // col maps to the individual letters in the word/guess
     for (uint8_t col = 0; col < BOARD_GRID_W; col ++) {
 
-        board_set_color_for_letter(row, col, word, p_guess[col], do_highlight);
+        // Cheat Mode: Highlight word letters as typed in debug mode
+        #ifdef DEBUG_REVEAL_WHILE_TYPE
+            board_set_color_for_letter(row, col, BOARD_HIGHLIGHT_YES);
+        #else
+            board_set_color_for_letter(row, col, do_highlight);
+        #endif
 
         board_draw_letter(row, col, p_guess[col]);
+
+        // TODO: OPTIONAL: nice tile flipping animation here as it reveals (sprite based?)
+        // // Little delay between revealing each letter
+        // if (do_highlight)
+        //         wait_vbl_done();
     }
 }
 
 
 // Set highlight color for a letter on baord based on guess status
-void board_set_color_for_letter(uint8_t row, uint8_t col, char *word, char letter, uint8_t do_highlight) {
+void board_set_color_for_letter(uint8_t row, uint8_t col, uint8_t do_highlight) {
 
     if (IS_CGB)
         SET_PRINT_COLOR_NORMAL;
 
+    // If highlighting is turned off just use normal style
     if (!do_highlight) {
+
         if (IS_CGB)
             board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_NORMAL);
         else
             SET_BOARD_COLOR_NORMAL;
-    }
-    else if(word[col] == letter) {
-        if (IS_CGB) {
-            board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_MATCHED);
-        }
-        else
-            SET_BOARD_COLOR_MATCHED;
-
-    // } else if (contains(guessed_wrong, letter)) {
-    //     SET_BOARD_COLOR_NOT_IN_WORD;
-
-    } else if (contains(word, letter)) {
-        if (IS_CGB)
-            board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_CONTAINS);
-        else
-            SET_BOARD_COLOR_CONTAINS;
-
     } else {
-        if (IS_CGB)
-            board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_NORMAL);
-        else
-            SET_BOARD_COLOR_NORMAL;
+
+        if (guess_eval[col] == LETTER_RIGHT_PLACE) {
+
+            if (IS_CGB) {
+                board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_MATCHED);
+            }
+            else
+                SET_BOARD_COLOR_MATCHED;
+
+        } else if (guess_eval[col] == LETTER_WRONG_PLACE) {
+
+            if (IS_CGB)
+                board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_CONTAINS);
+            else
+                SET_BOARD_COLOR_CONTAINS;
+
+        } else { // implied: if (guess_eval[col] == LETTER_NOT_IN_WORD) {
+
+            if (IS_CGB)
+                board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_NORMAL);
+            else
+                SET_BOARD_COLOR_NORMAL;
+        }
     }
 }
 

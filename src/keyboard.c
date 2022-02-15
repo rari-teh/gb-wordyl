@@ -64,46 +64,83 @@ void keyboard_fill_letter_cgb_pal(uint8_t row, uint8_t col, uint8_t palnum) {
 
 
 // Set highlight color for a letter on the keyboard based on guess status
-void keyboard_set_color_for_letter(uint8_t row, uint8_t col, char letter) {
+void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type) {
 
     if (IS_CGB)
         SET_PRINT_COLOR_NORMAL;
 
-    // if(letter == ' ')
-    // {
-    //     set_1bpp_colors(DMG_BLACK, DMG_WHITE);
-    // }
-    if (contains(guessed_wrong, letter)) {
-        if (IS_CGB)
-            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_NOT_IN_WORD);
-        else
-            SET_KEYBD_COLOR_NOT_IN_WORD;
-    }
-    else if(contains(guessed_position, letter)) {
-        if (IS_CGB)
-            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_CONTAINS);
-        else
-            SET_KEYBD_COLOR_CONTAINS;
-    }
-    else if(contains(guessed_correct, letter)) {
+    if (match_type == LETTER_RIGHT_PLACE) {
+
         if (IS_CGB)
             keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_MATCHED);
         else
             SET_KEYBD_COLOR_MATCHED;
     }
-    else {
+    else if (match_type == LETTER_WRONG_PLACE) {
+
         if (IS_CGB)
-            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_NORMAL);
+            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_CONTAINS);
         else
-            SET_KEYBD_COLOR_NORMAL;
+            SET_KEYBD_COLOR_CONTAINS;
+    }
+    else // implied: if (match_type == LETTER_NOT_MATCHED) {
+        if (IS_CGB)
+            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_NOT_IN_WORD);
+        else
+            SET_KEYBD_COLOR_NOT_IN_WORD;
+}
+
+
+// Set default non-highlighted color for a letter on the keyboard
+inline void keyboard_set_default_color_letter(uint8_t row, uint8_t col) {
+    if (IS_CGB)
+        keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_NORMAL);
+    else
+        SET_KEYBD_COLOR_NORMAL;
+}
+
+
+// Update keyboard highlighting based on a guessed word evaluation
+// TODO: could be optimized
+void keyboard_update_from_guess(void) {
+
+    uint8_t highest_match_type;
+    uint8_t tile_id = BG_TILES_KEYBD_START;
+
+    // Loop through keyboard, check for letters to highlight
+    for(uint8_t row = 0; row < 3; row++) {
+
+        uint8_t kbl = strlen(kb[row]);
+        for(uint8_t col=0; col < kbl; col++) {
+
+            char letter = kb[row][col];
+
+            // See if current keyboard letter is in guess word
+            highest_match_type = LETTER_NOT_MATCHED;
+
+            for (int c = 0; c < WORD_LENGTH; c++) {
+
+                if (letter == guess[c]) {
+
+                    // find highest match type in the guess word
+                    if (guess_eval[c] > highest_match_type)
+                        highest_match_type = guess_eval[c];
+
+                    keyboard_set_color_for_letter(row, col, highest_match_type);
+
+                    // Only needed for DMG which does a full redraw, CGB just touches the attribs
+                    if (IS_CGB)
+                        draw_letter_to_tileid(letter, tile_id);
+                }
+            }
+            tile_id++;
+        }
     }
 }
 
 
-// TODO: OPTIMIZE: add function to just redraw a single keyboard letter on demand instead of entire board
-
-// Redraw they keyboard with letters highlighted based on guess data
-void keyboard_redraw() {
+// Reset / Redraw the entire keyboard with no letters highlighted
+void keyboard_redraw_clean(void) {
 
     uint8_t tile_id = BG_TILES_KEYBD_START;
     for(uint8_t row = 0; row < 3; row++) {
@@ -112,7 +149,7 @@ void keyboard_redraw() {
         for(uint8_t col=0; col < kbl; col++) {
 
             char letter = kb[row][col];
-            keyboard_set_color_for_letter(row, col, letter);
+            keyboard_set_default_color_letter(row, col);
             draw_letter_to_tileid(letter, tile_id);
             tile_id++;
         }
@@ -139,7 +176,7 @@ void keyboard_draw_map(void) {
 
 
 // Move the cursor to highlight a key
-void keyboard_highlight_letter(void) {
+void keyboard_update_cursor(void) {
 
     uint8_t x = (kb_x * 16) + (kb_offsets[kb_y] * 8) + DEVICE_SPRITE_PX_OFFSET_X;
     uint8_t y = ((KEYBD_START_Y + kb_y) * 8) + DEVICE_SPRITE_PX_OFFSET_Y;
