@@ -8,14 +8,16 @@
  * CGB + GFX refactor improvement by bbbbbr
  */
 #include <gbdk/platform.h>
-// #include <gbdk/font.h>
-#include <string.h>
-#include <stdint.h>
-#include <rand.h>
 #include <gbdk/incbin.h>
 #include <gb/gbdecompress.h>
 
-#include "word-db.h"
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <rand.h>
+
+// #include "word-db.h"
+#include "decode.h"
 
 #include "common.h"
 #include "input.h"
@@ -74,7 +76,7 @@ uint8_t game_handle_guess(void) {
         win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is too short!\n\nNeeds 5 Letters", NULL);
         return STATUS_GAME_CONTINUE;
     }
-    else if (!query_word(guess)) {
+    else if (!filterWord(guess)) {
         // Word not in dictionary
         win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is not in\n\ndictionary!", NULL);
         return STATUS_GAME_CONTINUE;
@@ -117,7 +119,8 @@ void game_init_answer_word(void) {
     while(r > 211) {
         r = rand();
     }
-    get_word(r, word);
+    // get_word(r, word);
+    getSpecialWord(r, word);
 
     #ifdef DEBUG_FORCE_WORD
         strcpy(word, DEBUG_FORCE_WORD);

@@ -3,10 +3,11 @@
 #include <gbdk/platform.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <gbdk/incbin.h>
 #include <gb/gbdecompress.h>
 
-#include "word-db.h"
+// #include "word-db.h"
 
 #include "common.h"
 #include "gfx_common.h"
