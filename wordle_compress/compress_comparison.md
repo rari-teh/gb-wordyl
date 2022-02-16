@@ -11,7 +11,7 @@ ROM_1          0x4000 -> 0x7FFF  16384  11258    68%   5126    31%
 Bank           Range             Size   Used   Used%  Free   Free% 
 ----------     ----------------  -----  -----  -----  -----  -----
 ROM            0x0000 -> 0x3FFF  16384  16215    98%    169     1%
-ROM_1          0x4000 -> 0x7FFF  16384  11520    70%   4864    29%
+ROM_1          0x4000 -> 0x7FFF  16384  11135    67%   5249    32%
 ```
 
 ## Compression (details): zeta_two
@@ -48,25 +48,79 @@ ROM_1          0x4000 -> 0x7FFF  16384  11520    70%   4864    29%
 
 # Data
 ```
-+ wordBlob                        0x17F9 -> 0x3FFF   10247 (17,734)
-+ wordBlob                        0x4000 -> 0x5D3E    7487
-+ answers                         0x5D3F -> 0x6391    1619
-+ words                           0x6392 -> 0x63FD     108
++ wordBlob                        0x1678 -> 0x3FFF   10632 (17,734)
++ wordBlob                        0x4000 -> 0x5BBD    7102
++ answers                         0x5BBE -> 0x6210    1619
++ words                           0x6211 -> 0x627C     108
  = 19,461
 ```
 
 # Code
 ```
-+ filterWord                      0x0A86 -> 0x0CCD     584
-+ decodeInt                       0x06EF -> 0x08A9     443
-+ getWord                         0x095A -> 0x0A85     300
-+ getSpecialWord                  0x0CCE -> 0x0D81     180
-+ decodeWord                      0x08AA -> 0x0959     176
- = 1,683
++ filterWord                      0x0966 -> 0x0B4C     487
++ getWord                         0x0849 -> 0x0965     285
++ decodeInt                       0x06EF -> 0x07F9     267
++ getSpecialWord                  0x0B4D -> 0x0C00     180
++ decodeWord                      0x07FA -> 0x0847      78
+ = 1,297
 ```
 
 # Total
 ```
- = 21,144
+ = 20,758
 ```
+
+
+## Profiling (avg cycles):  arpruss
+
+# Check: Nearly valid word: "GRATX"
+
+Prev Version
+```
+_filterWord		4198362			9	466484/__466490__/466484.7
+
+  _decodeInt	6180950		11425	310/__1558__/541.0
+```
+
+Newer version (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
+```
+_filterWord		12623584	13282	435296/__435296__/435296.0
+
+  _decodeInt	5616662		13253	238/__1346__/423.8
+```
+
+# Check: Far from valid word: "GZZZZZ"
+
+Prev Version
+```
+_filterWord		8384428	13	644956/644956/644956.0
+```
+
+
+Newer version (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
+```_filterWord		3007910	3185	601582/601582/601582.0
+```
+
+# Get Answer Word: (#100, "ARBOR")
+
+Prev Version
+```
+_getSpecialWord		592648	1	592648/__592648__/592648.0
+
+  _getWord			529972	1	529972/__529972__/529972.0
+    _decodeInt		329150	493	310/__1558__/667.6
+	_decodeWord		796		1	796/__796__/796.0
+```
+
+Newer version (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
+```
+_getSpecialWord		523806	1	523806/__523806__/523806.0
+
+  _getWord			461130	1	461130/__461130__/461130.0
+    _decodeInt		258978	493	238/__1346__/525.3
+    _decodeWord		1326	1	1326/__1326__/1326.0
+```
+
+
+
 
