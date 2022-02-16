@@ -13,24 +13,24 @@
 #include "keyboard.h"
 
 // Keyboard map
-const char *kb[3] = {
+const char *kb[KEYBD_ROWS] = {
 "QWERTYUIOP",
  "ASDFGHJKL",
   "ZXCVBNM"};
 
 // Stores color coding for keyboard basde on guess data
-uint8_t kb_status[3][10];
+uint8_t kb_status[KEYBD_ROWS][10];
 
 
 // Length of each keyboard row in characters
-int8_t kb_coords[3] = {
+int8_t kb_coords[KEYBD_ROWS] = {
     10,
     9,
     7
 };
 
 // Which tile column each keyboard row starts on
-int8_t kb_offsets[3] = {
+int8_t kb_offsets[KEYBD_ROWS] = {
     0,
     1,
     2
@@ -200,3 +200,35 @@ void keyboard_update_cursor(void) {
     }
 }
 
+
+void keyboard_move_cursor(int8_t move_x, int8_t move_y) {
+
+    // Update Y first (may change X) and handle wraparound
+    if (move_y != 0) {
+        kb_y += move_y;
+
+        if (kb_y < 0) {
+            kb_y = ARRAY_LEN(kb) - 1;
+        }
+        else if (kb_y >= ARRAY_LEN(kb)) {
+            kb_y = 0;
+        }
+
+        // Bump X to end or row if it's shorter X if needed on row change
+        if(kb_x >= kb_coords[kb_y]) {
+            kb_x = kb_coords[kb_y] - 1;
+        }
+    }
+
+
+    // Update X and handle wraparound
+    kb_x += move_x;
+
+    if (kb_x >= kb_coords[kb_y])
+        kb_x = 0;
+    else if (kb_x < 0)
+        kb_x = kb_coords[kb_y] - 1;
+
+
+    keyboard_update_cursor();
+}

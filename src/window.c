@@ -7,6 +7,7 @@
 #include "word-db.h"
 
 #include "common.h"
+#include "input.h"
 #include "gfx_common.h"
 #include "gameboy_color.h"
 
@@ -58,13 +59,7 @@ void win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * st
         wait_vbl_done();
     }
 
-    // Wait for button press and then release
-    while (!(joypad() & (J_A | J_B | J_START))) {
-        wait_vbl_done();
-    }
-    while ((joypad() & (J_A | J_B | J_START))) {
-        wait_vbl_done();
-    }
+    waitpadticked_lowcpu(J_ANY_KEY, NULL);
 
     // Scroll window out of view (with a small ease-out)
     while (WY_REG < win_y_save) {

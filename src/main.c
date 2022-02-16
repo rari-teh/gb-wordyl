@@ -18,12 +18,17 @@
 #include "word-db.h"
 
 #include "common.h"
+#include "input.h"
 #include "gfx_common.h"
 #include "gameboy_color.h"
 
 #include "keyboard.h"
 #include "board.h"
 #include "window.h"
+
+
+uint8_t game_handle_guess(void);
+void game_init_answer_word(void);
 
 
 uint8_t game_won_str[] = "You won!\n\nOn Guess X of 6";
@@ -39,7 +44,6 @@ void show_win_message(uint8_t guess_count) {
     win_dialog_show_message(DIALOG_WON_MESSAGE_WIN_Y, game_won_str, NULL);
     reset(); // TODO: replace and improve, move to function calling this
 }
-
 
 // Show a popup message: You Lost
 void show_lose_message(char *correct_word) {
@@ -63,6 +67,68 @@ void analyze_guess(char *guess) {
 }
 */
 
+uint8_t game_handle_guess(void) {
+
+    if (strlen(guess) != WORD_LENGTH) {
+        // TODO: indicate insufficient length
+        return STATUS_GAME_CONTINUE;
+    }
+    else if (!query_word(guess)) {
+        // TODO: indicate not a matched word
+        return STATUS_GAME_CONTINUE;
+    }
+
+    // analyze_guess(guess); // TODO: DEAD CODE?
+    // strcpy(guesses[guess_num], guess);
+
+    board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
+    guess_num += 1;
+    keyboard_update_from_guess();
+    keyboard_update_cursor();
+
+    // Check for correct match
+    if(strcmp(word, guess) == 0) {
+        show_win_message(guess_num);
+        return STATUS_GAME_WON;
+    }
+    if(guess_num == MAX_GUESSES) {
+        // show_loose();
+        show_lose_message(word);
+        return STATUS_GAME_LOST;
+    }
+
+    // Reset guess to empty and prepare for next one
+    memset(guess, 0, WORD_LENGTH);
+
+    return STATUS_GAME_CONTINUE;
+}
+
+
+void game_init_answer_word(void) {
+
+    uint16_t seed = LY_REG;
+    seed |= (uint16_t)DIV_REG << 8;
+    initrand(seed);
+    int r = rand();
+
+    // TODO: FIXME? Is this limiting to first 211 answer words?
+    while(r > 211) {
+        r = rand();
+    }
+    get_word(r, word);
+
+    #ifdef DEBUG_FORCE_WORD
+        strcpy(word, DEBUG_FORCE_WORD);
+    #endif
+
+    #ifdef DEBUG_REVEAL_WORD
+        // Cheat Mode: Display answer word in debug mode
+        print_gotoxy(0,0, PRINT_BKG);
+        print_str(word);
+    #endif
+}
+
+
 void run_wordyl(void)
 {
     board_initgfx();
@@ -71,7 +137,6 @@ void run_wordyl(void)
     win_dialog_draw();
 
     strcpy(word, "EMPTY");
-    int has_random = 0;
 
     guess_num = 0;
     memset(guess, 0, sizeof(guess));
@@ -80,9 +145,10 @@ void run_wordyl(void)
     // memset(guessed_position, 0, sizeof(guessed_position));
     // memset(guessed_correct, 0, sizeof(guessed_correct));
 
-    for(int i=0; i < MAX_GUESSES; i++) {
-        strcpy(guesses[i], "");
-    }
+    // TODO: DEAD CODE?
+    // for(uint8_t i=0; i < MAX_GUESSES; i++) {
+    //     strcpy(guesses[i], "");
+    // }
 
     // Draws initial empty board
     board_redraw_clean();
@@ -92,115 +158,71 @@ void run_wordyl(void)
 
     // Show cursor on default keyboard key
     keyboard_update_cursor();
+
+    // Wait for first button press then Initialize answer word
+    while (!(joypad() & J_ANY_KEY)) {
+        wait_vbl_done();
+    }
+    game_init_answer_word();
+
     while(1) {
-        int j = joypad();
-        if((has_random == 0) && (j != 0)) {
-            uint16_t seed = LY_REG;
-            seed |= (uint16_t)DIV_REG << 8;
-            initrand(seed);
-            int r = rand();
-            while(r > 211) {
-                r = rand();
+        UPDATE_KEYS();
+
+
+        // Handle D-Pad movement separate from other buttons
+        // so that buttons kept held down don't lock out D-pad
+        //  movement during keyboard entry
+        if (KEY_TICKED(J_LEFT | J_RIGHT | J_UP | J_DOWN)) {
+            // Filter D-pad buttons pressed to only test changed ones
+            switch(keys & keys_changed) {
+                    // Keyboard Movement
+                    case J_RIGHT:
+                        keyboard_move_cursor(1, 0);
+                        break;
+
+                    case J_LEFT:
+                        keyboard_move_cursor(-1, 0);
+                        break;
+
+                    case J_UP:
+                        keyboard_move_cursor(0, -1);
+                        break;
+
+                    case J_DOWN:
+                        keyboard_move_cursor(0, 1);
+                        break;
+
             }
-            get_word(r, word);
-
-            #ifdef DEBUG_FORCE_WORD
-                strcpy(word, DEBUG_FORCE_WORD);
-            #endif
-
-            has_random = 1;
-
-            #ifdef DEBUG_REVEAL_WORD
-                // Cheat Mode: Display answer word in debug mode
-                print_gotoxy(0,0, PRINT_BKG);
-                print_str(word);
-            #endif
         }
 
-        switch(j) {
-            case J_RIGHT:
-                kb_x += 1;
-                if(kb_x >= kb_coords[kb_y]) {
-                    kb_x = 0;
-                }
-                keyboard_update_cursor();
-                waitpadup();
-                break;
-            case J_LEFT:
-                kb_x -= 1;
-                if(kb_x < 0) {
-                    kb_x = kb_coords[kb_y] - 1;
-                }
-                keyboard_update_cursor();
-                waitpadup();
-                break;
-            case J_UP:
-                kb_y -= 1;
-                if(kb_y < 0) {
-                    kb_y = 2;
-                }
-                if(kb_x >= kb_coords[kb_y]) {
-                    kb_x = kb_coords[kb_y] - 1;
-                }
-                keyboard_update_cursor();
-                waitpadup();
-                break;
-            case J_DOWN:
-                kb_y += 1;
-                if(kb_y > 2) {
-                    kb_y = 0;
-                }
-                if(kb_x >= kb_coords[kb_y]) {
-                    kb_x = kb_coords[kb_y] - 1;
-                }
-                keyboard_update_cursor();
-                waitpadup();
-                break;
-            case J_SELECT:
-            case J_START:
-                if(strlen(guess) != WORD_LENGTH) {
-                    // TODO: indicate insufficient length
+        if (KEY_TICKED(J_A | J_B | J_SELECT | J_START)) {
+            switch(keys) {
+
+                case J_SELECT:
                     break;
-                }
-                else if(!query_word(guess)) {
-                    // TODO: indicate not a matched word
+
+                // Check a guess
+                case J_START:
+                    // TODO: better handling of game over/won
+                    if (game_handle_guess() != STATUS_GAME_CONTINUE)
+                        return; // Game was Won or Lost, exit
                     break;
-                }
-                // analyze_guess(guess); // TODO: DEAD CODE?
-                strcpy(guesses[guess_num], guess);
-                board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
-                guess_num += 1;
-                keyboard_update_from_guess();
-                keyboard_update_cursor();
-                if(strcmp(word, guess) == 0) {
-                    show_win_message(guess_num);
-                    return;
+
+                // Add/Remove letters from a guess
+                case J_A:
+                    if (strlen(guess) == WORD_LENGTH) break; // TODO: replace with counter
+                    guess[strlen(guess)] = keyboard_get_letter();
+                    board_render_guess_entry();
                     break;
-                }
-                if(guess_num == MAX_GUESSES) {
-                    // show_loose();
-                    show_lose_message(word);
-                    return;
+
+                case J_B:
+                    if (strlen(guess) == 0) break;
+                    guess[strlen(guess)-1] = 0;
+                    board_render_guess_entry();
                     break;
-                }
-                // empty guess
-                memset(guess, 0, WORD_LENGTH);
-                // TODO
+                default:
                 break;
-            case J_A:
-                if (strlen(guess) == WORD_LENGTH) break; // TODO: replace with counter
-                guess[strlen(guess)] = keyboard_get_letter();
-                board_render_guess_entry();
-                waitpadup();
-                break;
-            case J_B:
-                if (strlen(guess) == 0) break;
-                guess[strlen(guess)-1] = 0;
-                board_render_guess_entry();
-                waitpadup();
-                break;
-            default:
-            break;
+            }
         }
 
         wait_vbl_done();

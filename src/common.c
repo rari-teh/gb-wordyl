@@ -14,7 +14,7 @@ bool answer_letter_used[WORD_LENGTH];
 uint8_t guess_num;
 
 char guess[WORD_LENGTH+1];
-char guesses[WORD_LENGTH+1][MAX_GUESSES];
+// char guesses[WORD_LENGTH+1][MAX_GUESSES];
 
 // TODO: implement?
 // char guessed_wrong[30];

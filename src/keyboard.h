@@ -3,9 +3,11 @@
 #ifndef _KEYBOARD_H
 #define _KEYBOARD_H
 
-extern const char *kb[3];
-extern int8_t kb_coords[3];
-extern int8_t kb_offsets[3];
+#define KEYBD_ROWS 3
+
+extern const char *kb[KEYBD_ROWS];
+extern int8_t kb_coords[KEYBD_ROWS];
+extern int8_t kb_offsets[KEYBD_ROWS];
 
 extern int8_t kb_x;
 extern int8_t kb_y;
@@ -26,5 +28,6 @@ void keyboard_redraw_clean(void);
 void keyboard_draw_map(void);
 
 void keyboard_update_cursor(void);
+void keyboard_move_cursor(int8_t move_x, int8_t move_y);
 
 #endif
