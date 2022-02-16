@@ -71,25 +71,48 @@ ROM_1          0x4000 -> 0x7FFF  16384  11135    67%   5249    32%
 ```
 
 
-## Profiling (avg cycles):  arpruss
+# Profiling (avg cycles):
 
-# Check: Nearly valid word: "GRATX"
+## Check: Nearly valid word: "GRATX"
 
-Prev Version
+(zeta_two)
+```
+_query_word		16558112	10496	1034882/__1034882__/1034882.0
+
+  _query_word_compressed	16555200	10496	236892/__797808__/517350.0
+    _add_unpack_varint		13706240	10176	904/__3294__/1346.9
+    _from_b26				1099328	352	34354/__34354__/34354.0
+      __mullong				1008512	320	3024/__3248__/3151.6
+```
+
+
+Prev Version (arpruss)
 ```
 _filterWord		4198362			9	466484/__466490__/466484.7
 
   _decodeInt	6180950		11425	310/__1558__/541.0
 ```
 
-Newer version (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
+Newer version (arpruss) (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
 ```
 _filterWord		12623584	13282	435296/__435296__/435296.0
 
   _decodeInt	5616662		13253	238/__1346__/423.8
 ```
 
-# Check: Far from valid word: "GZZZZZ"
+
+## Check: Far from valid word: "GZZZZZ"
+
+
+(zeta_two)
+```
+_query_word		7243922	4592	1034846/__1034846__/1034846.0
+
+  _query_word_compressed	7242648	4592	236826/__797838__/517332.0
+    _add_unpack_varint		5992504	4452	904/__3294__/1346.0
+    _from_b26				481040	154	34360/__34360__/34360.0
+      __mullong				441308	140	3024/__3248__/3152.2
+```
 
 Prev Version
 ```
@@ -98,12 +121,22 @@ _filterWord		8384428	13	644956/644956/644956.0
 
 
 Newer version (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
-```_filterWord		3007910	3185	601582/601582/601582.0
+```
+_filterWord		3007910	3185	601582/601582/601582.0
 ```
 
-# Get Answer Word: (#100, "ARBOR")
+## Get Answer Word: (#100, "ARBOR")
 
-Prev Version
+(zeta_two)
+```
+_get_word		237206	4	237206/__237206__/237206.0
+
+  _get_word_compressed		237116	4	237116/237116/237116.0
+    _add_unpack_varint		179302	101	904/3294/1775.3
+    _to_b26		40308	4	40308/40308/40308.0
+```
+
+Prev Version (arpruss)
 ```
 _getSpecialWord		592648	1	592648/__592648__/592648.0
 
@@ -112,7 +145,7 @@ _getSpecialWord		592648	1	592648/__592648__/592648.0
 	_decodeWord		796		1	796/__796__/796.0
 ```
 
-Newer version (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
+Newer version (arpruss) (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
 ```
 _getSpecialWord		523806	1	523806/__523806__/523806.0
 
