@@ -12,7 +12,8 @@
 // Cheats for testing
 // #define DEBUG_REVEAL_WHILE_TYPE
 // #define DEBUG_FORCE_WORD "AMPLE"
-// #define DEBUG_REVEAL_WORD
+#define DEBUG_REVEAL_WORD
+#define DEBUG_FORCE_WORD_BY_NUM  100
 
 #define BOARD_HIGHLIGHT_NO  false
 #define BOARD_HIGHLIGHT_YES true

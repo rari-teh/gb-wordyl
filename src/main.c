@@ -119,6 +119,9 @@ void game_init_answer_word(void) {
     while(r > 211) {
         r = rand();
     }
+    #ifdef DEBUG_FORCE_WORD_BY_NUM
+        r = DEBUG_FORCE_WORD_BY_NUM;
+    #endif
     // get_word(r, word);
     getSpecialWord(r, word);
 
