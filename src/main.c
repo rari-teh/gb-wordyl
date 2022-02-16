@@ -70,11 +70,13 @@ void analyze_guess(char *guess) {
 uint8_t game_handle_guess(void) {
 
     if (strlen(guess) != WORD_LENGTH) {
-        // TODO: indicate insufficient length
+        // Insufficient length
+        win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is too short!\n\nNeeds 5 Letters", NULL);
         return STATUS_GAME_CONTINUE;
     }
     else if (!query_word(guess)) {
-        // TODO: indicate not a matched word
+        // Word not in dictionary
+        win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is not in\n\ndictionary!", NULL);
         return STATUS_GAME_CONTINUE;
     }
 
