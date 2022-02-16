@@ -1,3 +1,6 @@
+# Data compression comparison (code & data table size)
+- SDCC `-Wf--max-allocs-per-node...` not turned on
+
 ## Compression: zeta_two
 ```
 Bank           Range             Size   Used   Used%  Free   Free% 
@@ -6,7 +9,15 @@ ROM            0x0000 -> 0x3FFF  16384  16215    98%    169     1%
 ROM_1          0x4000 -> 0x7FFF  16384  11258    68%   5126    31%
 ```
 
-## Compression: arpruss
+## Compression: arpruss (prev version)
+```
+Bank           Range             Size   Used   Used%  Free   Free% 
+----------     ----------------  -----  -----  -----  -----  -----
+ROM            0x0000 -> 0x3FFF  16384  16215    98%    169     1%
+ROM_1          0x4000 -> 0x7FFF  16384  11520    70%   4864    29%
+```
+
+## Compression: arpruss (Newer version: 2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
 ```
 Bank           Range             Size   Used   Used%  Free   Free% 
 ----------     ----------------  -----  -----  -----  -----  -----
@@ -72,12 +83,16 @@ ROM_1          0x4000 -> 0x7FFF  16384  11135    67%   5249    32%
 
 
 # Profiling (avg cycles):
+- Measurements taken in CGB 2X mode. For DMG multiply numbers x 2
+- 70,224 cycles per frame (59.7 FPS)
+- Use numbers emphasized by underscores
+
 
 ## Check: Nearly valid word: "GRATX"
 
 (zeta_two)
 ```
-_query_word		16558112	10496	1034882/__1034882__/1034882.0
+_query_word		16558112	10496	1034882/__1034882__/1034882.0   (14.7 frames, .25 sec)
 
   _query_word_compressed	16555200	10496	236892/__797808__/517350.0
     _add_unpack_varint		13706240	10176	904/__3294__/1346.9
@@ -88,14 +103,14 @@ _query_word		16558112	10496	1034882/__1034882__/1034882.0
 
 Prev Version (arpruss)
 ```
-_filterWord		4198362			9	466484/__466490__/466484.7
+_filterWord		4198362			9	466484/__466490__/466484.7  (6.64 frames, .11 sec)
 
   _decodeInt	6180950		11425	310/__1558__/541.0
 ```
 
 Newer version (arpruss) (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
 ```
-_filterWord		12623584	13282	435296/__435296__/435296.0
+_filterWord		12623584	13282	435296/__435296__/435296.0  (6.19 frames. .10 sec)
 
   _decodeInt	5616662		13253	238/__1346__/423.8
 ```
@@ -106,30 +121,26 @@ _filterWord		12623584	13282	435296/__435296__/435296.0
 
 (zeta_two)
 ```
-_query_word		7243922	4592	1034846/__1034846__/1034846.0
+_query_word		7243922	4592	1034846/__1034846__/1034846.0   (14.7 frames, .25 sec)
 
-  _query_word_compressed	7242648	4592	236826/__797838__/517332.0
-    _add_unpack_varint		5992504	4452	904/__3294__/1346.0
-    _from_b26				481040	154	34360/__34360__/34360.0
-      __mullong				441308	140	3024/__3248__/3152.2
 ```
 
 Prev Version
 ```
-_filterWord		8384428	13	644956/644956/644956.0
+_filterWord		8384428	13	644956/__644956__/644956.0  (9.18 frames. .15 sec)
 ```
 
 
 Newer version (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
 ```
-_filterWord		3007910	3185	601582/601582/601582.0
+_filterWord		3007910	3185	601582/__601582__/601582.0  (8.57 frames. .14 sec)
 ```
 
-## Get Answer Word: (#100, "ARBOR")
+## Get Initial Answer Word: (#100, "ARBOR")
 
 (zeta_two)
 ```
-_get_word		237206	4	237206/__237206__/237206.0
+_get_word		237206	4	237206/__237206__/237206.0  (3.38 frames. .06 sec)
 
   _get_word_compressed		237116	4	237116/237116/237116.0
     _add_unpack_varint		179302	101	904/3294/1775.3
@@ -138,7 +149,7 @@ _get_word		237206	4	237206/__237206__/237206.0
 
 Prev Version (arpruss)
 ```
-_getSpecialWord		592648	1	592648/__592648__/592648.0
+_getSpecialWord		592648	1	592648/__592648__/592648.0  (8.43 frames. .14 sec)
 
   _getWord			529972	1	529972/__529972__/529972.0
     _decodeInt		329150	493	310/__1558__/667.6
@@ -147,7 +158,7 @@ _getSpecialWord		592648	1	592648/__592648__/592648.0
 
 Newer version (arpruss) (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
 ```
-_getSpecialWord		523806	1	523806/__523806__/523806.0
+_getSpecialWord		523806	1	523806/__523806__/523806.0  (7.46 frames. .12 sec)
 
   _getWord			461130	1	461130/__461130__/461130.0
     _decodeInt		258978	493	238/__1346__/525.3
