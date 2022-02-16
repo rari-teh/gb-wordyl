@@ -18,7 +18,7 @@ ROM_1          0x4000 -> 0x7FFF  16384  11520    70%   4864    29%
 
 # Data
 ```
-+ word_guesses                    0x11EE -> 0x3FFF   11794
++ word_guesses                    0x11EE -> 0x3FFF   11794 (14,846)
 + word_guesses                    0x4000 -> 0x4BEB    3052
 + word_answers                    0x0202 -> 0x1148    3911
 + answers_index                   0x114A -> 0x11EB     162
@@ -48,7 +48,7 @@ ROM_1          0x4000 -> 0x7FFF  16384  11520    70%   4864    29%
 
 # Data
 ```
-+ wordBlob                        0x17F9 -> 0x3FFF   10247
++ wordBlob                        0x17F9 -> 0x3FFF   10247 (17,734)
 + wordBlob                        0x4000 -> 0x5D3E    7487
 + answers                         0x5D3F -> 0x6391    1619
 + words                           0x6392 -> 0x63FD     108
