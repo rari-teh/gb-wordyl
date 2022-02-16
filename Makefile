@@ -19,6 +19,9 @@ LCCFLAGS_gg      =
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
+# Set ROM name
+LCCFLAGS += -Wm-yn"$(PROJECTNAME)"
+
 # No autobanking needed for 32k ROM
 # LCCFLAGS += -Wl-j -Wm-yoA -Wm-ya4 -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
 LCCFLAGS += -debug # Uncomment to enable debug output
