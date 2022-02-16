@@ -3,8 +3,11 @@
 A Wordle clone for the Nintendo Game Boy / Color and Analogue Pocket!
 
 - Original source by [stacksmashing](https://github.com/stacksmashing/gb-wordle)  ([twitter](http://twitter.com/ghidraninja))
-- Dictionary improvements by [zeta_two](https://github.com/ZetaTwo/gb-wordle)
+- Improvements merged in from:
+  - [zeta_two](https://github.com/ZetaTwo/gb-wordle) : Dictionary compression and word list
+  - [arpruss](https://github.com/arpruss/gb-fiver) : Highlighting fixes
 - Game Boy Color support + GFX refactor and improvement by [bbbbbr](https://github.com/bbbbbr/gb-wordle)
+
 
 Playable online at: https://bbbbbr.itch.io/gb-wordyl
 
