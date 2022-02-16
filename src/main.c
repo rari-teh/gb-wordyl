@@ -8,12 +8,13 @@
  * CGB + GFX refactor improvement by bbbbbr
  */
 #include <gbdk/platform.h>
-// #include <gbdk/font.h>
-#include <string.h>
-#include <stdint.h>
-#include <rand.h>
 #include <gbdk/incbin.h>
 #include <gb/gbdecompress.h>
+
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <rand.h>
 
 #include "word-db.h"
 

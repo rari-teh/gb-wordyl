@@ -3,8 +3,8 @@
 #include <gbdk/platform.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
 
-#include "word-db.h"
 
 #include "common.h"
 #include "input.h"

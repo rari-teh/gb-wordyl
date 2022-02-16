@@ -3,8 +3,7 @@
 #include <gbdk/platform.h>
 #include <string.h>
 #include <stdint.h>
-
-#include "word-db.h"
+#include <stdbool.h>
 
 #include "common.h"
 #include "gfx_common.h"
