@@ -27,11 +27,12 @@
 #define STATUS_GAME_LOST     1u
 #define STATUS_GAME_CONTINUE 0u
 
+#define GUESS_LETTER_EMPTY   0
+
 
 extern uint8_t guess_eval[5];
 
 extern uint8_t guess_num;
-// extern uint8_t guess_cur_letter; // TODO
 
 extern char guess[WORD_LENGTH+1];
 extern char word[WORD_LENGTH+1];

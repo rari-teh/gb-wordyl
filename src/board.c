@@ -40,24 +40,49 @@ const uint8_t board_map[]  = {
 char empty_word_buf[WORD_LENGTH + 1] = "     ";
 
 
-// Draw the currently entered letters for the guess on to the board
-void board_render_guess_entry(void) {
 
-    SET_BOARD_COLOR_NORMAL; // TODO: remove?
-    board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_NO); // guess_num is row
 
-// TODO: OPTIMIZE: convert to adding/removing letters instead of a full word redraw
-/*    // Cheat Mode: Highlight word letters as typed in debug mode
+// Draw the letters for a guess as they are entered
+void board_render_guess_letter(uint8_t col) {
+
+
+    // Cheat Mode: Highlight word letters as typed in debug mode
     #ifdef DEBUG_REVEAL_WHILE_TYPE
-        board_set_color_for_letter(row, col, BOARD_HIGHLIGHT_YES);
+        // evaluate_letters(guess);
+        // board_set_color_for_letter(guess_num, col, BOARD_HIGHLIGHT_YES);
+        board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
     #else
         // No highlighting during guess entry
-        SET_BOARD_COLOR_NORMAL;
+        board_set_color_for_letter(guess_num, col, BOARD_HIGHLIGHT_NO);
+        board_draw_letter(guess_num, col, guess[col]);
     #endif
-    // board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_NO); // guess_num is row
-    board_draw_letter(guess_num, guess, guess[col]);
-*/
+
 }
+
+
+// Add a guess letter to the board
+void board_add_guess_letter(void) {
+
+    uint8_t guess_len = strlen(guess);
+
+    if (guess_len < WORD_LENGTH) {
+        guess[guess_len] = keyboard_get_letter();
+        board_render_guess_letter(guess_len);
+    }
+}
+
+
+// Add a guess letter to the board
+void board_remove_guess_letter(void) {
+
+    uint8_t guess_len = strlen(guess);
+
+    if (guess_len > 0) {
+        guess[guess_len-1] = GUESS_LETTER_EMPTY;
+        board_render_guess_letter(guess_len-1);
+    }
+}
+
 
 // Redraw the board for all current guesses
 void board_redraw_clean(void) {
@@ -104,13 +129,7 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
     // col maps to the individual letters in the word/guess
     for (uint8_t col = 0; col < BOARD_GRID_W; col ++) {
 
-        // Cheat Mode: Highlight word letters as typed in debug mode
-        #ifdef DEBUG_REVEAL_WHILE_TYPE
-            board_set_color_for_letter(row, col, BOARD_HIGHLIGHT_YES);
-        #else
-            board_set_color_for_letter(row, col, do_highlight);
-        #endif
-
+        board_set_color_for_letter(row, col, do_highlight);
         board_draw_letter(row, col, p_guess[col]);
 
         // TODO: OPTIONAL: nice tile flipping animation here as it reveals (sprite based?)

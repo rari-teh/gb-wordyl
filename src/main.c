@@ -210,18 +210,12 @@ void run_wordyl(void)
 
                 // Add/Remove letters from a guess
                 case J_A:
-                    if (strlen(guess) == WORD_LENGTH) break; // TODO: replace with counter
-                    guess[strlen(guess)] = keyboard_get_letter();
-                    board_render_guess_entry();
+                    board_add_guess_letter();
                     break;
 
                 case J_B:
-                    if (strlen(guess) == 0) break;
-                    guess[strlen(guess)-1] = 0;
-                    board_render_guess_entry();
+                    board_remove_guess_letter();
                     break;
-                default:
-                break;
             }
         }
 
