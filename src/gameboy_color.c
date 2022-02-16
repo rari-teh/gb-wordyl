@@ -40,7 +40,7 @@ void board_initgfx_cgb(void) {
     VBK_REG = VBKF_BKG_ATTRIB;
 
     // Fill screen top region under baord with blue
-    fill_bkg_rect(0,0, DEVICE_SCREEN_WIDTH,
+    fill_bkg_rect(0,0, DEVICE_SCREEN_BUFFER_WIDTH,
                   BOARD_GRID_Y + BOARD_GRID_TILE_H,
                   CGB_PAL_SCREEN_BKG);
 

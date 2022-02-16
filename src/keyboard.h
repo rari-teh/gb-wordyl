@@ -5,6 +5,8 @@
 
 #define KEYBD_ROWS 3
 
+#define KEYBD_CURSOR_OFFSET_Y 4u
+
 extern const char *kb[KEYBD_ROWS];
 extern int8_t kb_coords[KEYBD_ROWS];
 extern int8_t kb_offsets[KEYBD_ROWS];

@@ -186,6 +186,9 @@ void keyboard_draw_map(void) {
             tile_id++;
         }
     }
+
+    // Bar across top of keyboard
+    fill_bkg_rect(KEYBD_START_X, KEYBD_START_Y-1, 33, 1, BG_TILES_DIALOG_START + DIALOG_TILE_TOP);
 }
 
 
@@ -193,7 +196,7 @@ void keyboard_draw_map(void) {
 void keyboard_update_cursor(void) {
 
     uint8_t x = (kb_x * 16) + (kb_offsets[kb_y] * 8) + DEVICE_SPRITE_PX_OFFSET_X;
-    uint8_t y = ((KEYBD_START_Y + kb_y) * 8) + DEVICE_SPRITE_PX_OFFSET_Y;
+    uint8_t y = ((KEYBD_START_Y + kb_y) * 8) + DEVICE_SPRITE_PX_OFFSET_Y - KEYBD_CURSOR_OFFSET_Y;
 
     for (uint8_t i = 0; i < SP_ID_CURSOR_LEN; i++) {
         move_sprite(SP_ID_CURSOR_START + i, x + sp_cursor_offset_x[i], y + sp_cursor_offset_y[i] );

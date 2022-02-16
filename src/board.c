@@ -241,8 +241,9 @@ void board_initgfx(void) {
         set_sprite_prop(SP_ID_CURSOR_START + i, sp_cursor_props[i]);
     }
 
-    // Center screen
-    move_bkg(252, 252); // TODO: handle offsets for sprites and raw bkg display
+    // Center screen by scrolling slightly to the left
+    // move_bkg(252, 252);
+    move_bkg(252, 0);
 
     // Clear window and move it offscreen at the bottom
     move_win(0 + WIN_X_OFFSET, DEVICE_SCREEN_PX_HEIGHT); // Window is offscreen by default

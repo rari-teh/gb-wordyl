@@ -59,7 +59,7 @@ extern uint8_t board_letters_decomp_buf[];
 extern uint8_t font_letters_decomp_buf[];
 
 
-#define BOARD_GRID_X  2u // Start x,y in Tiles
+#define BOARD_GRID_X  4u // Start x,y in Tiles
 #define BOARD_GRID_Y  1u
 #define BOARD_GRID_W  (WORD_LENGTH) // from common.h // 5u // Size in Tiles
 #define BOARD_GRID_H  (MAX_GUESSES) // from common.h
