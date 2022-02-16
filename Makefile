@@ -27,11 +27,16 @@ LCCFLAGS += -Wm-yn"$(PROJECTNAME)"
 LCCFLAGS += -debug # Uncomment to enable debug output
 # LCCFLAGS += -v     # Uncomment for lcc verbose output
 
+
 # You can set the name of the ROM file here
 PROJECTNAME = GBWORDYL
 
 CFLAGS += -debug
 CFLAGS += -Wf-MMD
+
+# Code size improvements continue to show up to 250000
+# 15000 seems to balance code size improvements vs compile time
+# CFLAGS += -Wf--max-allocs-per-node15000
 
 # EXT?=gb # Only sets extension to default (game boy .gb) if not populated
 SRCDIR      = src
