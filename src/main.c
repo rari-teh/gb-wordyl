@@ -16,7 +16,6 @@
 #include <stdbool.h>
 #include <rand.h>
 
-// #include "word-db.h"
 #include "decode.h"
 
 #include "common.h"
@@ -122,7 +121,6 @@ void game_init_answer_word(void) {
     #ifdef DEBUG_FORCE_WORD_BY_NUM
         r = DEBUG_FORCE_WORD_BY_NUM;
     #endif
-    // get_word(r, word);
     getSpecialWord(r, word);
 
     #ifdef DEBUG_FORCE_WORD
@@ -175,14 +173,23 @@ void run_wordyl(void)
 
     while(1) {
         UPDATE_KEYS();
+        UPDATE_KEY_REPEAT(J_DPAD);
 
 
         // Handle D-Pad movement separate from other buttons
         // so that buttons kept held down don't lock out D-pad
         //  movement during keyboard entry
-        if (KEY_TICKED(J_LEFT | J_RIGHT | J_UP | J_DOWN)) {
-            // Filter D-pad buttons pressed to only test changed ones
-            switch(keys & keys_changed) {
+        if (KEY_PRESSED(J_DPAD)) {
+
+            // Check for initial button press or repeat
+            if ((key_repeat_count == KEY_REPEAT_START) ||
+                (key_repeat_count >= KEY_REPEAT_DPAD_THRESHOLD)) {
+
+                if (key_repeat_count >= KEY_REPEAT_DPAD_THRESHOLD)
+                    RESET_KEY_REPEAT(KEY_REPEAT_DPAD_RELOAD_VAL);
+
+                // Filter with D-Pad to allow movement while still pressing A / B
+                switch(keys & J_DPAD) {
                     // Keyboard Movement
                     case J_RIGHT:
                         keyboard_move_cursor(1, 0);
@@ -199,7 +206,7 @@ void run_wordyl(void)
                     case J_DOWN:
                         keyboard_move_cursor(0, 1);
                         break;
-
+                }
             }
         }
 
