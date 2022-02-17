@@ -17,12 +17,12 @@ ROM            0x0000 -> 0x3FFF  16384  16215    98%    169     1%
 ROM_1          0x4000 -> 0x7FFF  16384  11520    70%   4864    29%
 ```
 
-## Compression: arpruss (Newer version: 2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
+## Compression: arpruss (Newer version: 2022.02.16: commit beeb2b2249aa1dc39a1c77ef549c4662d1e47249)
 ```
 Bank           Range             Size   Used   Used%  Free   Free% 
 ----------     ----------------  -----  -----  -----  -----  -----
 ROM            0x0000 -> 0x3FFF  16384  16215    98%    169     1%
-ROM_1          0x4000 -> 0x7FFF  16384  11135    67%   5249    32%
+ROM_1          0x4000 -> 0x7FFF  16384  10953    66%   5431    33%
 ```
 
 ## Compression (details): zeta_two
@@ -59,26 +59,26 @@ ROM_1          0x4000 -> 0x7FFF  16384  11135    67%   5249    32%
 
 # Data
 ```
-+ wordBlob                        0x1678 -> 0x3FFF   10632 (17,734)
-+ wordBlob                        0x4000 -> 0x5BBD    7102
-+ answers                         0x5BBE -> 0x6210    1619
-+ words                           0x6211 -> 0x627C     108
++ wordBlob                        0x15C2 -> 0x3FFF   10814 (17,734)
++ wordBlob                        0x4000 -> 0x5B07    6920
++ answers                         0x5B08 -> 0x615A    1619
++ words                           0x615B -> 0x61C6     108
  = 19,461
 ```
 
 # Code
 ```
-+ filterWord                      0x0966 -> 0x0B4C     487
-+ getWord                         0x0849 -> 0x0965     285
-+ decodeInt                       0x06EF -> 0x07F9     267
-+ getSpecialWord                  0x0B4D -> 0x0C00     180
-+ decodeWord                      0x07FA -> 0x0847      78
- = 1,297
++ filterWord                      0x0422 -> 0x0591     368
++ getWord                         0x0332 -> 0x0421     240
++ decodeInt                       0x0200 -> 0x02E2     227
++ getSpecialWord                  0x0592 -> 0x0645     180
++ decodeWord                      0x02E3 -> 0x0330      78
+ = 1,093
 ```
 
 # Total
 ```
- = 20,758
+ = 20,554
 ```
 
 
@@ -108,11 +108,12 @@ _filterWord		4198362			9	466484/__466490__/466484.7  (6.64 frames, .11 sec)
   _decodeInt	6180950		11425	310/__1558__/541.0
 ```
 
-Newer version (arpruss) (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
+Newer version (arpruss) (2022.02.16: commit beeb2b2249aa1dc39a1c77ef549c4662d1e47249)
 ```
-_filterWord		12623584	13282	435296/__435296__/435296.0  (6.19 frames. .10 sec)
+_filterWord		12623584	13282	435296/__435296__/435296.0  (5.20 frames. .09 sec)
+_filterWord		5116334	6412	365452/__365458__/365452.4
 
-  _decodeInt	5616662		13253	238/__1346__/423.8
+  _decodeInt		2892462	6398	316/__1274__/452.1
 ```
 
 
@@ -131,9 +132,10 @@ _filterWord		8384428	13	644956/__644956__/644956.0  (9.18 frames. .15 sec)
 ```
 
 
-Newer version (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
+Newer version (2022.02.16: commit beeb2b2249aa1dc39a1c77ef549c4662d1e47249)
 ```
-_filterWord		3007910	3185	601582/__601582__/601582.0  (8.57 frames. .14 sec)
+_filterWord		3007910	3185	601582/__601582__/601582.0  (7.20 frames. .12 sec)
+_filterWord		5562128	7007	505648/__505648__/505648.0
 ```
 
 ## Get Initial Answer Word: (#100, "ARBOR")
@@ -156,12 +158,13 @@ _getSpecialWord		592648	1	592648/__592648__/592648.0  (8.43 frames. .14 sec)
 	_decodeWord		796		1	796/__796__/796.0
 ```
 
-Newer version (arpruss) (2022.02.16: commit ae17d83c3c19e4d5ab70d2eaf476044defb94bbe)
+Newer version (arpruss) (2022.02.16: commit beeb2b2249aa1dc39a1c77ef549c4662d1e47249)
 ```
-_getSpecialWord		523806	1	523806/__523806__/523806.0  (7.46 frames. .12 sec)
+_getSpecialWord		523806	1	523806/__523806__/523806.0
+_getSpecialWord		447734	1	447734/__447734__/447734.0  (6.37 frames. .11 sec) 
 
-  _getWord			461130	1	461130/__461130__/461130.0
-    _decodeInt		258978	493	238/__1346__/525.3
+  _getWord		385058	1	385058/__385058__/385058.0
+    _decodeInt		257424	493	316/__1268__/522.2
     _decodeWord		1326	1	1326/__1326__/1326.0
 ```
 

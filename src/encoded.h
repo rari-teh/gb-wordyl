@@ -1,4 +1,8 @@
 
+#include <stdint.h>
+
+#ifndef _ENCODED_H
+#define _ENCODED_H
 
 extern const uint8_t wordBlob[];
 
@@ -10,3 +14,5 @@ typedef struct {
 } LetterList_t;
 
 extern const LetterList_t words[];
+
+#endif

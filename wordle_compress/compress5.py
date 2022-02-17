@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-outfile = open('../src/encoded.h', 'w')
+outfile = open('../src/encoded.c', 'w')
+
+outfile.write("#include \"encoded.h\"\n\n");
 
 def toBitmap(length, decider):
     def encodeByte(offset, decider):
@@ -34,7 +36,7 @@ def encodeDelta(d):
     elif d < 0x80*0x80:
         return bytes((d & 0x7F, 0x80|(d>>7)))
     else:
-        return bytes((d & 0x7F, (d>>7) & 0x7F, 0x80 | (d>>14)))
+        return bytes((d & 0x7F, (d>>7) & 0x7F, (d>>14)))
 
 def encodeList(ww):
     bin = tuple( map(tobinary, ww) )
@@ -87,12 +89,12 @@ answerBlob = toBitmap(len(allwords), lambda x : x in answers)
 dumpBlob("wordBlob", wordBlob)
 dumpBlob("answers", answerBlob)
 
-outfile.write("""typedef struct {
-  uint16_t wordNumber;
-  uint16_t blobOffset;
-} LetterList_t;
+# outfile.write("""typedef struct {
+#  uint16_t wordNumber;
+#  uint16_t blobOffset;
+# } LetterList_t;
 
-const LetterList_t words[27] = {\n""")
+outfile.write("const LetterList_t words[27] = {\n""")
 
 for i in range(27):
     outfile.write("  /* %s */ { %u, %u },\n" % (str(chr(ord('a')+i)) if i < 26 else "end", sum(map(len,words[:i])), offsets[i]) )
@@ -107,4 +109,5 @@ with open("../src/sizes.h", "w") as sizes:
 
 #print(sum(map(len, encoded)))
 #print(max(map(len, encoded)))
+
 
