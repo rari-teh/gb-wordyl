@@ -16,7 +16,8 @@
 #include <stdbool.h>
 #include <rand.h>
 
-#include "word-db.h"
+// #include "word-db.h"
+#include "decode.h"
 
 #include "common.h"
 #include "input.h"
@@ -75,7 +76,7 @@ uint8_t game_handle_guess(void) {
         win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is too short!\n\nNeeds 5 Letters", NULL);
         return STATUS_GAME_CONTINUE;
     }
-    else if (!query_word(guess)) {
+    else if (!filterWord(guess)) {
         // Word not in dictionary
         win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is not in\n\ndictionary!", NULL);
         return STATUS_GAME_CONTINUE;
@@ -121,7 +122,8 @@ void game_init_answer_word(void) {
     #ifdef DEBUG_FORCE_WORD_BY_NUM
         r = DEBUG_FORCE_WORD_BY_NUM;
     #endif
-    get_word(r, word);
+    // get_word(r, word);
+    getSpecialWord(r, word);
 
     #ifdef DEBUG_FORCE_WORD
         strcpy(word, DEBUG_FORCE_WORD);
