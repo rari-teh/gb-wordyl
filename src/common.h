@@ -21,7 +21,7 @@
 // #define DEBUG_REVEAL_WHILE_TYPE
 // #define DEBUG_FORCE_WORD "AMPLE"
 // #define DEBUG_REVEAL_WORD
-// #define DEBUG_FORCE_WORD_BY_NUM  100
+// #define DEBUG_FORCE_WORD_BY_NUM  2200u // 0u // 100u
 
 #define BOARD_HIGHLIGHT_NO  false
 #define BOARD_HIGHLIGHT_YES true

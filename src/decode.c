@@ -77,29 +77,39 @@ uint8_t filterWord(char* s) {
     return 0;
 }
 
-void getSpecialWord(int16_t n, char* buffer) {
-    uint16_t w = 0;
-    const uint8_t* b = answers;
-    while(n>=0) {
-        uint8_t c = *b;
-        if (c == 0) {
-            w += 8;
+
+void getSpecialWord(uint16_t n, char* buffer) {
+
+    static uint8_t i;
+    static uint8_t bit_data;
+    static uint16_t w;
+    static const uint8_t* b;
+
+    n++; // Indexing offset
+    b = answers;
+    w = 0u;
+
+    while(n != 0u) {
+        bit_data = *b;
+        if (bit_data == 0u) {
+            w += 8u;
         }
         else {
-            for (uint8_t i = 0 ; i < 8 ; i++) {
-                if (c & 1) {
+            // After final upshift i becomes 0x00 and loop exits
+            for (i = 0x01u ; i != 0x00u; i <<= 1) {
+                if (bit_data & i) {
                     n--;
-                    if (n<0)
+                    if (n == 0u)
                         break;
                 }
                 w++;
-                c >>= 1;
             }
         }
         b++;
     }
     getWord(w, buffer);
 }
+
 
 #ifdef TEST
 main() {
