@@ -56,6 +56,7 @@ void show_lose_message(char *correct_word) {
 //   from the main gameplay loop
 void gameplay_handle_guess(void) {
 
+    // TODO: special handling for word_len = 0 -> don't send popup?
     if (strlen(guess) != WORD_LENGTH) {
 
         // Insufficient length
@@ -100,18 +101,12 @@ void gameplay_handle_guess(void) {
 // Modifies global: word
 void gameplay_init_answer_word(void) {
 
-    uint16_t seed = LY_REG;
-    seed |= (uint16_t)DIV_REG << 8;
-    initrand(seed);
-    int r = rand();
+    uint16_t r = randw() % NUM_ANSWERS;
 
-    // TODO: FIXME? Is this limiting to first 211 answer words?
-    while(r > 211) {
-        r = rand();
-    }
     #ifdef DEBUG_FORCE_WORD_BY_NUM
         r = DEBUG_FORCE_WORD_BY_NUM;
     #endif
+
     getSpecialWord(r, word);
 
     #ifdef DEBUG_FORCE_WORD
@@ -150,6 +145,14 @@ void gameplay_init(void) {
 
     // Reset guess to empty and prepare for next one
     strcpy(word, "EMPTY");
+
+    // == Random number generation init ==
+
+    // Wait for first button press then intiailize random number generator
+    while (!(joypad() & J_ANY_KEY)) {
+        wait_vbl_done();
+    }
+    initrand(LY_REG  | ((uint16_t)DIV_REG << 8));
 }
 
 
@@ -163,10 +166,6 @@ void gameplay_restart(void) {
     board_redraw_clean();
     keyboard_reset();
 
-    // Wait for first button press then Initialize answer word ~randomly
-    while (!(joypad() & J_ANY_KEY)) {
-        wait_vbl_done();
-    }
     gameplay_init_answer_word();
 }
 
