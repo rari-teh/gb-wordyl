@@ -5,6 +5,14 @@
 
 #define ARRAY_LEN(A)  sizeof(A) / sizeof(A[0])
 
+
+// Game flow control
+#define GAME_STATE_INIT     0
+#define GAME_STATE_RESTART  1
+#define GAME_STATE_RUNNING  2
+#define GAME_STATE_OVER     3
+
+
 // Controls board size and many other things
 #define WORD_LENGTH 5
 #define MAX_GUESSES 6
@@ -30,6 +38,7 @@
 
 #define GUESS_LETTER_EMPTY   0
 
+extern uint8_t game_state;
 
 extern uint8_t guess_eval[5];
 
@@ -38,13 +47,7 @@ extern uint8_t guess_num;
 extern char guess[WORD_LENGTH+1];
 extern char word[WORD_LENGTH+1];
 
-// TODO: DEAD CODE?
-// extern char guesses[WORD_LENGTH+1][MAX_GUESSES];
-
-// TODO: DEAD CODE?
-// extern char guessed_wrong[30];
-// extern char guessed_position[30];
-// extern char guessed_correct[30];
+uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num);
 
 // uint8_t contains(char *str, char c); // TODO: DEAD CODE
 void evaluate_letters(char* guess);

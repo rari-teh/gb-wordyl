@@ -241,16 +241,7 @@ void board_initgfx(void) {
         set_sprite_prop(SP_ID_CURSOR_START + i, sp_cursor_props[i]);
     }
 
-    // Center screen by scrolling slightly to the left
-    // move_bkg(252, 252);
-    move_bkg(252, 0);
-
     // Clear window and move it offscreen at the bottom
     move_win(0 + WIN_X_OFFSET, DEVICE_SCREEN_PX_HEIGHT); // Window is offscreen by default
     fill_win_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START );
-    SHOW_WIN;
-
-    SHOW_BKG;
-    SHOW_SPRITES;
-    DISPLAY_ON;
 }

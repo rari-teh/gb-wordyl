@@ -35,14 +35,26 @@ int8_t kb_offsets[KEYBD_ROWS] = {
     2
 };
 
-int8_t kb_x = 0;
-int8_t kb_y = 0;
-
+// Keyboard cursor location
+int8_t kb_x;
+int8_t kb_y;
 
 // Cursor sprite flipping flags to allow use of same tile for all 4 corners
 const uint8_t sp_cursor_props[] = { 0x00, S_FLIPX, S_FLIPY, S_FLIPX | S_FLIPY };
 const uint8_t sp_cursor_offset_x[] = { 0, 8, 0, 8 };
 const uint8_t sp_cursor_offset_y[] = { 0, 0, 8, 8 };
+
+
+// Reset keyboard cursor and clear highlighting
+void keyboard_reset(void) {
+    kb_x = 0;
+    kb_y = 0;
+
+    keyboard_redraw_clean();
+
+    // Show cursor on default keyboard key
+    keyboard_update_cursor();
+}
 
 
 // return currently selected letter in keyboard

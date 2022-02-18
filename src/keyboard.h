@@ -19,6 +19,9 @@ extern const uint8_t sp_cursor_offset_x[];
 extern const uint8_t sp_cursor_offset_y[];
 
 
+
+void keyboard_reset(void);
+
 inline char keyboard_get_letter(void);
 
 void keyboard_fill_letter_cgb_pal(uint8_t row, uint8_t col, uint8_t palnum);

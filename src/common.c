@@ -7,38 +7,51 @@
 
 #include "common.h"
 
+uint8_t game_state;
+
 uint8_t guess_eval[WORD_LENGTH];
 bool answer_letter_used[WORD_LENGTH];
-
 
 uint8_t guess_num;
 
 char guess[WORD_LENGTH+1];
-// char guesses[WORD_LENGTH+1][MAX_GUESSES];
-
-// TODO: implement?
-// char guessed_wrong[30];
-// char guessed_position[30];
-// char guessed_correct[30];
 char word[WORD_LENGTH+1];
 
 
-/*
-// TODO: DEAD CODE
-// Check if a letter is in a string
-uint8_t contains(char *str, char c) {
+#define PRINT_MAX_DIGITS  5
 
-    uint8_t len = strlen(str);
-    uint8_t count = 0;
+// Patch a number into the string at char 'X'
+// * uitoa() puts in leading zeros and a tailing str terminator, so it's not suitable
+// * Warning: Safetys are turned off, lots can go wrong here
+uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num) {
 
-    for(uint8_t i=0; i < len; i++) {
-        if(str[i] == c) {
-            count++;
-        }
+    uint8_t index = PRINT_MAX_DIGITS;
+
+    // if (p_str == NULL) return NULL;
+
+    // Search for start position
+    while ((*p_str != 'X') && (*p_str)) p_str++;
+
+    // Store individual digits of n in reverse order
+    // Starting at the END of the array and working forward
+    // (using do-while to handle when initial value == 0)
+    do {
+        // decrement the counter first, so it finishes as pointing to the current digit in the array
+        index--;
+        *p_str-- = (num % 10) + '0';
+        num = num / 10;
+    } while (num != 0);
+
+    // Fill remaining characters with space chars
+    while (index > 0) {
+        index--;
+        *p_str-- = ' ';
     }
-    return count;
+
+    // Move pointer past end of print area
+    return (p_str + PRINT_MAX_DIGITS + 1);
 }
-*/
+
 
 
 // Check a guess word for letter matches and marks
