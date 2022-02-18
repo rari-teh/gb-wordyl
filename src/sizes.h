@@ -1,2 +1,2 @@
 #define NUM_WORDS 12946
-#define NUM_ANSWERS 2308
+#define NUM_ANSWERS 2296
