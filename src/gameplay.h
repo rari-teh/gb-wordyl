@@ -25,13 +25,12 @@
 #include "window.h"
 
 
-uint8_t gameplay_handle_guess(void);
 void gameplay_init_answer_word(void);
 
 void show_win_message(uint8_t guess_count);
 void show_lose_message(char *correct_word);
 
-uint8_t gameplay_handle_guess(void);
+void gameplay_handle_guess(void);
 
 void gameplay_init_answer_word(void);
 void gameplay_init(void);

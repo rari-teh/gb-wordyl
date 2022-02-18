@@ -22,6 +22,8 @@
 #include "stats.h"
 
 
+#define GAMEPLAY_SET_GAMEOVER  game_state = GAME_STATE_OVER
+
 uint8_t game_won_str[] = "You won!\n\nOn Guess X of 6";
 
 
@@ -47,44 +49,50 @@ void show_lose_message(char *correct_word) {
 }
 
 
-// Process a player guess for a word
-uint8_t gameplay_handle_guess(void) {
+// Process a player guess for a word (including winning and losing)
+//
+// * If the player won or lost, then game state
+//   will be changed to game over, causing an exit
+//   from the main gameplay loop
+void gameplay_handle_guess(void) {
 
     if (strlen(guess) != WORD_LENGTH) {
+
         // Insufficient length
         win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is too short!\n\nNeeds 5 Letters", NULL);
-        return STATUS_GAME_CONTINUE;
     }
     else if (!filterWord(guess)) {
+
         // Word not in dictionary
         win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is not in\n\ndictionary!", NULL);
-        return STATUS_GAME_CONTINUE;
+    } else {
+
+        // Otherwise process the guess word
+
+        board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
+        guess_num += 1;
+        keyboard_update_from_guess();
+        keyboard_update_cursor();
+
+        // == Handle Game Over scenarios ==
+
+        // Check for correct match
+        bool game_was_won = (strcmp(word, guess) == 0);
+
+        if (game_was_won) {
+            show_win_message(guess_num);
+            stats_update(game_was_won, guess_num);
+            GAMEPLAY_SET_GAMEOVER;
+        }
+        else if (guess_num == MAX_GUESSES) {
+            show_lose_message(word);
+            stats_update(game_was_won, guess_num);
+            GAMEPLAY_SET_GAMEOVER;
+        }
+
+        // Reset guess to empty and prepare for next one
+        memset(guess, 0, WORD_LENGTH);
     }
-
-    board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
-    guess_num += 1;
-    keyboard_update_from_guess();
-    keyboard_update_cursor();
-
-    // == Handle Game Over scenarios ==
-
-    // Check for correct match
-    bool game_won = (strcmp(word, guess) == 0);
-    if (game_won) {
-        show_win_message(guess_num);
-        stats_update(game_won, guess_num); // TODO: consolidate handling
-        return GAME_STATE_RESTART;
-    }
-    else if (guess_num == MAX_GUESSES) {
-        show_lose_message(word);
-        stats_update(game_won, guess_num); // TODO: consolidate handling
-        return GAME_STATE_RESTART;
-    }
-
-    // Reset guess to empty and prepare for next one
-    memset(guess, 0, WORD_LENGTH);
-
-    return STATUS_GAME_CONTINUE;
 }
 
 
@@ -215,11 +223,9 @@ void gameplay_run(void)
 
                 // Check a guess
                 case J_START:
-                    // TODO: better handling of game over/won
-                    if (gameplay_handle_guess() != STATUS_GAME_CONTINUE) {
-                        game_state = GAME_STATE_OVER; // TODO: better location for this?
+                    gameplay_handle_guess();
+                    if (game_state != GAME_STATE_RUNNING)
                         return; // Game was Won or Lost, exit
-                    }
                     break;
 
                 // Add/Remove letters from a guess
