@@ -46,10 +46,16 @@ void draw_letter_to_tileid(uint8_t letter, uint8_t index);
 
 // TODO: COUNT needs to be BOARD SIZE IN TILES (5 * 6 * 4)
 #define BOARD_LETTERS_BYTES_PER_TILE  8u // 1bpp tiles = 8 bytes per 8x8 tile
-#define BOARD_LETTERS_COUNT          27u // Last entry is blank space
+#define BOARD_LETTERS_ALPHA           26u
+#define BOARD_LETTERS_BLANK           1u
+#define BOARD_LETTERS_FLIP            3u
+#define BOARD_LETTERS_COUNT          (BOARD_LETTERS_ALPHA + BOARD_LETTERS_BLANK + BOARD_LETTERS_FLIP) // Last entry is blank space
 #define BOARD_LETTERS_TILES_PER       4u // Last entry is blank space
 // Empty space is last char in board font tile set
-#define BOARD_LETTERS_SPACE_CHAR (BOARD_LETTERS_COUNT - 1)
+#define BOARD_LETTERS_SPACE_CHAR (BOARD_LETTERS_COUNT - (BOARD_LETTERS_BLANK + BOARD_LETTERS_FLIP))
+#define BOARD_LETTERS_FLIP_1     (BOARD_LETTERS_COUNT - BOARD_LETTERS_FLIP)
+#define BOARD_LETTERS_FLIP_2     (BOARD_LETTERS_FLIP_1 + 1)
+#define BOARD_LETTERS_FLIP_3     (BOARD_LETTERS_FLIP_2 + 1)
 
 
 #define FONT_LETTERS_COUNT           29u // 26 letters + 3 special chars: ".", "!", ":"
