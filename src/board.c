@@ -39,13 +39,7 @@ const uint8_t board_map[]  = {
 
 char empty_word_buf[WORD_LENGTH + 1] = "     ";
 
-#define BOARD_TILE_FLIP_SLOW    2u
-#define BOARD_TILE_FLIP_FAST    1u
-#define BOARD_TILE_FLIP_NONE    0u
-#define BOARD_TILE_FLIP_DEFAULT (BOARD_TILE_FLIP_NONE)
-
-
-static uint8_t g_board_tile_flip_speed;
+uint8_t g_board_tile_flip_speed;
 
 // Tile flip animation
 const uint8_t board_flip_anim[] = {
@@ -56,9 +50,6 @@ const uint8_t board_flip_anim[] = {
     (BOARD_LETTERS_FLIP_1)
 };
 
-// Turns board tile flipping on/off and sets speed in board_draw_letter()
-// Use with BOARD_TILE_FLIP_*
-#define BOARD_SET_FLIP_SPEED(speed) g_board_tile_flip_speed = (speed)
 
 // Draw the letters for a guess as they are entered
 void board_render_guess_letter(uint8_t col) {
@@ -71,11 +62,8 @@ void board_render_guess_letter(uint8_t col) {
         // board_set_color_for_letter(guess_num, col, BOARD_HIGHLIGHT_YES);
         board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
     #else
-        // No color highlighting during guess entry
-        board_draw_tile_flip_anim(guess_num, col, guess[col]);
-
-        board_set_color_for_letter(guess_num, col, BOARD_HIGHLIGHT_NO);
-        board_draw_letter(guess_num, col, guess[col]);
+        BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_FAST);
+        board_draw_letter(guess_num, col, guess[col], BOARD_HIGHLIGHT_NO);
     #endif
 }
 
@@ -129,18 +117,15 @@ void board_draw_letter_bits(uint8_t row, uint8_t col, uint8_t letter) {
 
 // Board tile flip animation: Direct render a tile to VRAM to fill a board letter square
 // Previous calls to set_1bpp_colors() will affect colors produced here
-void board_draw_tile_flip_anim(uint8_t row, uint8_t col, uint8_t letter) {
-
-    // Make sure color is set to default
-    SET_BOARD_COLOR_NORMAL;
+void board_draw_tile_flip_anim(uint8_t row, uint8_t col) {
 
     for (uint8_t c = 0; c < ARRAY_LEN(board_flip_anim); c++) {
         board_draw_letter_bits(row, col, board_flip_anim[c]);
 
         // One frame between animations in all modes
-        // 2 frames in slow mode
         wait_vbl_done();
 
+        // Another frame of delay in slow mode
         if (g_board_tile_flip_speed == BOARD_TILE_FLIP_SLOW) {
             wait_vbl_done();
         }
@@ -150,7 +135,17 @@ void board_draw_tile_flip_anim(uint8_t row, uint8_t col, uint8_t letter) {
 
 // Direct render a tile to VRAM to fill a board letter square
 // Previous calls to set_1bpp_colors() will affect colors produced here
-void board_draw_letter(uint8_t row, uint8_t col, uint8_t letter) {
+void board_draw_letter(uint8_t row, uint8_t col, uint8_t letter, bool do_highlight) {
+
+    // Default to normal color scheme
+    SET_BOARD_COLOR_NORMAL;
+
+    // If enabled, draw a tile flip animation BEFORE coloring is applied
+    #ifndef DEBUG_REVEAL_WHILE_TYPE // Turn off in cheat mode
+        if (g_board_tile_flip_speed)
+            board_draw_tile_flip_anim(guess_num, col);
+    #endif
+
 
     if ((letter == ' ') || (letter == 0x00))
         letter = BOARD_LETTERS_SPACE_CHAR;
@@ -159,6 +154,10 @@ void board_draw_letter(uint8_t row, uint8_t col, uint8_t letter) {
     else if (letter >= 'A')
         letter -= 'A';
 
+    // Only color highlighting when not doing guess entry
+    board_set_color_for_letter(row, col, do_highlight);
+
+    // Now draw the letter
     board_draw_letter_bits(row, col, letter);
 }
 
@@ -170,32 +169,19 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
     // If it's a request to draw an empty word, use a shim empty string
     if (p_guess == NULL) {
         p_guess = empty_word_buf;
-        SET_BOARD_COLOR_NORMAL;
+        BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_NONE);
+    } else {
+        // Slow tile flip for word reveal
+        BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_SLOW);
     }
-
 
     // Flag guess letters as: LETTER_NOT_IN_WORD, LETTER_WRONG_PLACE or LETTER_RIGHT_PLACE
     evaluate_letters(guess);
 
-    if (do_highlight)
-        BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_SLOW);
-    else
-        BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_DEFAULT);
-
     // col maps to the individual letters in the word/guess
     for (uint8_t col = 0; col < BOARD_GRID_W; col ++) {
 
-// TODO FIXME Is there a more efficient way to do this?
-        // Draw a tile flip animation BEFORE coloring is applied
-        #ifndef DEBUG_REVEAL_WHILE_TYPE // Turn off in cheat mode
-            if (do_highlight) {
-                BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_SLOW);
-                board_draw_tile_flip_anim(row, col, do_highlight);
-            }
-        #endif
-
-        board_set_color_for_letter(row, col, do_highlight);
-        board_draw_letter(row, col, p_guess[col]);
+        board_draw_letter(row, col, p_guess[col], do_highlight);
     }
 }
 
