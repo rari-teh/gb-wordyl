@@ -190,7 +190,7 @@ void getSpecialWord(uint16_t _n, char* buffer) {
         // w += 8;
         _addr_add_8$:
         ld    a, #0x08
-        adc   a, e
+        add   a, e
         ld    e, a
         // handle 8 bit carry for DE
         jr    c, _addr_add_8_c$
