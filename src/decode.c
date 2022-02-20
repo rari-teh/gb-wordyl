@@ -73,6 +73,10 @@ uint8_t filterWord(char* s) {
     return 0;
 }
 
+#define _GETSPECIALWORD_ASM
+
+#ifndef _GETSPECIALWORD_ASM
+
 void getSpecialWord(uint16_t _n, char* buffer) {
     static uint16_t w;
     w = 0;
@@ -80,7 +84,7 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     static uint16_t n;
     n = _n;
 
-    for(;;) { 
+    for(;;) {
         static uint8_t c;
         c = *b++;
         if (c == 0) {
@@ -101,6 +105,131 @@ void getSpecialWord(uint16_t _n, char* buffer) {
         }
     }
 }
+
+#else
+
+
+// TODO: OLDCALL as precaution against upcoming SDCC calling convention change
+void getSpecialWord(uint16_t _n, char* buffer) {
+
+    __asm \
+
+    push AF
+    push HL
+    push BC
+    push DE
+
+    // word number (counter):  bc   :n
+    // bit index counter:      de   :w
+    // answer array index:     hl   :answer
+    // packed-bits:            a    :c
+
+    // Load _n (arg word number) to bc
+    ldhl  sp, #10
+    ld    a, (hl+)
+    ld    c, a
+    ld    a, (hl)
+    ld    b, a
+
+    // Zero array bit index counter
+    // Load pointer to bit-packed index array
+    ld    de, #0x0000
+    ld    hl, #_answers
+
+    // Load first byte of bit-packed array into a, increment array pointer
+    _lookup_loop$:
+
+        // c = *b++;
+        ld   a, (hl+)
+
+        // Special handling when value is zero
+        // Less cycles when not taken
+        // if (c == 0) {
+        and   a, #0xFF
+        jr    z, _addr_add_8$
+
+
+        // for (mask = 1 ; mask ; mask <<= 1) {
+        // hl will be loop control
+        push   hl
+        ld     l, #0x08
+        _bitmask_loop$:
+
+            // if (c & mask) {
+            // Downshift A into carry
+            rrca
+            // Continue loop if lowest bit was zero
+            jr    nc, _bitmask_loop_check_exit$
+            // Otherwise decrement word number counter
+            // if (n == 0) return
+            ld   h, a  // stash a in h
+            ld   a, b
+            or   a, c
+            ld   a, h  // retsore a
+            // n--;
+            dec   bc
+            jr    z, _lookup_done$
+
+            _bitmask_loop_check_exit$:
+            // increment bit index counter
+            // w++;
+            inc   de
+            // for (mask = 1 ; mask ; mask <<= 1) {
+            dec    l
+        jr     nz, _bitmask_loop$
+        // end _bitmask_loop$:
+
+        pop    hl
+    jr     _lookup_loop$
+    // end _lookup_loop$:
+
+
+        // Special case when bit-packed value is zero
+        // w += 8;
+        _addr_add_8$:
+        ld    a, #0x08
+        adc   a, e
+        ld    e, a
+        // handle 8 bit carry for DE
+        jr    c, _addr_add_8_c$
+        // return to main loop
+        jr    _lookup_loop$
+
+        _addr_add_8_c$:
+        inc   d
+
+    jr    _lookup_loop$
+    // end _lookup_loop$:
+
+
+    _lookup_done$:
+    // this will have been skipped at the end of _lookup_loop
+    pop    hl
+
+    // Load buffer address onto stack
+    ldhl    sp, #12
+    ld  a, (hl+)
+    ld  c, a
+    ld  b, (hl)
+    push    bc
+
+    // Load index into bit packed array onto stack
+    push    de
+
+    call  _getWord
+    add    sp, #4
+
+    pop DE
+    pop BC
+    pop HL
+    pop AF
+    ret
+
+    __endasm;
+
+}
+
+#endif
 
 #ifdef TEST
 main() {
