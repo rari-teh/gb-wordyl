@@ -5,20 +5,22 @@
 
 #include "encoded.h"
 
-const uint8_t* decodeInt(const uint8_t* blob, uint32_t* valueP) {
-    const uint8_t* bb=blob;
-    uint8_t b = *bb++;
-    uint32_t v = b & 0x7F;
+static uint32_t currentWord;
+static const uint8_t* blobPtr;
+
+void updateWord(void) {
+    uint8_t b = *blobPtr++;
+    uint32_t v;
+    v = b & 0x7F;
     if (0 == (b & 0x80)) {
-        b = *bb++;
+        b = *blobPtr++;
         v |= (uint32_t)(b & 0x7F) << 7;
         if (0 == (b&0x80)) {
-            v |= (uint32_t)*bb << 14;
-            bb++;
+            v |= (uint32_t)*blobPtr << 14;
+            blobPtr++;
         }
     }
-    *valueP = v+1;
-    return bb;
+    currentWord += v+1;
 }
 
 void decodeWord(uint8_t start, uint32_t nextFour, char* buffer) {
@@ -41,15 +43,12 @@ void getWord(uint16_t n, char* buffer) {
         *buffer = 0;
         return;
     }
-    n -= w->wordNumber;
-    uint32_t word = 0;
-    const uint8_t* blob = wordBlob + w->blobOffset;
-    for (uint16_t j=0; j<=n; j++) {
-        uint32_t delta;
-        blob = decodeInt(blob, &delta);
-        word += delta;
+    currentWord = 0;
+    blobPtr = wordBlob + w->blobOffset;
+    for (uint16_t j = n - w->wordNumber + 1; j; j--) {
+        updateWord();
     }
-    decodeWord(i, word, buffer);
+    decodeWord(i, currentWord, buffer);
 }
 
 uint8_t filterWord(char* s) {
@@ -61,55 +60,47 @@ uint8_t filterWord(char* s) {
     uint32_t w = 0;
     for (i=1;i<5;i++)
         w = (w << 5) | (s[i]-'A');
-
+    
     i = s[0]-'A';
-    uint16_t n = words[i+1].wordNumber - words[i].wordNumber;
-    uint32_t match = 0;
-    const uint8_t* b = wordBlob + words[i].blobOffset;
-    for (uint16_t j=0; j<n; j++) {
-        uint32_t delta;
-        b = decodeInt(b, &delta);
-        match += delta;
-        if (match >= w) {
-            return match == w;
+    currentWord = 0;
+    blobPtr = wordBlob + words[i].blobOffset;
+    for (uint16_t j=words[i+1].wordNumber - words[i].wordNumber; j; j--) {
+        updateWord();
+        if (currentWord >= w) {
+            return currentWord == w;
         }
     }
     return 0;
 }
 
-
-void getSpecialWord(uint16_t n, char* buffer) {
-
-    static uint8_t i;
-    static uint8_t bit_data;
+void getSpecialWord(uint16_t _n, char* buffer) {
     static uint16_t w;
-    static const uint8_t* b;
+    w = 0;
+    const uint8_t* b = answers;
+    static uint16_t n;
+    n = _n;
 
-    n++; // Indexing offset
-    b = answers;
-    w = 0u;
-
-    while(n != 0u) {
-        bit_data = *b;
-        if (bit_data == 0u) {
-            w += 8u;
+    for(;;) { 
+        static uint8_t c;
+        c = *b++;
+        if (c == 0) {
+            w += 8;
         }
         else {
-            // After final upshift i becomes 0x00 and loop exits
-            for (i = 0x01u ; i != 0x00u; i <<= 1) {
-                if (bit_data & i) {
+            static uint8_t mask;
+            for (mask = 1 ; mask ; mask <<= 1) {
+                if (c & mask) {
+                    if (n == 0) {
+                        getWord(w, buffer);
+                        return;
+                    }
                     n--;
-                    if (n == 0u)
-                        break;
                 }
                 w++;
             }
         }
-        b++;
     }
-    getWord(w, buffer);
 }
-
 
 #ifdef TEST
 main() {
@@ -124,4 +115,3 @@ main() {
     printf("%d\n", filterWord("BAAED"));
 }
 #endif
-
