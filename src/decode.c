@@ -159,16 +159,18 @@ void getSpecialWord(uint16_t _n, char* buffer) {
             // Downshift A into carry
             rrca
             // Continue loop if lowest bit was zero
-            jr    nc, _bitmask_loop_check_exit$
+            jr   nc, _bitmask_loop_check_exit$
+
             // Otherwise decrement word number counter
             // if (n == 0) return
             ld   h, a  // stash a in h
             ld   a, b
             or   a, c
             ld   a, h  // retsore a
+            jr   z, _lookup_done$
+
             // n--;
             dec   bc
-            jr    z, _lookup_done$
 
             _bitmask_loop_check_exit$:
             // increment bit index counter
