@@ -4,6 +4,13 @@ outfile = open('../src/encoded.c', 'w')
 
 outfile.write("#include \"encoded.h\"\n\n");
 
+def mask(n):
+    # next power of 2 starting with n-i
+    m = 1
+    while m <= n:
+        m *= 2
+    return m
+
 def toBitmap(length, decider):
     def encodeByte(offset, decider):
         return sum( 1 << i for i in range(8) if offset+i < length and decider(offset+i) )
@@ -90,9 +97,11 @@ dumpBlob("wordBlob", wordBlob)
 dumpBlob("answers", answerBlob)
 
 # outfile.write("""typedef struct {
-#  uint16_t wordNumber;
-#  uint16_t blobOffset;
+#   uint16_t wordNumber;
+#   uint16_t blobOffset;
 # } LetterList_t;
+#
+# const LetterList_t words[27] = {\n""")
 
 outfile.write("const LetterList_t words[27] = {\n""")
 
@@ -106,6 +115,7 @@ outfile.close()
 with open("../src/sizes.h", "w") as sizes:
     sizes.write("#define NUM_WORDS %u\n" % len(allwords))
     sizes.write("#define NUM_ANSWERS %u\n" % len(answers))
+    sizes.write("#define NUM_ANSWERS_ROUNDED_UP_POW2 %u" % mask(len(answers)))
 
 #print(sum(map(len, encoded)))
 #print(max(map(len, encoded)))
