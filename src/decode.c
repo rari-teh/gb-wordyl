@@ -137,6 +137,9 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     ld    c, a
     ld    a, (hl)
     ld    b, a
+    // Counter offsets for word number exit test
+    inc b
+    inc c
 
     // Zero array bit index counter
     // Load pointer to bit-packed index array
@@ -167,16 +170,13 @@ void getSpecialWord(uint16_t _n, char* buffer) {
             // Continue loop if lowest bit was zero
             jr   nc, .bitmask_loop_check_exit$
 
-            // Otherwise decrement word number counter
-            // if (n == 0) return
-            ld   d, a  // stash a in d
-            ld   a, b
-            or   a, c
-            ld   a, d  // retsore a
-            jr   z, .lookup_done$
+            // // Otherwise decrement word number counter
+            // // if (n == 0) return
+            dec  c
+            jr   nz, .bitmask_loop_check_exit$
 
-            // n--;
-            dec   bc
+            dec  b
+            jr   z, .lookup_done$
 
             .bitmask_loop_check_exit$:
             // for (mask = 1 ; mask ; mask <<= 1) {
@@ -225,7 +225,7 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     ld    a, l
     sub   a, e
     ld    e, a
-    
+
     ld    a, h
     sbc   a, #0x00
     ld    d, a
