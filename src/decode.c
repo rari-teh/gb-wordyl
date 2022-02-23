@@ -73,6 +73,7 @@ uint8_t filterWord(char* s) {
     return 0;
 }
 
+
 #define _GETSPECIALWORD_ASM
 
 #ifndef _GETSPECIALWORD_ASM
@@ -95,12 +96,18 @@ void getSpecialWord(uint16_t _n, char* buffer) {
             for (mask = 1 ; mask ; mask <<= 1) {
                 if (c & mask) {
                     if (n == 0) {
+                        // Calculate word number "w" using pointer vs base address
+                        // b--;
+                        w = (uint16_t)(b - answers) << 3;
+                        // Then Subtract out unused bits for this byte (rewind mask 1 step) to get final value
+                        mask >>= 1;
+                        while (mask <<= 1)
+                            w--;
                         getWord(w, buffer);
                         return;
                     }
                     n--;
                 }
-                w++;
             }
         }
     }
@@ -119,10 +126,10 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     push BC
     push DE
 
-    // word number (counter):  bc   :n
-    // bit index counter:      de   :w
-    // answer array index:     hl   :answer
-    // packed-bits:            a    :c
+    // word number (counter):            bc   :n
+    // bit index counter & bitmask loop: de   :w
+    // answer array index:               hl   :answer
+    // packed-bits:                      a    :c
 
     // Load _n (arg word number) to bc
     ldhl  sp, #10
@@ -137,7 +144,7 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     ld    hl, #_answers
 
     // Load first byte of bit-packed array into a, increment array pointer
-    _lookup_loop$:
+    .lookup_loop$:
 
         // c = *b++;
         ld   a, (hl+)
@@ -146,67 +153,82 @@ void getSpecialWord(uint16_t _n, char* buffer) {
         // Less cycles when not taken
         // if (c == 0) {
         and   a, #0xFF
-        jr    z, _addr_add_8$
+        jr    z, .addr_add_8$
 
 
         // for (mask = 1 ; mask ; mask <<= 1) {
-        // hl will be loop control
-        push   hl
-        ld     l, #0x08
-        _bitmask_loop$:
+        // e is loop control
+        ld     e, #0x08
+        .bitmask_loop$:
 
             // if (c & mask) {
             // Downshift A into carry
             rrca
             // Continue loop if lowest bit was zero
-            jr   nc, _bitmask_loop_check_exit$
+            jr   nc, .bitmask_loop_check_exit$
 
             // Otherwise decrement word number counter
             // if (n == 0) return
-            ld   h, a  // stash a in h
+            ld   d, a  // stash a in d
             ld   a, b
             or   a, c
-            ld   a, h  // retsore a
-            jr   z, _lookup_done$
+            ld   a, d  // retsore a
+            jr   z, .lookup_done$
 
             // n--;
             dec   bc
 
-            _bitmask_loop_check_exit$:
-            // increment bit index counter
-            // w++;
-            inc   de
+            .bitmask_loop_check_exit$:
             // for (mask = 1 ; mask ; mask <<= 1) {
-            dec    l
-        jr     nz, _bitmask_loop$
+            dec    e
+        jr     nz, .bitmask_loop$
         // end _bitmask_loop$:
 
-        pop    hl
-    jr     _lookup_loop$
+    jr     .lookup_loop$
     // end _lookup_loop$:
-
 
         // Special case when bit-packed value is zero
         // w += 8;
-        _addr_add_8$:
+        .addr_add_8$:
         ld    a, #0x08
         add   a, e
         ld    e, a
-        // handle 8 bit carry for DE
-        jr    c, _addr_add_8_c$
-        // return to main loop
-        jr    _lookup_loop$
 
-        _addr_add_8_c$:
+        // handle 8 bit carry for DE
+        jr    c, .addr_add_8_carry$
+        // return to main loop
+        jr    .lookup_loop$
+        .addr_add_8_carry$:
         inc   d
 
-    jr    _lookup_loop$
+    jr    .lookup_loop$
     // end _lookup_loop$:
 
 
-    _lookup_done$:
-    // this will have been skipped at the end of _lookup_loop
-    pop    hl
+    .lookup_done$:
+    // Calculate bit index counter address from current pointer and base address
+    // w = (uint16_t)(b - answers) << 3;
+    ld  a, l
+    sub a, #<(_answers)
+    ld  l, a
+
+    ld  a, h
+    sbc a, #>(_answers)
+    ld  h, a
+
+    add hl, hl
+    add hl, hl
+    add hl, hl
+
+    // Loop value left in e holds unused bits from packed byte,
+    // subtract out to get final word index and store in de
+    ld    a, l
+    sub   a, e
+    ld    e, a
+    
+    ld    a, h
+    sbc   a, #0x00
+    ld    d, a
 
     // Load buffer address onto stack
     ldhl    sp, #12
