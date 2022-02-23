@@ -8,7 +8,86 @@
 static uint32_t currentWord;
 static const uint8_t* blobPtr;
 
+// high byte of currentWord is always zero
 void updateWord(void) {
+#ifndef TEST
+__asm
+    ld a,(#_blobPtr)
+    ld l,a
+    ld a,(#_blobPtr+1)
+    ld h,a
+    ld a,(hl+)
+    bit 7,a
+    jr z,0001$
+    and #127
+    ld b,a
+    xor a
+    ld d,a
+0005$:
+    ld e,a
+0003$:
+;; inc edb
+    ld a,b
+    add #1
+    ld b,a
+    ld a,d
+    adc #0
+    ld d,a
+    ld a,e
+    adc #0
+    ld e,a
+;; add edb to currentWord
+    ld a,(#_currentWord)
+    add b
+    ld (#_currentWord),a
+    ld a,(#_currentWord+1)
+    adc d
+    ld (#_currentWord+1),a
+    ld a,(#_currentWord+2)
+    adc e
+    ld (#_currentWord+2),a
+;; update blobPtr
+    ld a,l
+    ld (#_blobPtr),a
+    ld a,h
+    ld (#_blobPtr+1),a
+    ret
+0001$:
+    ld b,a
+    ld a,(hl+)
+    ld c,a
+    and #127
+    ld d,a
+    srl d
+    sla a
+    sla a
+    sla a
+    sla a
+    sla a
+    sla a
+    sla a
+    or b
+    ld b,a
+    bit 7,c
+    jr z,0002$
+    xor a
+    jr 0005$
+0002$:
+    ld a,(hl+)
+    ld e,a
+    srl e
+    srl e
+    sla a
+    sla a
+    sla a
+    sla a
+    sla a
+    sla a
+    or d
+    ld d,a
+    jr 0003$
+__endasm ;
+#else
     uint8_t b = *blobPtr++;
     uint32_t v;
     v = b & 0x7F;
@@ -21,6 +100,7 @@ void updateWord(void) {
         }
     }
     currentWord += v+1;
+#endif
 }
 
 void decodeWord(uint8_t start, uint32_t nextFour, char* buffer) {
@@ -60,7 +140,7 @@ uint8_t filterWord(char* s) {
     uint32_t w = 0;
     for (i=1;i<5;i++)
         w = (w << 5) | (s[i]-'A');
-    
+
     i = s[0]-'A';
     currentWord = 0;
     blobPtr = wordBlob + words[i].blobOffset;
@@ -111,7 +191,6 @@ void getSpecialWord(uint16_t _n, char* buffer) {
 }
 
 #else
-
 
 // TODO: OLDCALL as precaution against upcoming SDCC calling convention change
 void getSpecialWord(uint16_t _n, char* buffer) {
