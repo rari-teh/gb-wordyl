@@ -88,10 +88,7 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     for(;;) {
         static uint8_t c;
         c = *b++;
-        if (c == 0) {
-            w += 8;
-        }
-        else {
+        if (c) {
             static uint8_t mask;
             for (mask = 1 ; mask ; mask <<= 1) {
                 if (c & mask) {
@@ -141,9 +138,9 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     inc b
     inc c
 
-    // Zero array bit index counter
+    // Pre-load loop counter (e gets reloaded from d)
     // Load pointer to bit-packed index array
-    ld    de, #0x0000
+    ld    d, #0x08
     ld    hl, #_answers
 
     // Load first byte of bit-packed array into a, increment array pointer
@@ -155,23 +152,23 @@ void getSpecialWord(uint16_t _n, char* buffer) {
         // Special handling when value is zero
         // Less cycles when not taken
         // if (c == 0) {
-        and   a, #0xFF
-        jr    z, .addr_add_8$
+        or    a, a
+        jr    z, .lookup_loop$
 
 
         // for (mask = 1 ; mask ; mask <<= 1) {
         // e is loop control
-        ld     e, #0x08
+        ld     e, d
         .bitmask_loop$:
 
             // if (c & mask) {
             // Downshift A into carry
             rrca
-            // Continue loop if lowest bit was zero
+            // Skip answer word decrement if lowest bit was zero
             jr   nc, .bitmask_loop_check_exit$
 
-            // // Otherwise decrement word number counter
-            // // if (n == 0) return
+            // Otherwise decrement word number counter
+            // if (n == 0) return
             dec  c
             jr   nz, .bitmask_loop_check_exit$
 
@@ -186,24 +183,6 @@ void getSpecialWord(uint16_t _n, char* buffer) {
 
     jr     .lookup_loop$
     // end _lookup_loop$:
-
-        // Special case when bit-packed value is zero
-        // w += 8;
-        .addr_add_8$:
-        ld    a, #0x08
-        add   a, e
-        ld    e, a
-
-        // handle 8 bit carry for DE
-        jr    c, .addr_add_8_carry$
-        // return to main loop
-        jr    .lookup_loop$
-        .addr_add_8_carry$:
-        inc   d
-
-    jr    .lookup_loop$
-    // end _lookup_loop$:
-
 
     .lookup_done$:
     // Calculate bit index counter address from current pointer and base address
