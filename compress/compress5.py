@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-NUM_ANSWER_BUCKETS = 10
+import sys
+
+NUM_ANSWER_BUCKETS = 15
 outfile = open('../src/encoded.c', 'w')
 outfile.write("#include \"encoded.h\"\n\n");
 
@@ -81,11 +83,11 @@ with open("answers.txt") as f:
             answerWords.add(w)
 
 allWords = tuple(sorted(allWords))
-           
-buckets = [[] for i in range(26)]        
+
+buckets = [[] for i in range(26)]
 for w in allWords:
     buckets[ord(w[0])-ord('a')].append(w[1:])
-    
+
 encoded = tuple(map(encodeList, buckets))
 offsets = []
 offset = 0
@@ -114,8 +116,8 @@ outfile.write("const LetterBucket_t buckets[27] = {\n""")
 for i in range(27):
     outfile.write("  /* %s */ { %u, %u },\n" % (str(chr(ord('a')+i)) if i < 26 else "end", sum(map(len,buckets[:i])), offsets[i]) )
 
-outfile.write("};\n\n")    
-   
+outfile.write("};\n\n")
+
 # outfile.write("""typedef struct {
 #  uint16_t numWords;
 #  uint16_t byteOffset;
@@ -128,7 +130,8 @@ targetSize = len(answerWords) // NUM_ANSWER_BUCKETS
 pos = 0
 count = 0
 prevCount = 0
-startBucket = 0
+startBucketDelta = 0
+lastBucket = 0
 
 for i in range(NUM_ANSWER_BUCKETS):
     targetCount = count + targetSize
@@ -136,8 +139,15 @@ for i in range(NUM_ANSWER_BUCKETS):
         if answerBits[pos]:
             count += 1
         pos += 1
-    outfile.write("  { %u, %u},\n" % (count-prevCount, startBucket//8))
-    startBucket = pos
+    if (((count-prevCount) > 255) or ((startBucketDelta //8) > 255)):
+        print("Error: bucket uint8 overload. Bucket:%u { %u, %u},\n" % (i, count-prevCount, startBucketDelta//8))
+        sys.exit()
+
+    startBucketDelta = pos - lastBucket
+    lastBucket = pos
+    outfile.write("  { %u, %u},\n" % (count-prevCount, startBucketDelta//8))
+    # startBucket = pos
+    # Store start bucket as deltas instead
     prevCount = count
 outfile.write("};\n")
 

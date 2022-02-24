@@ -1,16 +1,22 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// #ifdef _ASM_UPDATEWORD
-// // #include <stdio.h>
-// #endif
-
 #include "encoded.h"
+
+
+#define _ASM_GETSPECIALWORD
+#define _ASM_UPDATEWORD
+
+#ifdef _ASM_GETSPECIALWORD
+    void getSpecialWordFinish(void);
+    static const uint8_t  * b_start;
+    static uint16_t   answer_word_num;
+#endif
 
 static uint32_t currentWord;
 static const uint8_t* blobPtr;
+static char     * str_return_buffer;
 
-#define _ASM_UPDATEWORD
 
 #ifdef _ASM_UPDATEWORD
 
@@ -124,14 +130,14 @@ void decodeWord(uint8_t start, uint32_t nextFour, char* buffer) {
     }
 }
 
-void getWord(uint16_t n, char* buffer) {
+void getWord(uint16_t n) {
     uint16_t count = 0;
     uint8_t i;
     const LetterBucket_t* w;
     w = buckets;
     for (i = 0 ; i < 26 && n >= w[1].wordNumber ; i++, w++) ;
     if (i == 26) {
-        *buffer = 0;
+        *str_return_buffer = 0;
         return;
     }
     currentWord = 0;
@@ -139,7 +145,7 @@ void getWord(uint16_t n, char* buffer) {
     for (uint16_t j = n - w->wordNumber + 1; j; j--) {
         updateWord();
     }
-    decodeWord(i, currentWord, buffer);
+    decodeWord(i, currentWord, str_return_buffer);
 }
 
 uint8_t filterWord(char* s) {
@@ -165,27 +171,29 @@ uint8_t filterWord(char* s) {
 }
 
 
-#define _ASM_GETSPECIALWORD
-
 #ifndef _ASM_GETSPECIALWORD
 
+// C version is about 70-80 bytes larger than ASM version right now,
+// speed comparable once bucket size is increased to 50
 void getSpecialWord(uint16_t _n, char* buffer) {
+
+    str_return_buffer = buffer;
     static uint16_t w;
     w = 0;
     static uint16_t n;
     n = _n;
 
     const AnswerBucket_t* bucket = answerBuckets;
+    const uint8_t* b = answers;
 
+    // Use bucket index to fast-forward closer to desired answer word
     while (bucket->numWords <= n) {
         n -= bucket->numWords;
+        b += bucket->byteOffsetDelta;
         bucket++;
     }
 
-    const uint8_t* b = answers + bucket->byteOffset;
-    // w = bucket->byteOffset * 8;
-
-    for(;;) {
+    while(1) {
         static uint8_t c;
         c = *b++;
         if (c) {
@@ -194,13 +202,12 @@ void getSpecialWord(uint16_t _n, char* buffer) {
                 if (c & mask) {
                     if (n == 0) {
                         // Calculate word number "w" using pointer vs base address
-                        // b--;
                         w = (uint16_t)(b - answers) << 3;
                         // Then Subtract out unused bits for this byte (rewind mask 1 step) to get final value
                         mask >>= 1;
                         while (mask <<= 1)
                             w--;
-                        getWord(w, buffer);
+                        getWord(w);
                         return;
                     }
                     n--;
@@ -210,30 +217,30 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     }
 }
 
-
 #else
 
 
-void getSpecialWordFinish(uint16_t _n, char* buffer);
-const uint8_t * b_start;
+void getSpecialWord(uint16_t special_word_num, char* str_buffer) {
 
-void getSpecialWord(uint16_t _n, char* buffer) {
+    str_return_buffer = str_buffer;
+    answer_word_num = special_word_num;
+    b_start = answers;
 
     const AnswerBucket_t* bucket = answerBuckets;
 
-    while (bucket->numWords <= _n) {
-        _n -= bucket->numWords;
+    // Use bucket index to fast-forward closer to desired answer word
+    while (bucket->numWords <= answer_word_num) {
+        answer_word_num -= bucket->numWords;
+        b_start += bucket->byteOffsetDelta;
         bucket++;
     }
 
-    b_start = answers + bucket->byteOffset;
-
-    getSpecialWordFinish(_n, buffer);
+    getSpecialWordFinish();
 }
 
 
 // TODO: OLDCALL as precaution against upcoming SDCC calling convention change
-void getSpecialWordFinish(uint16_t _n, char* buffer) {
+void getSpecialWordFinish(void) {
 
     __asm \
 
@@ -248,7 +255,7 @@ void getSpecialWordFinish(uint16_t _n, char* buffer) {
     // packed-bits:                      a    :c
 
     // Load _n (arg word number) to bc
-    ldhl  sp, #10
+    ld    hl, #_answer_word_num+0
     ld    a, (hl+)
     ld    c, a
     ld    a, (hl)
@@ -335,18 +342,12 @@ void getSpecialWordFinish(uint16_t _n, char* buffer) {
     sbc   a, #0x00
     ld    d, a
 
-    // Load buffer address onto stack
-    ldhl    sp, #12
-    ld  a, (hl+)
-    ld  c, a
-    ld  b, (hl)
-    push    bc
-
     // Load index into bit packed array onto stack
     push    de
 
     call  _getWord
-    add    sp, #4
+    // Restore stack after pushing previous arguments
+    add    sp, #2
 
     pop DE
     pop BC
