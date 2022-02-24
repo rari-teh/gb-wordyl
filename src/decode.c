@@ -7,12 +7,6 @@
 #define _ASM_GETSPECIALWORD
 #define _ASM_UPDATEWORD
 
-#ifdef _ASM_GETSPECIALWORD
-    void getSpecialWordFinish(void);
-    static const uint8_t  * b_start;
-    static uint16_t   answer_word_num;
-#endif
-
 static uint32_t currentWord;
 static const uint8_t* blobPtr;
 static char     * str_return_buffer;
@@ -220,27 +214,8 @@ void getSpecialWord(uint16_t _n, char* buffer) {
 #else
 
 
-void getSpecialWord(uint16_t special_word_num, char* str_buffer) {
-
-    str_return_buffer = str_buffer;
-    answer_word_num = special_word_num;
-    b_start = answers;
-
-    const AnswerBucket_t* bucket = answerBuckets;
-
-    // Use bucket index to fast-forward closer to desired answer word
-    while (bucket->numWords <= answer_word_num) {
-        answer_word_num -= bucket->numWords;
-        b_start += bucket->byteOffsetDelta;
-        bucket++;
-    }
-
-    getSpecialWordFinish();
-}
-
-
 // TODO: OLDCALL as precaution against upcoming SDCC calling convention change
-void getSpecialWordFinish(void) {
+void getSpecialWord(uint16_t special_word_num, char* str_buffer) {
 
     __asm \
 
@@ -254,24 +229,65 @@ void getSpecialWordFinish(void) {
     // answer array index:               hl   :answer
     // packed-bits:                      a    :c
 
+    // Load str_buffer into global
+    ldhl  sp, #12
+    ld    a, (hl+)
+    ld    (#_str_return_buffer), a
+    ld    a, (hl)
+    ld    (#_str_return_buffer + 1), a
+
     // Load _n (arg word number) to bc
-    ld    hl, #_answer_word_num+0
+    ldhl  sp, #10
     ld    a, (hl+)
     ld    c, a
     ld    a, (hl)
     ld    b, a
-    // Counter offsets for word number exit test
-    inc b
-    inc c
 
-    // Load pointer to bit-packed index array
-    // ld    hl, #_answers
-    ld    de, #_b_start+0
-    ld    a, (de)
-    ld    l, a
-    inc   de
-    ld    a, (de)
-    ld    h, a
+
+    // const AnswerBucket_t* bucket = answerBuckets;
+    ld    de, #_answers
+    ld    hl, #_answerBuckets
+    .preload_loop$:
+
+        push  de
+        // while (answer_word_num >= bucket->numWords)
+        // bc: answer_word_num, hl: answerBuckets->numWords
+        // save result in e to avoid re-subtracting if applicable
+        ld    a, c
+        sub   a, (hl)
+        ld    e, a
+        ld    a, b
+        sbc   a, #0x00
+        // If answer_word_num was smaller, exit loop
+        jr    c, .preload_loop_done$
+        // True: (answer_word_num >= bucket->numWords)
+        // save result from above: answer_word_num -= bucket->numWords;
+        ld    b, a
+        ld    c, e  // low byte of result was saved in e
+        inc   hl
+
+        // hl: answerBuckets->byteOffsetDelta;
+        // b_start += bucket->byteOffsetDelta;
+        pop   de
+        ld    a, e
+        add   a, (hl)
+        ld    e, a
+        ld    a, d
+        adc   a, #0x00
+        ld    d, a
+        inc   hl
+
+    jr    .preload_loop$
+
+    .preload_loop_done$:
+    // Restore answer array index pointer
+    // Was pushed as de
+    pop   hl
+
+    // Counter offsets for word number exit test
+    inc   b
+    inc   c
+
 
     // Pre-load loop counter (e gets reloaded from d)
     ld    d, #0x08
