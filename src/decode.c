@@ -1,16 +1,21 @@
 #include <stdint.h>
-#ifdef TEST
-#include <stdio.h>
-#endif
+#include <stdbool.h>
+
+// #ifdef _ASM_UPDATEWORD
+// // #include <stdio.h>
+// #endif
 
 #include "encoded.h"
 
 static uint32_t currentWord;
 static const uint8_t* blobPtr;
 
+#define _ASM_UPDATEWORD
+
+#ifdef _ASM_UPDATEWORD
+
 // high byte of currentWord is always zero
 void updateWord(void) {
-#ifndef TEST
 __asm
     ld a,(#_blobPtr)
     ld l,a
@@ -87,7 +92,11 @@ __asm
     ld d,a
     jr 0003$
 __endasm ;
+}
+
 #else
+
+void updateWord(void) {
     uint8_t b = *blobPtr++;
     uint32_t v;
     v = b & 0x7F;
@@ -100,8 +109,10 @@ __endasm ;
         }
     }
     currentWord += v+1;
-#endif
 }
+
+#endif // _ASM_UPDATEWORD
+
 
 void decodeWord(uint8_t start, uint32_t nextFour, char* buffer) {
     *buffer = start + 'A';
@@ -116,8 +127,8 @@ void decodeWord(uint8_t start, uint32_t nextFour, char* buffer) {
 void getWord(uint16_t n, char* buffer) {
     uint16_t count = 0;
     uint8_t i;
-    const LetterList_t* w;
-    w = words;
+    const LetterBucket_t* w;
+    w = buckets;
     for (i = 0 ; i < 26 && n >= w[1].wordNumber ; i++, w++) ;
     if (i == 26) {
         *buffer = 0;
@@ -143,8 +154,8 @@ uint8_t filterWord(char* s) {
 
     i = s[0]-'A';
     currentWord = 0;
-    blobPtr = wordBlob + words[i].blobOffset;
-    for (uint16_t j=words[i+1].wordNumber - words[i].wordNumber; j; j--) {
+    blobPtr = wordBlob + buckets[i].blobOffset;
+    for (uint16_t j=buckets[i+1].wordNumber - buckets[i].wordNumber; j; j--) {
         updateWord();
         if (currentWord >= w) {
             return currentWord == w;
@@ -154,16 +165,25 @@ uint8_t filterWord(char* s) {
 }
 
 
-#define _GETSPECIALWORD_ASM
+#define _ASM_GETSPECIALWORD
 
-#ifndef _GETSPECIALWORD_ASM
+#ifndef _ASM_GETSPECIALWORD
 
 void getSpecialWord(uint16_t _n, char* buffer) {
     static uint16_t w;
     w = 0;
-    const uint8_t* b = answers;
     static uint16_t n;
     n = _n;
+
+    const AnswerBucket_t* bucket = answerBuckets;
+
+    while (bucket->numWords <= n) {
+        n -= bucket->numWords;
+        bucket++;
+    }
+
+    const uint8_t* b = answers + bucket->byteOffset;
+    // w = bucket->byteOffset * 8;
 
     for(;;) {
         static uint8_t c;
@@ -190,10 +210,30 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     }
 }
 
+
 #else
 
-// TODO: OLDCALL as precaution against upcoming SDCC calling convention change
+
+void getSpecialWordFinish(uint16_t _n, char* buffer);
+const uint8_t * b_start;
+
 void getSpecialWord(uint16_t _n, char* buffer) {
+
+    const AnswerBucket_t* bucket = answerBuckets;
+
+    while (bucket->numWords <= _n) {
+        _n -= bucket->numWords;
+        bucket++;
+    }
+
+    b_start = answers + bucket->byteOffset;
+
+    getSpecialWordFinish(_n, buffer);
+}
+
+
+// TODO: OLDCALL as precaution against upcoming SDCC calling convention change
+void getSpecialWordFinish(uint16_t _n, char* buffer) {
 
     __asm \
 
@@ -217,10 +257,17 @@ void getSpecialWord(uint16_t _n, char* buffer) {
     inc b
     inc c
 
-    // Pre-load loop counter (e gets reloaded from d)
     // Load pointer to bit-packed index array
+    // ld    hl, #_answers
+    ld    de, #_b_start+0
+    ld    a, (de)
+    ld    l, a
+    inc   de
+    ld    a, (de)
+    ld    h, a
+
+    // Pre-load loop counter (e gets reloaded from d)
     ld    d, #0x08
-    ld    hl, #_answers
 
     // Load first byte of bit-packed array into a, increment array pointer
     .lookup_loop$:

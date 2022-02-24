@@ -11,8 +11,16 @@ extern const uint8_t answers[];
 typedef struct {
   uint16_t wordNumber;
   uint16_t blobOffset;
-} LetterList_t;
+} LetterBucket_t;
 
-extern const LetterList_t words[];
+extern const LetterBucket_t buckets[];
+
+typedef struct {
+  uint16_t numWords;
+  uint16_t byteOffset;
+} AnswerBucket_t;
+
+extern const AnswerBucket_t answerBuckets[];
+
 
 #endif

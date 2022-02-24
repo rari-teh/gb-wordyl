@@ -20,8 +20,8 @@
 // Cheats for testing
 // #define DEBUG_REVEAL_WHILE_TYPE
 // #define DEBUG_FORCE_WORD "AMPLE"
-// #define DEBUG_REVEAL_WORD
-// #define DEBUG_FORCE_WORD_BY_NUM  2200u // 2200u // 2295u // 2200u // 0u // 100u // 1351u
+#define DEBUG_REVEAL_WORD
+#define DEBUG_FORCE_WORD_BY_NUM  2200u // 2200u // 2295u // 2200u // 0u // 100u // 1351u
 // TODO: show answer word number
 
 #define BOARD_HIGHLIGHT_NO  false
