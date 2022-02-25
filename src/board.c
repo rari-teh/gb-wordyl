@@ -41,10 +41,12 @@ char empty_word_buf[WORD_LENGTH + 1] = "     ";
 
 uint8_t g_board_tile_flip_speed;
 
-// Tile flip animation
+// Tile flip animation frames
 const uint8_t board_flip_anim[] = {
     (BOARD_LETTERS_FLIP_1),
     (BOARD_LETTERS_FLIP_2),
+    (BOARD_LETTERS_FLIP_3),
+    (BOARD_LETTERS_FLIP_4),
     (BOARD_LETTERS_FLIP_3),
     (BOARD_LETTERS_FLIP_2),
     (BOARD_LETTERS_FLIP_1)
@@ -125,10 +127,12 @@ void board_draw_tile_flip_anim(uint8_t row, uint8_t col) {
         // One frame between animations in all modes
         wait_vbl_done();
 
-        // Another frame of delay in slow mode
-        if (g_board_tile_flip_speed == BOARD_TILE_FLIP_SLOW) {
-            wait_vbl_done();
-        }
+        #ifdef ENABLE_BOARD_SLOW_FLIP
+            // Another frame of delay in slow mode
+            if (g_board_tile_flip_speed == BOARD_TILE_FLIP_SLOW) {
+                wait_vbl_done();
+            }
+        #endif
     }
 }
 
@@ -171,8 +175,12 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
         p_guess = empty_word_buf;
         BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_NONE);
     } else {
-        // Slow tile flip for word reveal
-        BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_SLOW);
+        #ifdef ENABLE_BOARD_SLOW_FLIP
+            // Slow tile flip for word reveal
+            BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_SLOW);
+        #else
+            BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_FAST);
+        #endif
     }
 
     // Flag guess letters as: LETTER_NOT_IN_WORD, LETTER_WRONG_PLACE or LETTER_RIGHT_PLACE

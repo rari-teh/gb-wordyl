@@ -4,7 +4,11 @@
 #define _BOARD_H
 
 
-#define BOARD_TILE_FLIP_SLOW    2u
+// Faster flip speeds look ok on all hardware except stock CGB LCD
+// which seems to drop some frames?
+// #define ENABLE_BOARD_SLOW_FLIP
+
+#define BOARD_TILE_FLIP_SLOW    2u  // See ENABLE_BOARD_SLOW_FLIP
 #define BOARD_TILE_FLIP_FAST    1u
 #define BOARD_TILE_FLIP_NONE    0u
 
