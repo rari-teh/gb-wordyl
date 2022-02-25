@@ -10,8 +10,8 @@
 
 // Units are number of frames (~60 / sec)
 #define KEY_REPEAT_START                0u
-#define KEY_REPEAT_DPAD_INITIAL_DELAY   25u // 40u is slower, better accessibility // 20u is nice, might be too fast for some
-#define KEY_REPEAT_DPAD_REPEAT_DELAY    8u
+#define KEY_REPEAT_DPAD_INITIAL_DELAY   20u // 40u is slower, better accessibility // 20u is nice, might be too fast for some
+#define KEY_REPEAT_DPAD_REPEAT_DELAY    7u
 #define KEY_REPEAT_DPAD_THRESHOLD       (KEY_REPEAT_DPAD_INITIAL_DELAY)
 #define KEY_REPEAT_DPAD_RELOAD_VAL      (KEY_REPEAT_DPAD_THRESHOLD - KEY_REPEAT_DPAD_REPEAT_DELAY)
 

@@ -1,16 +1,16 @@
 /*
 
- LETTER_CURSOR_TILES.C
+ CURSOR_TILES.H
 
- Tile Source File.
+ Include File.
 
  Info:
   Form                 : All tiles as one unit.
   Format               : Gameboy 4 color.
-  Compression          : None.
+  Compression          : GB-Compress.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 0
+  Tiles                : 0 to 4
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -22,11 +22,14 @@
 
 */
 
-/* Start of tile array. */
-const unsigned char letter_cursor_tiles[] =
-{
-  0x00,0x00,0x00,0x00,0x0A,0x06,0x10,0x00,
-  0x00,0x10,0x10,0x10,0x10,0x10,0x00,0x00
-};
+#ifndef __cursor_tiles_h_INCLUDE
+#define __cursor_tiles_h_INCLUDE
 
-/* End of LETTER_CURSOR_TILES.C */
+/* Bank of tiles. */
+#define cursor_tilesBank 0
+/* Start of tile array. */
+extern const unsigned char cursor_tiles[];
+
+#endif
+
+/* End of CURSOR_TILES.H */

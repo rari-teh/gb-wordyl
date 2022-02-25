@@ -39,12 +39,6 @@ int8_t kb_offsets[KEYBD_ROWS] = {
 int8_t kb_x;
 int8_t kb_y;
 
-// Cursor sprite flipping flags to allow use of same tile for all 4 corners
-const uint8_t sp_cursor_props[] = { 0x00, S_FLIPX, S_FLIPY, S_FLIPX | S_FLIPY };
-const uint8_t sp_cursor_offset_x[] = { 0, 8, 0, 8 };
-const uint8_t sp_cursor_offset_y[] = { 0, 0, 8, 8 };
-
-
 // Reset keyboard cursor and clear highlighting
 void keyboard_reset(void) {
     kb_x = 0;
@@ -209,9 +203,14 @@ void keyboard_update_cursor(void) {
     uint8_t x = (kb_x * 16) + (kb_offsets[kb_y] * 8) + DEVICE_SPRITE_PX_OFFSET_X;
     uint8_t y = ((KEYBD_START_Y + kb_y) * 8) + DEVICE_SPRITE_PX_OFFSET_Y - KEYBD_CURSOR_OFFSET_Y;
 
-    for (uint8_t i = 0; i < SP_ID_CURSOR_LEN; i++) {
-        move_sprite(SP_ID_CURSOR_START + i, x + sp_cursor_offset_x[i], y + sp_cursor_offset_y[i] );
-    }
+    move_sprite(SP_ID_CURSOR_KBD_START     , x     , y);
+    move_sprite(SP_ID_CURSOR_KBD_START + 1u, x + 8u, y);
+    move_sprite(SP_ID_CURSOR_KBD_START + 2u, x     , y + 8u);
+    move_sprite(SP_ID_CURSOR_KBD_START + 3u, x + 8u, y + 8u);
+    // Takes more ROM space:
+    // for (uint8_t i = 0; i < SP_ID_CURSOR_BOARD_LEN; i++) {
+    //     move_sprite(SP_ID_CURSOR_KBD_START + i, x + sp_cursor_offset_x[i], y + sp_cursor_offset_y[i] );
+    // }
 }
 
 

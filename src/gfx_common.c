@@ -20,6 +20,11 @@ uint8_t * print_vram_addr = NULL;
 uint8_t board_letters_decomp_buf[BOARD_LETTERS_COUNT * BOARD_LETTERS_TILES_PER * BOARD_LETTERS_BYTES_PER_TILE];
 uint8_t font_letters_decomp_buf[FONT_LETTERS_COUNT * FONT_LETTERS_BYTES_PER_TILE];
 
+// Cursor sprite flipping flags to allow use of same tile for all 4 corners
+// const uint8_t sp_cursor_kbd_props[] = { 0x00, S_FLIPX, S_FLIPY, S_FLIPX | S_FLIPY };
+// const uint8_t sp_cursor_offset_x[] = { 0, 8, 0, 8 };
+// const uint8_t sp_cursor_offset_y[] = { 0, 0, 8, 8 };
+
 
 // Blank tile, could be optimized
 const uint8_t tile_blank[] = {0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00};

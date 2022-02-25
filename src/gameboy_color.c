@@ -8,10 +8,10 @@
 
 const palette_color_t cgb_palettes[] = {
                                RGB8(255u,255u,255u), RGB8(170u,170u,170u),RGB8(85u,85u,85u),RGB8(0u,0u,0u),
-                               RGB8(255u,243u, 86u), RGB8(170u,170u,170u),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = yellow
-                               RGB8(130u,255u,130u), RGB8(170u,170u,170u),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = green
-                               RGB8(168u,240u,255u), RGB8(170u,170u,170u),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = blue
-                               RGB8(255u,150u,150u), RGB8(170u,170u,170u),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = red
+                               RGB8(255u,243u, 86u), RGB8(255u /2, 243u /2, 86u  /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = yellow
+                               RGB8(130u,255u,130u), RGB8(130u /2, 255u /2, 130u /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = green
+                               RGB8(168u,240u,255u), RGB8(168u /2, 240u /2, 255u /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = blue
+                               RGB8(255u,150u,150u), RGB8(255u /2, 150u /2, 150u /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = red
                           };
 
 // Initialize CGB palettes

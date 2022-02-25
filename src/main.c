@@ -32,7 +32,10 @@ void main() {
         switch (game_state) {
             case GAME_STATE_INIT:
                 gameplay_init();
-                game_state = GAME_STATE_RESTART;
+                gameplay_restart();
+                gameplay_init_turn_gfx_on();
+                // Skip direct to GAME_STATE_RUNNING, past GAME_STATE_RESTART
+                game_state = GAME_STATE_RUNNING;
                 break;
 
             case GAME_STATE_RESTART:

@@ -18,6 +18,9 @@ extern uint8_t g_board_tile_flip_speed;
 // Use with BOARD_TILE_FLIP_*
 #define BOARD_SET_FLIP_SPEED(speed) g_board_tile_flip_speed = (speed)
 
+void board_hide_cursor(void);
+void board_update_cursor(void);
+
 void board_redraw_clean(void);
 void board_render_guess_letter(uint8_t col);
 void board_add_guess_letter(void);

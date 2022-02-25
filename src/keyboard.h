@@ -14,12 +14,6 @@ extern int8_t kb_offsets[KEYBD_ROWS];
 extern int8_t kb_x;
 extern int8_t kb_y;
 
-extern const uint8_t sp_cursor_props[];
-extern const uint8_t sp_cursor_offset_x[];
-extern const uint8_t sp_cursor_offset_y[];
-
-
-
 void keyboard_reset(void);
 
 inline char keyboard_get_letter(void);

@@ -53,6 +53,40 @@ const uint8_t board_flip_anim[] = {
 };
 
 
+#define CURSOR_BOARD_X_POS (((BOARD_TILE_X_START * 8)- 16u) + DEVICE_SPRITE_PX_OFFSET_X)
+
+// Move the cursor to highlight the current row
+void board_update_cursor(void) {
+
+    // guess_num is desired row
+    uint8_t x = CURSOR_BOARD_X_POS;
+    uint8_t y = (guess_num * (8u * BOARD_TILE_W)) + (DEVICE_SPRITE_PX_OFFSET_Y + (BOARD_TILE_Y_START * 8u));
+
+    move_sprite(SP_ID_CURSOR_BOARD_START     , x     , y);
+    move_sprite(SP_ID_CURSOR_BOARD_START + 1u, x + 8u, y);
+    move_sprite(SP_ID_CURSOR_BOARD_START + 2u, x     , y + 8u);
+    move_sprite(SP_ID_CURSOR_BOARD_START + 3u, x + 8u, y + 8u);
+    // Takes more ROM space:
+    /*
+    for (uint8_t i = 0; i < SP_ID_CURSOR_BOARD_LEN; i++) {
+        move_sprite(SP_ID_CURSOR_BOARD_START + i,
+                    CURSOR_BOARD_X_POS + sp_cursor_offset_x[i],
+                    y + sp_cursor_offset_y[i]);
+    }
+    */
+}
+
+
+// Move the cursor to highlight the current row
+void board_hide_cursor(void) {
+
+    for (uint8_t i = 0; i < SP_ID_CURSOR_BOARD_LEN; i++) {
+        hide_sprite(SP_ID_CURSOR_BOARD_START + i);
+    }
+}
+
+
+
 // Draw the letters for a guess as they are entered
 void board_render_guess_letter(uint8_t col) {
 
@@ -238,6 +272,8 @@ void board_set_color_for_letter(uint8_t row, uint8_t col, uint8_t do_highlight) 
 // Set up graphics for gameplay
 void board_initgfx(void) {
 
+    uint8_t c;
+
     // Map Data
     SET_PRINT_COLOR_NORMAL;
 
@@ -284,15 +320,37 @@ void board_initgfx(void) {
     print_gotoxy(2,0, PRINT_BKG);
     print_str("GAME BOY WORDYL");
 
+    // == Cursors ==
     // Sprite Data
-    // Load 2bpp blank tile
-    set_sprite_data((SP_TILES_CURSOR_START), SP_TILES_CURSOR_LEN, letter_cursor_tiles);
+    // Load 4bpp gbcompressed sprite cursor data
+    gb_decompress_sprite_data((SP_TILES_CURSOR_START), cursor_tiles);
+    // set_sprite_data((SP_TILES_CURSOR_START), SP_TILES_CURSOR_COUNT_TOTAL, cursor_tiles);
 
     SPRITES_8x8;
 
-    for (uint8_t i = 0; i < SP_ID_CURSOR_LEN; i++) {
-        set_sprite_tile(SP_ID_CURSOR_START + i, SP_TILES_CURSOR_START);
-        set_sprite_prop(SP_ID_CURSOR_START + i, sp_cursor_props[i]);
+    // Keyboard Cursor
+    set_sprite_tile(SP_ID_CURSOR_KBD_START + 0u, SP_TILES_CURSOR_KBD_START);
+    set_sprite_tile(SP_ID_CURSOR_KBD_START + 1u, SP_TILES_CURSOR_KBD_START);
+    set_sprite_tile(SP_ID_CURSOR_KBD_START + 2u, SP_TILES_CURSOR_KBD_START);
+    set_sprite_tile(SP_ID_CURSOR_KBD_START + 3u, SP_TILES_CURSOR_KBD_START);
+
+    set_sprite_prop(SP_ID_CURSOR_KBD_START + 0u, 0x00u);
+    set_sprite_prop(SP_ID_CURSOR_KBD_START + 1u, S_FLIPX);
+    set_sprite_prop(SP_ID_CURSOR_KBD_START + 2u, S_FLIPY);
+    set_sprite_prop(SP_ID_CURSOR_KBD_START + 3u, S_FLIPX | S_FLIPY);
+    // Takes more ROM space:
+    // c = 0;
+    // for (uint8_t i = SP_ID_CURSOR_KBD_START; i < (SP_ID_CURSOR_KBD_START + SP_ID_CURSOR_KBD_LEN); i++) {
+    //     set_sprite_tile(i, SP_TILES_CURSOR_KBD_START);
+    //     set_sprite_prop(i, sp_cursor_kbd_props[c++]);
+    // }
+
+
+    // Board Row Cursor
+    c = 0;
+    for (uint8_t i = SP_ID_CURSOR_BOARD_START; i < (SP_ID_CURSOR_BOARD_START + SP_ID_CURSOR_BOARD_LEN); i++) {
+        set_sprite_tile(i, SP_TILES_CURSOR_BOARD_START + c++);
+        set_sprite_prop(i, CGB_PAL_3);
     }
 
     // Clear window and move it offscreen at the bottom

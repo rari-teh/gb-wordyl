@@ -4,7 +4,7 @@
 #define _GFX_COMMON_H
 
 // Sprite Data
-#include "../res/letter_cursor_tiles.h"
+#include "../res/cursor_tiles.h"
 
 // Map Data
 //#include "../res/board_grid_tiles_gbcompress.h"
@@ -19,6 +19,14 @@
 #define PRINT_BKG 0
 #define PRINT_WIN 1
 
+extern uint8_t board_letters_decomp_buf[];
+extern uint8_t font_letters_decomp_buf[];
+
+// Optimized out
+// extern const uint8_t sp_cursor_kbd_props[];
+// extern const uint8_t sp_cursor_offset_x[];
+// extern const uint8_t sp_cursor_offset_y[];
+
 
 extern const uint8_t tile_blank[];
 
@@ -32,11 +40,19 @@ void draw_letter_to_tileid(uint8_t letter, uint8_t index);
 // Hardware correction factor for X position of Window when displayed on screen
 #define WIN_X_OFFSET 7
 
-#define SP_TILES_CURSOR_START 0u
-#define SP_TILES_CURSOR_LEN   1u
 
-#define SP_ID_CURSOR_START 0u
-#define SP_ID_CURSOR_LEN   4u
+#define SP_TILES_CURSOR_START               0u
+    #define SP_TILES_CURSOR_KBD_START       (SP_TILES_CURSOR_START)
+    #define SP_TILES_CURSOR_KBD_LEN         1u
+    #define SP_TILES_CURSOR_BOARD_START     (SP_TILES_CURSOR_KBD_START + SP_TILES_CURSOR_KBD_LEN)
+    #define SP_TILES_CURSOR_BOARD_LEN       4u
+#define SP_TILES_CURSOR_COUNT_TOTAL          (SP_TILES_CURSOR_KBD_LEN + SP_TILES_CURSOR_BOARD_LEN)
+
+
+#define SP_ID_CURSOR_KBD_START   0u
+#define SP_ID_CURSOR_KBD_LEN     4u
+#define SP_ID_CURSOR_BOARD_START (SP_ID_CURSOR_KBD_START + SP_ID_CURSOR_KBD_LEN)
+#define SP_ID_CURSOR_BOARD_LEN   4u
 
 
 // TODO: could move to keybaord.h
@@ -48,7 +64,7 @@ void draw_letter_to_tileid(uint8_t letter, uint8_t index);
 #define BOARD_LETTERS_BYTES_PER_TILE  8u // 1bpp tiles = 8 bytes per 8x8 tile
 #define BOARD_LETTERS_ALPHA           26u
 #define BOARD_LETTERS_BLANK           1u
-#define BOARD_LETTERS_FLIP            3u
+#define BOARD_LETTERS_FLIP            4u
 #define BOARD_LETTERS_COUNT          (BOARD_LETTERS_ALPHA + BOARD_LETTERS_BLANK + BOARD_LETTERS_FLIP) // Last entry is blank space
 #define BOARD_LETTERS_TILES_PER       4u // Last entry is blank space
 // Empty space is last char in board font tile set
@@ -56,14 +72,11 @@ void draw_letter_to_tileid(uint8_t letter, uint8_t index);
 #define BOARD_LETTERS_FLIP_1     (BOARD_LETTERS_COUNT - BOARD_LETTERS_FLIP)
 #define BOARD_LETTERS_FLIP_2     (BOARD_LETTERS_FLIP_1 + 1)
 #define BOARD_LETTERS_FLIP_3     (BOARD_LETTERS_FLIP_2 + 1)
+#define BOARD_LETTERS_FLIP_4     (BOARD_LETTERS_FLIP_3 + 1)
 
 
 #define FONT_LETTERS_COUNT           29u // 26 letters + 3 special chars: ".", "!", ":"
 #define FONT_LETTERS_BYTES_PER_TILE   8u // 1bpp tiles = 8 bytes per 8x8 tile
-
-extern uint8_t board_letters_decomp_buf[];
-extern uint8_t font_letters_decomp_buf[];
-
 
 #define BOARD_GRID_X  4u // Start x,y in Tiles
 #define BOARD_GRID_Y  1u
@@ -151,17 +164,17 @@ extern uint8_t font_letters_decomp_buf[];
 // Printing
 #define SET_PRINT_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)     // Full contrast text
 // Board
-#define SET_BOARD_COLOR_NORMAL       set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)  // Faded text
-#define SET_BOARD_COLOR_CONTAINS     set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)      // Full contrast text#
-#define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(DMG_BLACK, DMG_WHITE)  // Inverted text
-// #define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)  // Inverted text
-// #define SET_BOARD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)  // Inverted text
+#define SET_BOARD_COLOR_NORMAL       set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)
+#define SET_BOARD_COLOR_CONTAINS     set_1bpp_colors(DMG_WHITE, DMG_DARK_GRAY)
+#define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(DMG_BLACK, DMG_WHITE)
+// #define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)
+// #define SET_BOARD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)
 // Keyboard
-#define SET_KEYBD_COLOR_NORMAL       set_1bpp_colors(DMG_DARK_GRAY, DMG_WHITE)  // Faded text
-#define SET_KEYBD_COLOR_CONTAINS     set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)      // Full contrast text
-#define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)  // Inverted text
-// #define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_BLACK, DMG_WHITE)  // Inverted text
-#define SET_KEYBD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)  // Inverted text
+#define SET_KEYBD_COLOR_NORMAL       set_1bpp_colors(DMG_DARK_GRAY, DMG_WHITE)
+#define SET_KEYBD_COLOR_CONTAINS     set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)
+#define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)
+// #define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_BLACK, DMG_WHITE)
+#define SET_KEYBD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)
 
 /*
 // Board Letter box colors: Foreground, Background

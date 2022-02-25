@@ -26,6 +26,7 @@
 
 uint8_t game_won_str[] = "You won!\n\nOn Guess X of 6";
 
+bool game_answer_word_selected;
 
 // Show a popup message: You Won
 void show_win_message(uint8_t guess_count) {
@@ -73,7 +74,7 @@ void gameplay_handle_guess(void) {
         board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
         guess_num += 1;
         keyboard_update_from_guess();
-        keyboard_update_cursor();
+        // keyboard_update_cursor();
 
         // == Handle Game Over scenarios ==
 
@@ -81,14 +82,20 @@ void gameplay_handle_guess(void) {
         bool game_was_won = (strcmp(word, guess) == 0);
 
         if (game_was_won) {
+            // Hide cursor so it doesn't flash between popups
+            board_hide_cursor();
             show_win_message(guess_num);
             stats_update(game_was_won, guess_num);
             GAMEPLAY_SET_GAMEOVER;
         }
         else if (guess_num == MAX_GUESSES) {
+            // Hide cursor so it doesn't flash between popups
+            board_hide_cursor();
             show_lose_message(word);
             stats_update(game_was_won, guess_num);
             GAMEPLAY_SET_GAMEOVER;
+        } else {
+            board_update_cursor();
         }
 
         // Reset guess to empty and prepare for next one
@@ -100,6 +107,14 @@ void gameplay_handle_guess(void) {
 // Choose an answer word for a new gameplay round
 // Modifies global: word
 void gameplay_init_answer_word(void) {
+
+    static bool random_initialized = false;
+
+    // Random number generation init if not already done
+    if (random_initialized == false) {
+        initrand(LY_REG  | ((uint16_t)DIV_REG << 8));
+        random_initialized = true;
+    }
 
     uint16_t r = randw() % NUM_ANSWERS;
 
@@ -118,8 +133,17 @@ void gameplay_init_answer_word(void) {
         print_gotoxy(0,0, PRINT_BKG);
         print_str(word);
     #endif
+
+    game_answer_word_selected = true;
 }
 
+
+void gameplay_init_turn_gfx_on(void) {
+    SHOW_WIN;
+    SHOW_BKG;
+    SHOW_SPRITES;
+    DISPLAY_ON;
+}
 
 // Run once on startup to prepare gameplay board graphics
 void gameplay_init(void) {
@@ -130,43 +154,27 @@ void gameplay_init(void) {
     // Initialize Window dialog box
     win_dialog_draw();
 
-    // Draws initial empty board and keyboard
-    board_redraw_clean();
-    keyboard_reset();
-
     // Center screen by scrolling slightly to the left
     // move_bkg(252, 252);
     move_bkg(252, 0);
 
-    SHOW_WIN;
-    SHOW_BKG;
-    SHOW_SPRITES;
-    DISPLAY_ON;
-
     // Reset guess to empty and prepare for next one
     strcpy(word, "EMPTY");
-
-    // == Random number generation init ==
-
-    // Wait for first button press then intiailize random number generator
-    while (!(joypad() & J_ANY_KEY)) {
-        wait_vbl_done();
-    }
-    initrand(LY_REG  | ((uint16_t)DIV_REG << 8));
 }
 
 
 // Runs on startup and before start of a new gameplay round
 void gameplay_restart(void) {
 
+    game_answer_word_selected = false;
     guess_num = 0;
     memset(guess, 0, sizeof(guess));
 
     // Draws initial empty board and keyboard
     board_redraw_clean();
-    keyboard_reset();
+    board_update_cursor();
 
-    gameplay_init_answer_word();
+    keyboard_reset();
 }
 
 
@@ -230,6 +238,12 @@ void gameplay_run(void)
                 // Add/Remove letters from a guess
                 case J_A:
                     board_add_guess_letter();
+                    // Wait until after the first letter is pressed to
+                    // select the answer word (to avoid a delay after keypress)
+                    //
+                    // TODO: move this once there is a splash screen
+                    if (game_answer_word_selected == false)
+                        gameplay_init_answer_word();
                     break;
 
                 case J_B:
