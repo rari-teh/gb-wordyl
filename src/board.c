@@ -16,6 +16,7 @@
 #include "board.h"
 
 
+/*
 // 5 x 6 array of 2x2 metatiles arranged as first row:0,1 second row: 2,3
 const uint8_t board_map[]  = {
  0,1,   4,5,   8, 9, 12,13, 16,17,
@@ -36,6 +37,30 @@ const uint8_t board_map[]  = {
 100,101, 104,105, 108,109, 112,113, 116,117,
 102,103, 106,107, 110,111, 114,115, 118,119
 };
+*/
+
+// 2x2 BG metatiles on the board
+const uint8_t board_map_letter[]  = {0, 1, 2, 3};
+
+// This is about 70 bytes smaller than the const map version above ^^^
+//
+// Draw the board tile map
+// 5 x 6 array of 2x2 metatiles arranged as first row:0,1 second row: 2,3
+static void board_map_fill() {
+
+    uint8_t tile_index = BG_TILES_BOARD_LETTERS_START;
+    for (uint8_t y = 0; y < BOARD_GRID_TILE_H; y += BOARD_TILE_H) {
+
+        for (uint8_t x = 0; x < BOARD_GRID_TILE_W; x += BOARD_TILE_W) {
+
+            set_bkg_based_tiles(BOARD_TILE_X_START + x, BOARD_TILE_Y_START + y,
+                                BOARD_TILE_H, BOARD_TILE_H,
+                                board_map_letter, tile_index);
+            tile_index += 4u;
+        }
+    }
+}
+
 
 char empty_word_buf[WORD_LENGTH + 1] = "     ";
 
@@ -228,6 +253,7 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
 }
 
 
+// TODO: optimize this for size/speed
 // Set highlight color for a letter on baord based on guess status
 void board_set_color_for_letter(uint8_t row, uint8_t col, uint8_t do_highlight) {
 
@@ -304,13 +330,13 @@ void board_initgfx(void) {
     gb_decompress_bkg_data((BG_TILES_DIALOG_START), dialog_tiles);
 
     // == Draw the game board map ==
-    // TODO: this + map takes up about 300 bytes, optimize further? seems like setup call for this is what costs the most
     // Set up Board Letter map in VRAM
     // (direct addressable for rewriting letters via changing tile contents)
-    set_bkg_based_tiles(BOARD_TILE_X_START, BOARD_TILE_Y_START,
-                        BOARD_GRID_TILE_W, BOARD_GRID_TILE_H,
-                        board_map,
-                        BG_TILES_BOARD_LETTERS_START);
+    board_map_fill();
+    // set_bkg_based_tiles(BOARD_TILE_X_START, BOARD_TILE_Y_START,
+    //                     BOARD_GRID_TILE_W, BOARD_GRID_TILE_H,
+    //                     board_map,
+    //                     BG_TILES_BOARD_LETTERS_START);
 
     // Set up colors for board area
     if (IS_CGB)
