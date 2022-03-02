@@ -15,6 +15,9 @@
 #include "keyboard.h"
 #include "board.h"
 
+char empty_word_buf[WORD_LENGTH + 1] = "     ";
+
+uint8_t g_board_tile_flip_speed;
 
 /*
 // 5 x 6 array of 2x2 metatiles arranged as first row:0,1 second row: 2,3
@@ -39,32 +42,48 @@ const uint8_t board_map[]  = {
 };
 */
 
+#define BRD_COORD(x) (BOARD_TILE_X_START + ((x) * BOARD_TILE_W))
+
+
+// Range for consecutive board rows: start offset, length
+// This makes a 5 x 6 grid for gameplay
+const uint8_t board_row_ranges_game[] =
+  {BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
+   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
+   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
+   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
+   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
+   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W)};
+
+
 // 2x2 BG metatiles on the board
 const uint8_t board_map_letter[]  = {0, 1, 2, 3};
 
-// This is about 70 bytes smaller than the const map version above ^^^
+// This is about smaller in code size than the const map version above ^^^
 //
 // Draw the board tile map
-// 5 x 6 array of 2x2 metatiles arranged as first row:0,1 second row: 2,3
+// * Game Board is 5 x 6 array of 2x2 metatiles arranged as first row:0,1 second row: 2,3
+// * Also supports aribtrary row starts and lengths
 static void board_map_fill() {
 
+    const uint8_t * p_range = board_row_ranges_game;
     uint8_t tile_index = BG_TILES_BOARD_LETTERS_START;
-    for (uint8_t y = 0; y < BOARD_GRID_TILE_H; y += BOARD_TILE_H) {
 
-        for (uint8_t x = 0; x < BOARD_GRID_TILE_W; x += BOARD_TILE_W) {
+    for (uint8_t y = BOARD_TILE_Y_START; y < (BOARD_TILE_Y_START + BOARD_GRID_TILE_H); y += BOARD_TILE_H) {
 
-            set_bkg_based_tiles(BOARD_TILE_X_START + x, BOARD_TILE_Y_START + y,
-                                BOARD_TILE_H, BOARD_TILE_H,
+        uint8_t start_x = *p_range++;
+        uint8_t end_x   = *p_range++;
+        for (uint8_t x = start_x; x < end_x; x += BOARD_TILE_W) {
+
+            set_bkg_based_tiles(x, y,
+                                BOARD_TILE_H, BOARD_TILE_W,
                                 board_map_letter, tile_index);
-            tile_index += 4u;
+            tile_index += (BOARD_TILE_W * BOARD_TILE_H);
         }
     }
 }
 
 
-char empty_word_buf[WORD_LENGTH + 1] = "     ";
-
-uint8_t g_board_tile_flip_speed;
 
 // Tile flip animation frames
 const uint8_t board_flip_anim[] = {
