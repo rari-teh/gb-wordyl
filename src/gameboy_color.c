@@ -6,6 +6,11 @@
 #include "gfx_common.h"
 #include "gameboy_color.h"
 
+// These store a map for where to apply the CGB attributes for a given tile letter
+cgb_attr_xy board_cgb_addrs[BOARD_GRID_H * BOARD_GRID_W];
+uint8_t board_cgb_addrs_last;
+
+
 const palette_color_t cgb_palettes[] = {
                                RGB8(255u,255u,255u), RGB8(170u,170u,170u),RGB8(85u,85u,85u),RGB8(0u,0u,0u),
                                RGB8(255u,243u, 86u), RGB8(255u /2, 243u /2, 86u  /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = yellow
@@ -55,14 +60,22 @@ void board_fill_letter_cgb_pal(uint8_t row, uint8_t col, uint8_t palnum) {
     // Select CGB attribute tile mode for bkg map access
     VBK_REG = VBKF_BKG_ATTRIB;
 
-    // Fill region with requested CGB palette attribute
-    fill_bkg_rect(BOARD_GRID_X + (col * BOARD_TILE_W),
+    uint8_t idx = col + (row * BOARD_GRID_W);
+
+    // Don't render anything at 0,0 which is unpopulated
+    if (idx <= board_cgb_addrs_last)
+    {
+        // Fill region with requested CGB palette attribute
+        fill_bkg_rect(board_cgb_addrs[idx].x,
+                      board_cgb_addrs[idx].y,
+                      BOARD_TILE_W, BOARD_TILE_H,
+                      palnum & CGB_PAL_MASK);
+    }
+/*    fill_bkg_rect(BOARD_GRID_X + (col * BOARD_TILE_W),
                   BOARD_GRID_Y + (row * BOARD_TILE_H),
                   BOARD_TILE_W, BOARD_TILE_H,
                   palnum & CGB_PAL_MASK);
-
+*/
     // Return to normal tile BKG mode
     VBK_REG = VBKF_BKG_TILES;
 }
-
-

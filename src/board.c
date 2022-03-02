@@ -55,6 +55,15 @@ const uint8_t board_row_ranges_game[] =
    BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
    BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W)};
 
+// This makes an irregular grid for the intro screen
+const uint8_t board_row_ranges_splash[] =
+  {BRD_COORD(0u), BRD_COORD(0u + 4u),
+   BRD_COORD(2u), BRD_COORD(2u + 3u),
+   BRD_COORD(1u), BRD_COORD(1u + 1u),
+   BRD_COORD(0u), BRD_COORD(0u + 4u),
+   BRD_COORD(3u), BRD_COORD(3u + 2u),
+   BRD_COORD(0u), BRD_COORD(0u)};
+
 
 // 2x2 BG metatiles on the board
 const uint8_t board_map_letter[]  = {0, 1, 2, 3};
@@ -66,14 +75,21 @@ const uint8_t board_map_letter[]  = {0, 1, 2, 3};
 // * Also supports aribtrary row starts and lengths
 static void board_map_fill() {
 
-    const uint8_t * p_range = board_row_ranges_game;
+    const uint8_t * p_range = board_row_ranges_splash;
+    // const uint8_t * p_range = board_row_ranges_game;
     uint8_t tile_index = BG_TILES_BOARD_LETTERS_START;
 
-    for (uint8_t y = BOARD_TILE_Y_START; y < (BOARD_TILE_Y_START + BOARD_GRID_TILE_H); y += BOARD_TILE_H) {
+    uint8_t * p_board_cgb_addrs = (uint8_t *)board_cgb_addrs;
 
-        uint8_t start_x = *p_range++;
-        uint8_t end_x   = *p_range++;
-        for (uint8_t x = start_x; x < end_x; x += BOARD_TILE_W) {
+    for (uint8_t y = BOARD_TILE_Y_START; y < (BOARD_TILE_Y_START + BOARD_GRID_TILE_H); y += BOARD_TILE_H) {
+        uint8_t start = *p_range++;
+        uint8_t end   = *p_range++;
+
+        for (uint8_t x = start; x < end; x += BOARD_TILE_W) {
+
+            // Store x,y coordinates of tile for CGB attribute drawing later
+            *p_board_cgb_addrs++ = x;
+            *p_board_cgb_addrs++ = y;
 
             set_bkg_based_tiles(x, y,
                                 BOARD_TILE_H, BOARD_TILE_W,
@@ -81,7 +97,11 @@ static void board_map_fill() {
             tile_index += (BOARD_TILE_W * BOARD_TILE_H);
         }
     }
+
+    // board_cgb_addrs_last = board_cgb_addrs_index;
+    board_cgb_addrs_last = (tile_index - (BG_TILES_BOARD_LETTERS_START + (BOARD_TILE_W * BOARD_TILE_H))) >> 2;
 }
+
 
 
 

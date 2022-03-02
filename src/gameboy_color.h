@@ -42,6 +42,14 @@
 #define SET_KEYBD_CGB_PAL_MATCHED      CGB_PAL_GREEN
 #define SET_KEYBD_CGB_PAL_NOT_IN_WORD  CGB_PAL_RED
 
+typedef struct cgb_attr_xy {
+    uint8_t x;
+    uint8_t y;
+
+} cgb_attr_xy;
+extern cgb_attr_xy board_cgb_addrs[];
+extern uint8_t board_cgb_addrs_last;
+
 
 extern const palette_color_t cgb_palettes[];
 
