@@ -31,7 +31,9 @@ void main() {
     while(1) {
         switch (game_state) {
             case GAME_STATE_INIT:
-                gameplay_init();
+                board_initgfx();
+                BOARD_SET_LAYOUT_GAME;                
+                gameplay_init_maps();
                 gameplay_restart();
                 gameplay_init_turn_gfx_on();
                 // Skip direct to GAME_STATE_RUNNING, past GAME_STATE_RESTART

@@ -14,9 +14,21 @@
 
 extern uint8_t g_board_tile_flip_speed;
 
+
+// Range for consecutive board rows: start offset, length
+// Board layouts
+extern const uint8_t board_row_ranges_game[];
+extern const uint8_t board_row_ranges_splash[];
+extern const uint8_t * p_board_layout;
+
+#define BOARD_SET_LAYOUT_SPLASH (p_board_layout = board_row_ranges_splash)
+#define BOARD_SET_LAYOUT_GAME   (p_board_layout = board_row_ranges_game)
+
 // Turns board tile flipping on/off and sets speed in board_draw_letter()
 // Use with BOARD_TILE_FLIP_*
 #define BOARD_SET_FLIP_SPEED(speed) g_board_tile_flip_speed = (speed)
+
+void board_map_fill();
 
 void board_hide_cursor(void);
 void board_update_cursor(void);

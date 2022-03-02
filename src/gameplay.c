@@ -146,20 +146,23 @@ void gameplay_init_turn_gfx_on(void) {
 }
 
 // Run once on startup to prepare gameplay board graphics
-void gameplay_init(void) {
-
-    board_initgfx();
-    keyboard_draw_map();
+void gameplay_init_maps(void) {
 
     // Initialize Window dialog box
     win_dialog_draw();
 
-    // Center screen by scrolling slightly to the left
-    // move_bkg(252, 252);
-    move_bkg(252, 0);
+    // == Setup the game board & keyboard ==
 
-    // Reset guess to empty and prepare for next one
-    strcpy(word, "EMPTY");
+    // Clear screen
+    fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
+    keyboard_draw_map();
+    // Set up Board Letter map in VRAM
+    // (direct addressable for rewriting letters via changing tile contents)
+    board_map_fill();
+    // set_bkg_based_tiles(BOARD_TILE_X_START, BOARD_TILE_Y_START,
+    //                     BOARD_GRID_TILE_W, BOARD_GRID_TILE_H,
+    //                     board_map,
+    //                     BG_TILES_BOARD_LETTERS_START);
 }
 
 

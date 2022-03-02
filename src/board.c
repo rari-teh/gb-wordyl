@@ -64,6 +64,7 @@ const uint8_t board_row_ranges_splash[] =
    BRD_COORD(3u), BRD_COORD(3u + 2u),
    BRD_COORD(0u), BRD_COORD(0u)};
 
+const uint8_t * p_board_layout;
 
 // 2x2 BG metatiles on the board
 const uint8_t board_map_letter[]  = {0, 1, 2, 3};
@@ -73,9 +74,9 @@ const uint8_t board_map_letter[]  = {0, 1, 2, 3};
 // Draw the board tile map
 // * Game Board is 5 x 6 array of 2x2 metatiles arranged as first row:0,1 second row: 2,3
 // * Also supports aribtrary row starts and lengths
-static void board_map_fill() {
+void board_map_fill() {
 
-    const uint8_t * p_range = board_row_ranges_splash;
+    const uint8_t * p_range = p_board_layout;
     // const uint8_t * p_range = board_row_ranges_game;
     uint8_t tile_index = BG_TILES_BOARD_LETTERS_START;
 
@@ -91,8 +92,7 @@ static void board_map_fill() {
             *p_board_cgb_addrs++ = x;
             *p_board_cgb_addrs++ = y;
 
-            set_bkg_based_tiles(x, y,
-                                BOARD_TILE_H, BOARD_TILE_W,
+            set_bkg_based_tiles(x, y, BOARD_TILE_H, BOARD_TILE_W,
                                 board_map_letter, tile_index);
             tile_index += (BOARD_TILE_W * BOARD_TILE_H);
         }
@@ -342,9 +342,6 @@ void board_initgfx(void) {
     // Map Data
     SET_PRINT_COLOR_NORMAL;
 
-    // Clear screen
-    fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
-
     // Load 2bpp blank tile
     gb_decompress_bkg_data((BG_TILES_BLANK_START), tile_blank);
 
@@ -368,22 +365,9 @@ void board_initgfx(void) {
     // Load 2bpp window dialog tiles
     gb_decompress_bkg_data((BG_TILES_DIALOG_START), dialog_tiles);
 
-    // == Draw the game board map ==
-    // Set up Board Letter map in VRAM
-    // (direct addressable for rewriting letters via changing tile contents)
-    board_map_fill();
-    // set_bkg_based_tiles(BOARD_TILE_X_START, BOARD_TILE_Y_START,
-    //                     BOARD_GRID_TILE_W, BOARD_GRID_TILE_H,
-    //                     board_map,
-    //                     BG_TILES_BOARD_LETTERS_START);
-
     // Set up colors for board area
     if (IS_CGB)
         board_initgfx_cgb();
-
-    // TODO: replace me
-    print_gotoxy(2,0, PRINT_BKG);
-    print_str("GAME BOY WORDYL");
 
     // == Cursors ==
     // Sprite Data
@@ -420,5 +404,8 @@ void board_initgfx(void) {
 
     // Clear window and move it offscreen at the bottom
     move_win(0 + WIN_X_OFFSET, DEVICE_SCREEN_PX_HEIGHT); // Window is offscreen by default
-    fill_win_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START );
+
+    // Center screen by scrolling slightly to the left
+    // move_bkg(252, 252);
+    move_bkg(252, 0);
 }
