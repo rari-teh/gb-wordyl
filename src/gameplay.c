@@ -145,7 +145,10 @@ void gameplay_init_turn_gfx_on(void) {
     DISPLAY_ON;
 }
 
-// Run once on startup to prepare gameplay board graphics
+// Run once on startup to prepare gameplay board graphics maps
+//
+// This DOES NOT draw the actual graphics, just lays out maps
+// so they can be drawn using draw-via-tiles instead of draw-via-tile-ids
 void gameplay_init_maps(void) {
 
     // Initialize Window dialog box
@@ -156,6 +159,7 @@ void gameplay_init_maps(void) {
     // Clear screen
     fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
     keyboard_draw_map();
+
     // Set up Board Letter map in VRAM
     // (direct addressable for rewriting letters via changing tile contents)
     board_map_fill();
@@ -163,6 +167,10 @@ void gameplay_init_maps(void) {
     //                     BOARD_GRID_TILE_W, BOARD_GRID_TILE_H,
     //                     board_map,
     //                     BG_TILES_BOARD_LETTERS_START);
+
+    // Set up colors for board area
+    if (IS_CGB)
+        board_initgfx_cgb();
 }
 
 

@@ -54,6 +54,7 @@ extern uint8_t board_cgb_addrs_last;
 extern const palette_color_t cgb_palettes[];
 
 void cgb_check_and_init(void);
+void splash_initgfx_cgb(void);
 void cgb_set_palettes(void);
 void board_initgfx_cgb(void);
 void board_fill_letter_cgb_pal(uint8_t row, uint8_t col, uint8_t palnum);

@@ -59,9 +59,9 @@ const uint8_t board_row_ranges_game[] =
 const uint8_t board_row_ranges_splash[] =
   {BRD_COORD(0u), BRD_COORD(0u + 4u),
    BRD_COORD(2u), BRD_COORD(2u + 3u),
-   BRD_COORD(1u), BRD_COORD(1u + 1u),
-   BRD_COORD(0u), BRD_COORD(0u + 4u),
-   BRD_COORD(3u), BRD_COORD(3u + 2u),
+   BRD_COORD(0u), BRD_COORD(0u + 2u),
+   BRD_COORD(1u), BRD_COORD(1u + 4u),
+   BRD_COORD(2u), BRD_COORD(2u + 4u),
    BRD_COORD(0u), BRD_COORD(0u)};
 
 const uint8_t * p_board_layout;
@@ -162,7 +162,6 @@ void board_render_guess_letter(uint8_t col) {
         // board_set_color_for_letter(guess_num, col, BOARD_HIGHLIGHT_YES);
         board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
     #else
-        BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_FAST);
         board_draw_letter(guess_num, col, guess[col], BOARD_HIGHLIGHT_NO);
     #endif
 }
@@ -217,7 +216,11 @@ void board_draw_letter_bits(uint8_t row, uint8_t col, uint8_t letter) {
 
 // Board tile flip animation: Direct render a tile to VRAM to fill a board letter square
 // Previous calls to set_1bpp_colors() will affect colors produced here
+//
+// Faster flip speeds look ok on all hardware except stock CGB LCD
+// which seems to drop some frames?
 void board_draw_tile_flip_anim(uint8_t row, uint8_t col) {
+
 
     for (uint8_t c = 0; c < ARRAY_LEN(board_flip_anim); c++) {
         board_draw_letter_bits(row, col, board_flip_anim[c]);
@@ -225,12 +228,10 @@ void board_draw_tile_flip_anim(uint8_t row, uint8_t col) {
         // One frame between animations in all modes
         wait_vbl_done();
 
-        #ifdef ENABLE_BOARD_SLOW_FLIP
-            // Another frame of delay in slow mode
-            if (g_board_tile_flip_speed == BOARD_TILE_FLIP_SLOW) {
-                wait_vbl_done();
-            }
-        #endif
+        // Another frame of delay in slow mode
+        if (g_board_tile_flip_speed == BOARD_TILE_FLIP_SLOW) {
+            wait_vbl_done();
+        }
     }
 }
 
@@ -273,12 +274,7 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
         p_guess = empty_word_buf;
         BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_NONE);
     } else {
-        #ifdef ENABLE_BOARD_SLOW_FLIP
-            // Slow tile flip for word reveal
-            BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_SLOW);
-        #else
-            BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_FAST);
-        #endif
+        BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_FAST);
     }
 
     // Flag guess letters as: LETTER_NOT_IN_WORD, LETTER_WRONG_PLACE or LETTER_RIGHT_PLACE
@@ -364,10 +360,6 @@ void board_initgfx(void) {
     // == Dialog Window Tiles / Squares ==
     // Load 2bpp window dialog tiles
     gb_decompress_bkg_data((BG_TILES_DIALOG_START), dialog_tiles);
-
-    // Set up colors for board area
-    if (IS_CGB)
-        board_initgfx_cgb();
 
     // == Cursors ==
     // Sprite Data
