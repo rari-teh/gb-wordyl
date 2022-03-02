@@ -15,7 +15,7 @@ bool answer_letter_used[WORD_LENGTH];
 uint8_t guess_num;
 
 char guess[WORD_LENGTH+1];
-char word[WORD_LENGTH+1];
+char word[WORD_LENGTH+1];  // TODO: rename this to "answer_word"
 
 
 #define PRINT_MAX_DIGITS  5
