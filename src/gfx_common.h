@@ -38,6 +38,7 @@ void print_str(char * txt);
 
 void draw_letter_to_tileid(uint8_t letter, uint8_t index);
 
+void gfx_load(void);
 
 
 // Hardware correction factor for X position of Window when displayed on screen

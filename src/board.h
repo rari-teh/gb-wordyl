@@ -39,6 +39,4 @@ void board_draw_letter(uint8_t row, uint8_t col, uint8_t letter, bool do_highlig
 void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight);
 void board_set_color_for_letter(uint8_t row, uint8_t col, uint8_t do_highlight);
 
-void board_initgfx(void);
-
 #endif

@@ -34,7 +34,7 @@ void main() {
         switch (game_state) {
             case GAME_STATE_INTRO:
 // FADE OUT
-                board_initgfx(); // TODO: move out of main loop
+                gfx_load(); // TODO: move out of main loop
 
                 move_bkg(0, (uint8_t)-8); // TODO: macro
                 BOARD_SET_LAYOUT_SPLASH;
