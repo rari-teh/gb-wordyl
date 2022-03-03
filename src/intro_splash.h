@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+void splash_run(void);
 void splash_init_maps(void);
 void splash_animate_title(void);
 

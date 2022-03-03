@@ -11,12 +11,36 @@
 #include "input.h"
 #include "gfx_common.h"
 #include "gameboy_color.h"
+#include "fade.h"
 
 #include "board.h"
+#include "intro_splash.h"
+
+
+void splash_run(void) {
+                // Scroll up one tile row to move the board down a little
+                move_bkg(0, (uint8_t)-8); // TODO: macro?
+                BOARD_SET_LAYOUT_SPLASH;
+                splash_init_maps();
+
+                // Use an inverted pallette for splash screen
+                DMG_PAL_INVERT_ON;
+                fade_in();
+
+                splash_animate_title();
+                waitpadticked_lowcpu(J_START, NULL);
+
+                fade_out();
+                // Revert to normal palette
+                DMG_PAL_INVERT_OFF;
+
+                move_bkg(252, 0); // TODO: macro
+}
+
 
 // Run once on startup to prepare gameplay board graphics
 void splash_init_maps(void) {
-    
+
     set_bkg_based_tiles(0,31, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, map_decomp_buf, BG_TILES_INTRO_DIALOG_START);
 
     // Set up Board Letter map in VRAM

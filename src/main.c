@@ -17,49 +17,40 @@
 #include "input.h"
 #include "gfx_common.h"
 #include "gameboy_color.h"
+#include "fade.h"
 
 #include "intro_splash.h"
 #include "board.h"
 #include "gameplay.h"
 #include "stats.h"
 
+
 void main() {
 
-    DISPLAY_OFF;
+    fade_out();
+    SHOW_WIN;
+    SHOW_BKG;
+    SHOW_SPRITES;
+
     cgb_check_and_init();
+    gfx_load();
     stats_reset();
     game_state = GAME_STATE_INTRO;
 
     while(1) {
         switch (game_state) {
+
             case GAME_STATE_INTRO:
-// FADE OUT
-                gfx_load(); // TODO: move out of main loop
-
-                move_bkg(0, (uint8_t)-8); // TODO: macro
-                BOARD_SET_LAYOUT_SPLASH;
-                splash_init_maps();
-
-                gameplay_init_turn_gfx_on();  // TODO: move out of main loop
-// FADE IN
-                splash_animate_title();
-                waitpadticked_lowcpu(J_ANY_KEY, NULL);
-// FADE OUT
-                move_bkg(252, 0); // TODO: macro
-                game_state = GAME_STATE_FIRSTSTART;
-                break;
-
-            case GAME_STATE_FIRSTSTART:
+                splash_run();
+                // screen now: faded out
                 BOARD_SET_LAYOUT_GAME;
-// FIXME: seeing artifacting here leftover from splash - fade should fix it
                 gameplay_init_maps();
                 game_state = GAME_STATE_RESTART;
                 break;
 
             case GAME_STATE_RESTART:
-// FADE OUT
                 gameplay_restart();
-// FADE IN
+                fade_in();
                 game_state = GAME_STATE_RUNNING;
                 break;
 
@@ -69,6 +60,7 @@ void main() {
 
             case GAME_STATE_OVER:
                 stats_show();
+                fade_out();
                 game_state = GAME_STATE_RESTART;
                 break;
         }

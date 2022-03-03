@@ -138,12 +138,13 @@ void gameplay_init_answer_word(void) {
 }
 
 
-void gameplay_init_turn_gfx_on(void) {
-    SHOW_WIN;
-    SHOW_BKG;
-    SHOW_SPRITES;
-    DISPLAY_ON;
-}
+// TODO: deleteable
+// void gameplay_init_turn_gfx_on(void) {
+//     SHOW_WIN;
+//     SHOW_BKG;
+//     SHOW_SPRITES;
+//     DISPLAY_ON;
+// }
 
 // Run once on startup to prepare gameplay board graphics maps
 //
