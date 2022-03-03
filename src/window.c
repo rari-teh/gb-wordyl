@@ -17,17 +17,7 @@
 // Draw dialog box outline on the window
 void win_dialog_draw(void) {
 
-    // Clear window area
-    fill_win_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START );
-
-    // Top corners
-    set_win_tile_xy(0,0, BG_TILES_DIALOG_START + DIALOG_TILE_UL);
-    set_win_tile_xy(DEVICE_SCREEN_WIDTH - 1,0, BG_TILES_DIALOG_START + DIALOG_TILE_UR);
-    // Top bar
-    fill_win_rect(1, 0, DEVICE_SCREEN_WIDTH - 2, 1, BG_TILES_DIALOG_START + DIALOG_TILE_TOP);
-    // Left and right edges
-    fill_win_rect(0, 1, 1, DEVICE_SCREEN_HEIGHT - 1, BG_TILES_DIALOG_START + DIALOG_TILE_L);
-    fill_win_rect(DEVICE_SCREEN_WIDTH - 1, 1, 1, DEVICE_SCREEN_HEIGHT - 1, BG_TILES_DIALOG_START + DIALOG_TILE_R);
+    set_win_based_tiles(0,0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, map_decomp_buf, BG_TILES_INTRO_DIALOG_START);
 }
 
 

@@ -1,6 +1,7 @@
 // gameplay.c
 
 #include <gbdk/platform.h>
+#include <gb/gbdecompress.h>
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -16,25 +17,8 @@
 // Run once on startup to prepare gameplay board graphics
 void splash_init_maps(void) {
 
-
-// TODO: Use a compressed map, maybe include stars BG?
-
-// Clear screen
-fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
-
-
-// // Clear window area
-fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START );
-
-// Top corners
-set_bkg_tile_xy(0,0, BG_TILES_DIALOG_START + DIALOG_TILE_UL);
-set_bkg_tile_xy(DEVICE_SCREEN_WIDTH - 1,0, BG_TILES_DIALOG_START + DIALOG_TILE_UR);
-// Top bar
-fill_bkg_rect(1, 0, DEVICE_SCREEN_WIDTH - 2, 1, BG_TILES_DIALOG_START + DIALOG_TILE_TOP);
-// Left and right edges
-fill_bkg_rect(0, 1, 1, DEVICE_SCREEN_HEIGHT - 1, BG_TILES_DIALOG_START + DIALOG_TILE_L);
-fill_bkg_rect(DEVICE_SCREEN_WIDTH - 1, 1, 1, DEVICE_SCREEN_HEIGHT - 1, BG_TILES_DIALOG_START + DIALOG_TILE_R);
-
+    gb_decompress(intro_dialog_map, map_decomp_buf);
+    set_bkg_based_tiles(0,31, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, map_decomp_buf, BG_TILES_INTRO_DIALOG_START);
 
     // Set up Board Letter map in VRAM
     // (direct addressable for rewriting letters via changing tile contents)
@@ -69,11 +53,11 @@ const uint8_t splash_text[] = {
         CHR_NUM('O'),
         CHR_NUM('Y'),
         BOARD_LETTERS_SPACE_CHAR,
-        BOARD_LETTERS_SPACE_CHAR,
         CHR_NUM('W'),
         CHR_NUM('O'),
         CHR_NUM('R'),
         CHR_NUM('D'),
+        BOARD_LETTERS_SPACE_CHAR,
         BOARD_LETTERS_SPACE_CHAR,
         BOARD_LETTERS_SPACE_CHAR,
         CHR_NUM('Y'),
@@ -89,22 +73,21 @@ const uint8_t splash_text_color[] = {
     CGB_PAL_GREEN,
 
     CGB_PAL_WHITE, // SPACE
+
+    CGB_PAL_BLUE, // WORD
+    CGB_PAL_BLUE,
+    CGB_PAL_BLUE,
+    CGB_PAL_BLUE,
+
+    CGB_PAL_WHITE, // SPACE
+    CGB_PAL_WHITE, // SPACE
     CGB_PAL_WHITE, // SPACE
 
-    CGB_PAL_BLUE, // WORDYL
-    CGB_PAL_BLUE,
-    CGB_PAL_BLUE,
-    CGB_PAL_BLUE,
-    CGB_PAL_WHITE, // SPACE
-    CGB_PAL_WHITE, // SPACE
-    CGB_PAL_BLUE,
+    CGB_PAL_BLUE,  // YL
     CGB_PAL_BLUE};
 
 
 void splash_animate_title(void) {
-
-move_bkg(0, 0); // TODO: FIXME
-
 
     // memcpy(word, "GAME", sizeof("GAME"));
     // board_draw_word(0, word, BOARD_HIGHLIGHT_YES);
@@ -144,5 +127,4 @@ move_bkg(0, 0); // TODO: FIXME
         }
     }
 
-move_bkg(252, 0); // TODO: FIXME
 }

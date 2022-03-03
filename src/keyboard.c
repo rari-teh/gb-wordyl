@@ -193,7 +193,7 @@ void keyboard_draw_map(void) {
     }
 
     // Bar across top of keyboard
-    fill_bkg_rect(KEYBD_START_X, KEYBD_START_Y-1, 33, 1, BG_TILES_DIALOG_START + DIALOG_TILE_TOP);
+    fill_bkg_rect(KEYBD_START_X, KEYBD_START_Y-1, 33, 1, BG_TILES_INTRO_DIALOG_START + DIALOG_TILE_TOP);
 }
 
 

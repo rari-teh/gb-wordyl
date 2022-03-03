@@ -35,13 +35,17 @@ void main() {
             case GAME_STATE_INTRO:
 // FADE OUT
                 board_initgfx(); // TODO: move out of main loop
+
+                move_bkg(0, (uint8_t)-8); // TODO: macro
                 BOARD_SET_LAYOUT_SPLASH;
                 splash_init_maps();
+
                 gameplay_init_turn_gfx_on();  // TODO: move out of main loop
 // FADE IN
                 splash_animate_title();
                 waitpadticked_lowcpu(J_ANY_KEY, NULL);
 // FADE OUT
+                move_bkg(252, 0); // TODO: macro
                 game_state = GAME_STATE_FIRSTSTART;
                 break;
 

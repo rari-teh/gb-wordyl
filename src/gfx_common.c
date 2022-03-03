@@ -17,6 +17,8 @@
 // Printing cursor position, updated by print_gotoxy
 uint8_t * print_vram_addr = NULL;
 
+uint8_t map_decomp_buf[DEVICE_SCREEN_WIDTH * DEVICE_SCREEN_HEIGHT];
+
 uint8_t board_letters_decomp_buf[BOARD_LETTERS_COUNT * BOARD_LETTERS_TILES_PER * BOARD_LETTERS_BYTES_PER_TILE];
 uint8_t font_letters_decomp_buf[FONT_LETTERS_COUNT * FONT_LETTERS_BYTES_PER_TILE];
 

@@ -12,13 +12,16 @@
 #include "../res/font_num_tiles_1bpp_gbcompressed.h"
 #include "../res/board_letter_tiles_8x8_1bpp_gbcomp.h"
 
-// Window / Dialog data
-#include "../res/dialog_tiles_2bpp_gbcompressed.h"
+// Intro / Window Dialog data
+// #include "../res/dialog_tiles_2bpp_gbcompressed.h"
+#include "../res/intro_and_dialog_tiles.h"
+#include "../res/intro_dialog_map_gbcompress.h"
 
 
 #define PRINT_BKG 0
 #define PRINT_WIN 1
 
+extern uint8_t map_decomp_buf[];
 extern uint8_t board_letters_decomp_buf[];
 extern uint8_t font_letters_decomp_buf[];
 
@@ -104,10 +107,11 @@ void draw_letter_to_tileid(uint8_t letter, uint8_t index);
 #define BG_TILES_BOARD_LETTERS_START (BG_TILES_KEYBD_START + BG_TILES_KEYBD_LEN)
 #define BG_TILES_BOARD_LETTERS_LEN   (BOARD_GRID_W * BOARD_GRID_H * BOARD_GRID_TILES_PER_LETTER)
 
-#define BG_TILES_DIALOG_START (BG_TILES_BOARD_LETTERS_START + BG_TILES_BOARD_LETTERS_LEN)
-#define BG_TILES_DIALOG_LEN   5u
+#define BG_TILES_INTRO_DIALOG_START (BG_TILES_BOARD_LETTERS_START + BG_TILES_BOARD_LETTERS_LEN)
+#define BG_TILES_INTRO_DIALOG_LEN   8u
 
-#define BG_TILES_FONT_START   (BG_TILES_DIALOG_START + BG_TILES_DIALOG_LEN)
+
+#define BG_TILES_FONT_START   (BG_TILES_INTRO_DIALOG_START + BG_TILES_INTRO_DIALOG_LEN)
 #define BG_TILES_FONT_LEN     29u // 26 letters + 3 special chars: ".", "!", ":"
 #define BG_TILES_FONT_PERIOD  (BG_TILES_FONT_START + 26u)
 #define BG_TILES_FONT_EXCLAIM (BG_TILES_FONT_START + 27u)
@@ -117,11 +121,11 @@ void draw_letter_to_tileid(uint8_t letter, uint8_t index);
 #define BG_TILES_FONT_NUM_LEN     10u // 10 digits
 
 
-#define DIALOG_TILE_L    4u
 #define DIALOG_TILE_UL   0u
-#define DIALOG_TILE_R    3u
-#define DIALOG_TILE_UR   2u
 #define DIALOG_TILE_TOP  1u
+#define DIALOG_TILE_UR   2u
+#define DIALOG_TILE_L    3u
+#define DIALOG_TILE_R    6u
 
 
 

@@ -42,27 +42,33 @@ const uint8_t board_map[]  = {
 };
 */
 
-#define BRD_COORD(x) (BOARD_TILE_X_START + ((x) * BOARD_TILE_W))
-
+#define BRD_CRD_Y(y) (BOARD_TILE_Y_START + ((y) * BOARD_TILE_H))
+#define BRD_CRD_X(x) (BOARD_TILE_X_START + ((x) * BOARD_TILE_W))
+#define BRD_CRD_X_END(x, x_len) (BOARD_TILE_X_START + ((x + x_len) * BOARD_TILE_W))
+#define BRD_ROW(y, x, x_len) BRD_CRD_Y(y) , BRD_CRD_X(x) , BRD_CRD_X_END(x, x_len)
+#define BRD_CRD_STOP 0xFFu
 
 // Range for consecutive board rows: start offset, length
 // This makes a 5 x 6 grid for gameplay
+// y, x_start, x_length -> transformed to -> x, x_start, x_end
 const uint8_t board_row_ranges_game[] =
-  {BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
-   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
-   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
-   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
-   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W),
-   BRD_COORD(0u), BRD_COORD(0u + BOARD_GRID_W)};
+  {BRD_ROW(0u, 0u, BOARD_GRID_W),
+   BRD_ROW(1u, 0u, BOARD_GRID_W),
+   BRD_ROW(2u, 0u, BOARD_GRID_W),
+   BRD_ROW(3u, 0u, BOARD_GRID_W),
+   BRD_ROW(4u, 0u, BOARD_GRID_W),
+   BRD_ROW(5u, 0u, BOARD_GRID_W),
+   BRD_CRD_STOP};
 
 // This makes an irregular grid for the intro screen
 const uint8_t board_row_ranges_splash[] =
-  {BRD_COORD(0u), BRD_COORD(0u + 4u),
-   BRD_COORD(2u), BRD_COORD(2u + 3u),
-   BRD_COORD(0u), BRD_COORD(0u + 2u),
-   BRD_COORD(1u), BRD_COORD(1u + 4u),
-   BRD_COORD(2u), BRD_COORD(2u + 4u),
-   BRD_COORD(0u), BRD_COORD(0u)};
+  {BRD_ROW(0u, 1u, 4u), // Game
+   BRD_ROW(1u, 3u, 3u), // Boy
+   BRD_ROW(2u, 2u, 1u), // Blank
+   BRD_ROW(3u, 1u, 4u), // Word..
+   BRD_ROW(4u, 0u, 3u), // Blank
+   BRD_ROW(4u, 4u, 2u), // ..yl
+   BRD_CRD_STOP};
 
 const uint8_t * p_board_layout;
 
@@ -82,7 +88,10 @@ void board_map_fill() {
 
     uint8_t * p_board_cgb_addrs = (uint8_t *)board_cgb_addrs;
 
-    for (uint8_t y = BOARD_TILE_Y_START; y < (BOARD_TILE_Y_START + BOARD_GRID_TILE_H); y += BOARD_TILE_H) {
+    while (1) {
+        uint8_t y     = *p_range++;
+        if (y == BRD_CRD_STOP) break;
+
         uint8_t start = *p_range++;
         uint8_t end   = *p_range++;
 
@@ -341,11 +350,26 @@ void board_initgfx(void) {
     // Load 2bpp blank tile
     gb_decompress_bkg_data((BG_TILES_BLANK_START), tile_blank);
 
+
     // == Font Numbers ==
-    // Load 1bpp font num tiles - borrow font_letters_decomp_buf for a moment
+    //
+    // ** borrows font_letters_decomp_buf temporarily before it's actual use **
+    //
+    // Load 1bpp font num tiles
     gb_decompress(font_num_tiles, font_letters_decomp_buf);
     // Load tiles into vram for font printing
     set_bkg_1bpp_data(BG_TILES_FONT_NUM_START, BG_TILES_FONT_NUM_LEN, font_letters_decomp_buf);
+
+
+    // == Dialog Window Tiles / Squares ==
+    //
+    // ** borrows board_letters_decomp_buf temporarily before it's actual use **
+    //
+    // Load 1bpp intro / window dialog tiles
+    gb_decompress(intro_dialog_tiles, board_letters_decomp_buf);
+    // Load tiles into vram
+    set_bkg_1bpp_data(BG_TILES_INTRO_DIALOG_START, BG_TILES_INTRO_DIALOG_LEN, board_letters_decomp_buf);
+
 
     // == Font Letters ==
     // Load 1bpp font tiles (used by both keyboard for VRAM drawing and print as a VRAM tileset)
@@ -357,9 +381,7 @@ void board_initgfx(void) {
     // Decompress board letter tiles into a buffer, they get written to VRAM later as needed
     gb_decompress(board_letter_tiles, board_letters_decomp_buf);
 
-    // == Dialog Window Tiles / Squares ==
-    // Load 2bpp window dialog tiles
-    gb_decompress_bkg_data((BG_TILES_DIALOG_START), dialog_tiles);
+
 
     // == Cursors ==
     // Sprite Data
