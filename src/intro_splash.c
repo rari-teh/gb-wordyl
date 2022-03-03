@@ -16,8 +16,7 @@
 
 // Run once on startup to prepare gameplay board graphics
 void splash_init_maps(void) {
-
-    gb_decompress(intro_dialog_map, map_decomp_buf);
+    
     set_bkg_based_tiles(0,31, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, map_decomp_buf, BG_TILES_INTRO_DIALOG_START);
 
     // Set up Board Letter map in VRAM
