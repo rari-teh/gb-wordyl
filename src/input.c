@@ -6,6 +6,7 @@
 
 uint8_t keys = 0x00;
 uint8_t previous_keys = 0x00;
+uint8_t keys_ticked;
 // uint8_t keys_changed = 0x00;
 uint8_t key_repeat_count = 0x00;
 
@@ -23,11 +24,17 @@ void waitpadticked_lowcpu(uint8_t button_mask, volatile uint8_t * loop_control) 
 
         wait_vbl_done(); // yield CPU
         UPDATE_KEYS();
-        if (KEY_TICKED(button_mask))
-            break;
-    };
+        if (KEY_TICKED(button_mask)) {
 
-    // Prevent passing through any key ticked
-    // event that may have just happened
-    UPDATE_KEYS();
+            // Store key(s) ticked to exist this menu
+            // in case they need to be retrieved
+            UPDATE_KEYS_TICKED();
+
+            // Prevent passing through any key ticked
+            // event that may have just happened
+            UPDATE_KEYS();
+
+            return;
+        }
+    };
 }

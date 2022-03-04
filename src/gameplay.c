@@ -21,6 +21,7 @@
 #include "window.h"
 #include "stats.h"
 
+#include "gameplay.h"
 
 #define GAMEPLAY_SET_GAMEOVER  game_state = GAME_STATE_OVER
 
@@ -46,7 +47,39 @@ void show_win_message(uint8_t guess_count) {
 // Show a popup message: You Lost
 void show_lose_message(char *correct_word) {
 
-    win_dialog_show_message(DIALOG_LOSE_MESSAGE_WIN_Y, "You lost. Sorry!\n\nAnswer is: ", correct_word);
+    win_dialog_show_message(DIALOG_LOSE_MESSAGE_WIN_Y, "You lose. Sorry!\n\nAnswer is: ", correct_word);
+}
+
+
+void show_options_message(void) {
+
+    uint8_t  ret_keys_ticked;
+
+    ret_keys_ticked = win_dialog_show_message(DIALOG_MENU_WIN_Y,
+                        "OPTIONS\n\n"
+                        "RESET STATS .... A\n"
+                        "FOREIT ROUND ... B\n\n"
+                        "EXIT MENU .... ANY\n"
+                        ,NULL);
+
+    if (ret_keys_ticked & J_A) {
+        stats_reset();
+        win_dialog_show_message(DIALOG_INFO_WIN_Y, "STATS RESET!" ,NULL);
+        stats_show();
+    }
+    else if (ret_keys_ticked & J_B) {
+        // sets: GAMEPLAY_SET_GAMEOVER
+        gameplay_handle_lose();
+    }
+}
+
+
+void gameplay_handle_lose(void) {
+    // Hide cursor so it doesn't flash between popups
+    board_hide_cursor();
+    show_lose_message(word);
+    stats_update(GAME_NOT_WON, guess_num);
+    GAMEPLAY_SET_GAMEOVER;
 }
 
 
@@ -85,15 +118,12 @@ void gameplay_handle_guess(void) {
             // Hide cursor so it doesn't flash between popups
             board_hide_cursor();
             show_win_message(guess_num);
-            stats_update(game_was_won, guess_num);
+            stats_update(GAME_WAS_WON, guess_num);
             GAMEPLAY_SET_GAMEOVER;
         }
         else if (guess_num == MAX_GUESSES) {
-            // Hide cursor so it doesn't flash between popups
-            board_hide_cursor();
-            show_lose_message(word);
-            stats_update(game_was_won, guess_num);
-            GAMEPLAY_SET_GAMEOVER;
+            // sets: GAMEPLAY_SET_GAMEOVER;
+            gameplay_handle_lose();
         } else {
             board_update_cursor();
         }
@@ -194,7 +224,7 @@ void gameplay_restart(void) {
 void gameplay_run(void)
 {
 
-    while(1) {
+    while(game_state == GAME_STATE_RUNNING) {
         wait_vbl_done();
 
         UPDATE_KEYS();
@@ -237,14 +267,16 @@ void gameplay_run(void)
         if (KEY_TICKED(J_A | J_B | J_SELECT | J_START)) {
             switch(keys) {
 
+                // Show Options menu
                 case J_SELECT:
+                    // Can set game_state to lost (exiting loop)
+                    show_options_message();
                     break;
 
                 // Check a guess
                 case J_START:
+                    // Can set game_state to won / lost (exiting loop)
                     gameplay_handle_guess();
-                    if (game_state != GAME_STATE_RUNNING)
-                        return; // Game was Won or Lost, exit
                     break;
 
                 // Add/Remove letters from a guess

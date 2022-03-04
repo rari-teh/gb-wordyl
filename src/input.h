@@ -26,6 +26,8 @@
 //#define KEY_TICKED(MASK)   (keys & keys_changed & (MASK))
 //#define KEY_RELEASED(MASK) (~keys & keys_changed & (MASK))
 
+#define UPDATE_KEYS_TICKED() (keys_ticked = (keys ^ (keys & previous_keys)))
+#define KEYS_GET_TICKED() (keys_ticked)
 
 #define ANY_KEY_PRESSED (keys)
 
@@ -33,6 +35,7 @@ void waitpadticked_lowcpu(uint8_t button_mask, volatile uint8_t * loop_control);
 
 extern uint8_t keys;
 extern uint8_t previous_keys;
+extern uint8_t keys_ticked;
 // extern uint8_t keys_changed;
 extern uint8_t key_repeat_count;
 

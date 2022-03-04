@@ -22,9 +22,10 @@ void win_dialog_draw(void) {
 
 
 // Draw dialog box outline on the window
-void win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * str_2) {
+uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * str_2) {
     uint8_t win_y_save = WY_REG;
     uint8_t scroll_amt;
+    uint8_t ret_keys_ticked;
 
     // Clear dialog content area
     fill_win_rect(1, 1, DEVICE_SCREEN_WIDTH-2, DEVICE_SCREEN_HEIGHT-1, BG_TILES_BLANK_START );
@@ -53,6 +54,7 @@ void win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * st
     }
 
     waitpadticked_lowcpu(J_ANY_KEY, NULL);
+    ret_keys_ticked = KEYS_GET_TICKED();
 
     // Scroll window out of view (with a small ease-out)
     while (WY_REG < win_y_save) {
@@ -67,6 +69,8 @@ void win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * st
         wait_vbl_done();
     }
     SHOW_SPRITES;
+
+    return ret_keys_ticked;
 }
 
 

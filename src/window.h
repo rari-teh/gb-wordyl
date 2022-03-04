@@ -4,7 +4,7 @@
 #define _WINDOW_H
 
 void win_dialog_draw(void);
-void win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * str_2);
+uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * str_2);
 
 #define PX_PER_TILE        8
 #define DIALOG_BORDER_SIZE (1 * PX_PER_TILE)
@@ -13,5 +13,10 @@ void win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * st
 #define DIALOG_LOSE_MESSAGE_WIN_Y   (DIALOG_WON_MESSAGE_WIN_Y)
 #define DIALOG_GAME_INFO_Y          (DIALOG_WON_MESSAGE_WIN_Y)
 #define DIALOG_STATS_MESSAGE_WIN_Y  (DEVICE_SCREEN_PX_HEIGHT - ((10 * PX_PER_TILE) + DIALOG_BORDER_SIZE))
+
+#define DIALOG_MENU_WIN_Y  (DEVICE_SCREEN_PX_HEIGHT - ((7 * PX_PER_TILE) + DIALOG_BORDER_SIZE))
+
+#define DIALOG_INFO_WIN_Y           (DIALOG_WON_MESSAGE_WIN_Y)
+
 
 #endif
