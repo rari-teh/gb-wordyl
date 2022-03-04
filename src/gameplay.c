@@ -27,8 +27,6 @@
 
 uint8_t game_won_str[] = "You won!\n\nOn Guess X of 6";
 
-bool game_answer_word_selected;
-
 // Show a popup message: You Won
 void show_win_message(uint8_t guess_count) {
 
@@ -163,8 +161,6 @@ void gameplay_init_answer_word(void) {
         print_gotoxy(0,0, PRINT_BKG);
         print_str(word);
     #endif
-
-    game_answer_word_selected = true;
 }
 
 
@@ -208,7 +204,6 @@ void gameplay_init_maps(void) {
 // Runs on startup and before start of a new gameplay round
 void gameplay_restart(void) {
 
-    game_answer_word_selected = false;
     guess_num = 0;
     memset(guess, 0, sizeof(guess));
 
@@ -217,6 +212,8 @@ void gameplay_restart(void) {
     board_update_cursor();
 
     keyboard_reset();
+
+    gameplay_init_answer_word();
 }
 
 
@@ -282,12 +279,6 @@ void gameplay_run(void)
                 // Add/Remove letters from a guess
                 case J_A:
                     board_add_guess_letter();
-                    // Wait until after the first letter is pressed to
-                    // select the answer word (to avoid a delay after keypress)
-                    //
-                    // TODO: move this once there is a splash screen
-                    if (game_answer_word_selected == false)
-                        gameplay_init_answer_word();
                     break;
 
                 case J_B:
