@@ -80,7 +80,7 @@ void fade_in(void) {
 // Fade in/out from Black
 void fade_cgb(int8_t fade_dir) {
 
-    uint8_t pal, c;
+    uint8_t pal;
     // Static for size opt
     static int8_t i;
 
