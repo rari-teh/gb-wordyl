@@ -176,7 +176,7 @@ void gfx_load(void);
 // #define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)
 // #define SET_BOARD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)
 // Keyboard
-#define SET_KEYBD_COLOR_NORMAL       set_1bpp_colors(DMG_DARK_GRAY, DMG_WHITE)
+#define SET_KEYBD_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)
 #define SET_KEYBD_COLOR_CONTAINS     set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)
 #define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)
 // #define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_BLACK, DMG_WHITE)
