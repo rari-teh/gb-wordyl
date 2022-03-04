@@ -18,23 +18,45 @@
 
 
 void splash_run(void) {
-                // Scroll up one tile row to move the board down a little
-                move_bkg(0, (uint8_t)-8); // TODO: macro?
-                BOARD_SET_LAYOUT_SPLASH;
-                splash_init_maps();
 
-                // Use an inverted pallette for splash screen
-                DMG_PAL_INVERT_ON;
-                fade_in();
+    DMG_PAL_INVERT_ON;
 
-                splash_animate_title();
-                waitpadticked_lowcpu(J_START, NULL);
+    // == INITIAL CREDITS SCREEN ==
+    fade_in();
 
-                fade_out();
-                // Revert to normal palette
-                DMG_PAL_INVERT_OFF;
+    print_gotoxy(4u, (DEVICE_SCREEN_HEIGHT - 9u) / 2u, PRINT_BKG);
+    print_str(
+        "2022\n"
+        "BBBBBR\n\n"
+        "THX TO:\n"
+        "ARPRUSS\n"
+        "STACKSMASHING\n\n"
+        "GBDK2020\n"
+        "EMULICIOUS"
+        );
+    if (IS_CGB) delay(4000);
+    else        delay(2000);
+    fade_out();
 
-                move_bkg(252, 0); // TODO: macro
+
+    // == MAIN SPLASH SCREEN ==
+
+    // Scroll up one tile row to move the board down a little
+    move_bkg(0, (uint8_t)-8); // TODO: macro?
+    BOARD_SET_LAYOUT_SPLASH;
+    splash_init_maps();
+
+    // Use an inverted pallette for splash screen
+    fade_in();
+
+    splash_animate_title();
+    waitpadticked_lowcpu(J_START, NULL);
+
+    fade_out();
+    // Revert to normal palette
+    DMG_PAL_INVERT_OFF;
+
+    move_bkg(252, 0); // TODO: macro
 }
 
 
@@ -58,10 +80,6 @@ void splash_init_maps(void) {
 
     print_gotoxy((DEVICE_SCREEN_WIDTH - 11u) / 2u,DEVICE_SCREEN_HEIGHT - 4u, PRINT_BKG);
     print_str("PRESS START");
-
-    // TODO:
-    // print_gotoxy(1u,DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
-    // print_str("BBBBBR : ARPRUSS\nSTACKSMASHING\n");
 }
 
 #define CHR_NUM(c) (c - 'A')
@@ -112,10 +130,6 @@ const uint8_t splash_text_color[] = {
 
 void splash_animate_title(void) {
 
-    // memcpy(word, "GAME", sizeof("GAME"));
-    // board_draw_word(0, word, BOARD_HIGHLIGHT_YES);
-    // board_draw_word(0, "BOY", BOARD_HIGHLIGHT_YES);
-
     uint8_t row = 0;
     uint8_t col = 0;
     bool skip_anim = false;
@@ -143,6 +157,9 @@ void splash_animate_title(void) {
             board_fill_letter_cgb_pal(row, col, splash_text_color[c]);
 
         board_draw_letter_bits(row, col, splash_text[c]);
+
+        // Simulate transition between board rows as
+        // letters increment, to re-use board drawing logic
         row++;
         if (row = BOARD_GRID_W) {
             row = 0;
