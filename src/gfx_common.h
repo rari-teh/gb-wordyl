@@ -16,6 +16,7 @@
 // #include "../res/dialog_tiles_2bpp_gbcompressed.h"
 #include "../res/intro_and_dialog_tiles.h"
 #include "../res/intro_dialog_map_gbcompress.h"
+#include "../res/intro_stars_map_gbcompress.h"
 
 
 #define PRINT_BKG 0

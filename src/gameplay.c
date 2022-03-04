@@ -178,14 +178,16 @@ void gameplay_init_answer_word(void) {
 // so they can be drawn using draw-via-tiles instead of draw-via-tile-ids
 void gameplay_init_maps(void) {
 
-    // Initialize Window dialog box
-    win_dialog_draw();
-
     // == Setup the game board & keyboard ==
 
     // Clear screen
     fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
     keyboard_draw_map();
+
+    // Draw stars
+    // IMPORTANT: relies on stars already being in decompressed map
+    //     gb_decompress(intro_stars_map, map_decomp_buf);
+    set_bkg_based_tiles(0,0,  DEVICE_SCREEN_WIDTH - 2, DEVICE_SCREEN_HEIGHT - KEYBD_ROWS -2 , map_decomp_buf, BG_TILES_INTRO_DIALOG_START);
 
     // Set up Board Letter map in VRAM
     // (direct addressable for rewriting letters via changing tile contents)

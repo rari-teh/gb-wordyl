@@ -140,8 +140,10 @@ void gfx_load(void) {
     gb_decompress(intro_dialog_tiles, board_letters_decomp_buf);
     // Load tiles into vram
     set_bkg_1bpp_data(BG_TILES_INTRO_DIALOG_START, BG_TILES_INTRO_DIALOG_LEN, board_letters_decomp_buf);
-    // Decompress map for later use
+    // Initialize Window dialog box
     gb_decompress(intro_dialog_map, map_decomp_buf);
+    win_dialog_draw();
+
 
     // == Font Letters ==
     // Load 1bpp font tiles (used by both keyboard for VRAM drawing and print as a VRAM tileset)

@@ -63,7 +63,14 @@ void splash_run(void) {
 // Run once on startup to prepare gameplay board graphics
 void splash_init_maps(void) {
 
+    // IMPORTANT: Expects dialog border map to already be
+    // decompressed and ready
+    //     gb_decompress(intro_dialog_map, map_decomp_buf);
     set_bkg_based_tiles(0,31, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, map_decomp_buf, BG_TILES_INTRO_DIALOG_START);
+
+    // Decompress stars map
+    gb_decompress(intro_stars_map, map_decomp_buf);
+    set_bkg_based_tiles(1,0,  DEVICE_SCREEN_WIDTH - 2, DEVICE_SCREEN_HEIGHT - 1, map_decomp_buf, BG_TILES_INTRO_DIALOG_START);
 
     // Set up Board Letter map in VRAM
     // (direct addressable for rewriting letters via changing tile contents)
