@@ -82,7 +82,7 @@ $(BINS):	$(OBJS)
 
 romusage:
 # Ignores failure if romusage not in path
-	-romusage build/gb/GBWORDYL.gb; romusage build/gb/GBWORDYL.gb > romusage.txt
+	-romusage build/gb/GBWORDYL.noi; romusage build/gb/GBWORDYL.noi > romusage.txt
 
 clean:
 	@echo Cleaning
