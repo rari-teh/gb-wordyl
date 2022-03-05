@@ -18,7 +18,7 @@ const uint16_t FADE_LUT[] = {
 
 #define FADE_MAX    (ARRAY_LEN(FADE_LUT) - 1)
 
-#define CGB_PAL_COUNT   5
+// #define CGB_PAL_COUNT   5 // from gameboy_color.h
 #define CGB_COL_PER_PAL 4
 
 #define FADE_IN_START  5
