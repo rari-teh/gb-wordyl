@@ -56,12 +56,12 @@ void show_options_message(void) {
     ret_keys_ticked = win_dialog_show_message(DIALOG_MENU_WIN_Y,
                         "OPTIONS\n\n"
                         "SHOW STATS ....  B\n\n"
-                        "RESET STATS ... UP\n"
-                        "FORFEIT ROUND . DN\n\n"
+                        "RESET STATS ... RT\n"
+                        "FORFEIT ROUND . UP\n\n"
                         "EXIT MENU .... ANY"
                         ,NULL);
     switch (ret_keys_ticked) {
-        case J_UP:
+        case J_RIGHT:
             stats_reset();
             win_dialog_show_message(DIALOG_INFO_WIN_Y, "STATS RESET!" ,NULL);
             // Fall through to show stats
@@ -69,7 +69,7 @@ void show_options_message(void) {
             stats_show();
             break;
 
-        case J_DOWN:
+        case J_UP:
             // sets: GAMEPLAY_SET_GAMEOVER
             gameplay_handle_lose();
             break;
