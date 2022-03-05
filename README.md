@@ -22,7 +22,7 @@ Downloads: See Releases for ROMS or at [itch.io]( https://bbbbbr.itch.io/gb-word
     - A: Add Letter
     - B: Remove Letter
     - START: Submit guess
-    - SELECT: Options menu
+    - SELECT: Options menu (Stats, Reset Stats, Forfeit Round)
 
 Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020)
 
