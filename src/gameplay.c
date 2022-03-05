@@ -65,7 +65,7 @@ void show_options_message(void) {
             stats_reset();
             win_dialog_show_message(DIALOG_INFO_WIN_Y, "STATS RESET!" ,NULL);
             // Fall through to show stats
-        case J_A:
+        case J_B:
             stats_show();
             break;
 
