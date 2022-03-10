@@ -8,6 +8,7 @@ MKDIRS += ../src/lang_es/
 MKDIRS += ../src/lang_fr/
 MKDIRS += ../src/lang_it/
 MKDIRS += ../src/lang_nl/
+MKDIRS += ../src/lang_la/
 MKDIRS += ../src/lang_pt/
 
 compress-all-langs:
@@ -17,6 +18,7 @@ compress-all-langs:
 	python3 compress5.py fr
 	python3 compress5.py it
 	python3 compress5.py nl
+	python3 compress5.py la
 	python3 compress5.py pt
 
 # create necessary directories after Makefile is parsed but before build

@@ -112,6 +112,7 @@ langs:
 	${MAKE} LANG_CODE=fr
 	${MAKE} LANG_CODE=it
 	${MAKE} LANG_CODE=nl
+	${MAKE} LANG_CODE=la
 #   PT full answer file is too big	
 #	${MAKE} LANG_CODE=pt
 
