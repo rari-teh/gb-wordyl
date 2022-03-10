@@ -22,8 +22,18 @@
 #include "stats.h"
 
 #include "gameplay.h"
+#include "lang_text.h"
 
 #define GAMEPLAY_SET_GAMEOVER  game_state = GAME_STATE_OVER
+
+
+// TODO: dialogs.c
+
+void show_intro_message(void) {
+
+    win_dialog_show_message(DIALOG_WELCOME_WIN_Y, intro_message_str, NULL);
+}
+
 
 uint8_t game_won_str[] = "You won!\n\nOn Guess X of 6";
 

@@ -18,5 +18,6 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
 
 #define DIALOG_INFO_WIN_Y           (DIALOG_WON_MESSAGE_WIN_Y)
 
+#define DIALOG_WELCOME_WIN_Y  (DEVICE_SCREEN_PX_HEIGHT - ((11 * PX_PER_TILE) + DIALOG_BORDER_SIZE))
 
 #endif

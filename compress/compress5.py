@@ -2,9 +2,19 @@
 
 import sys
 
+lang = "en"
 NUM_ANSWER_BUCKETS = 15
-outfile = open('../src/encoded.c', 'w')
-outfile.write("#include \"encoded.h\"\n\n");
+
+# Optional arg 1 is language type (defaults to "en" otherwise)
+# which sets input source text files and output folders under ../src/
+if (len(sys.argv)) > 1:
+	lang = sys.argv[1]
+
+# output_path = "../src/"
+output_path = "../src/lang_" + lang + "/"
+
+outfile = open(output_path + "encoded.c", 'w')
+outfile.write("#include \"../encoded.h\"\n\n");
 
 def preprocessWord(w):
     return w
@@ -67,14 +77,17 @@ def encodeList(ww):
 allWords = set()
 answerWords = set()
 
-with open("full.txt") as f:
+print("full_" + lang + ".txt")
+print("answers_" + lang + ".txt")
+
+with open("full_" + lang + ".txt") as f:
     for w in f:
         w = w.strip()
         if len(w) == 5:
             w = preprocessWord(w)
             allWords.add(w)
 
-with open("answers.txt") as f:
+with open("answers_" + lang + ".txt") as f:
     for w in f:
         w = w.strip()
         if len(w) == 5:
@@ -153,7 +166,7 @@ outfile.write("};\n")
 
 outfile.close()
 
-with open("../src/sizes.h", "w") as sizes:
+with open(output_path + "sizes.h", "w") as sizes:
     sizes.write("#define NUM_WORDS %u\n" % len(allWords))
     sizes.write("#define NUM_ANSWERS %u\n" % len(answerWords))
     sizes.write("#define NUM_ANSWER_BUCKETS %u\n" % NUM_ANSWER_BUCKETS)

@@ -24,6 +24,7 @@
 #include "gameplay.h"
 #include "stats.h"
 
+bool is_first_run = true;
 
 void main() {
 
@@ -51,6 +52,10 @@ void main() {
             case GAME_STATE_RESTART:
                 gameplay_restart();
                 fade_in();
+                if (is_first_run) {
+                    show_intro_message();
+                    is_first_run = false;
+                }
                 game_state = GAME_STATE_RUNNING;
                 break;
 
