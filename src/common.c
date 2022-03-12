@@ -20,7 +20,7 @@ char word[WORD_LENGTH+1];  // TODO: rename this to "answer_word"
 
 #define PRINT_MAX_DIGITS  5
 
-// Patch a number into the string at char 'X'
+// Patch a number into the string at char '^'
 // * uitoa() puts in leading zeros and a tailing str terminator, so it's not suitable
 // * Warning: Safetys are turned off, lots can go wrong here
 uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num) {
@@ -30,7 +30,7 @@ uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num) {
     // if (p_str == NULL) return NULL;
 
     // Search for start position
-    while ((*p_str != 'X') && (*p_str)) p_str++;
+    while ((*p_str != '^') && (*p_str)) p_str++;
 
     // Store individual digits of n in reverse order
     // Starting at the END of the array and working forward

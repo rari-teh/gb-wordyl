@@ -53,7 +53,7 @@
 /*  |------------------| Available space (18 chars wide) */\
     "DU HAST GEWONNEN!\n" \
     "\n" \
-    "VERSUCH X von 6"
+    "VERSUCH ^ von 6"
 
 
 #undef __MESSAGE_WORD_TOO_SHORT_STR
@@ -80,16 +80,16 @@
 #undef __STATS_TEMPLATE_STR
 #define __STATS_TEMPLATE_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    " RUNDEN   ____X\n" \
-    " SERIE    ____X\n" \
-    " GEWONNEN ____X\n" \
-    " VERLOREN ____X\n" \
+    " RUNDEN   ____^\n" \
+    " SERIE    ____^\n" \
+    " GEWONNEN ____^\n" \
+    " VERLOREN ____^\n" \
     "\n" \
     "\n" \
     "GEWINNVERSUCHE\n" \
-    " MIN      ____X\n" \
-    " MAX      ____X\n" \
-    " MITTE    ____X\n"   // <-- All "____X" get replaced by numbers
+    " MIN      ____^\n" \
+    " MAX      ____^\n" \
+    " MITTE    ____^\n"   // <-- All "____^" get replaced by numbers
 
 
 // Should be no more than 18 chars

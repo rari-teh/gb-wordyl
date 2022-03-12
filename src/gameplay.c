@@ -40,15 +40,15 @@ uint8_t game_won_str[] = __MESSAGE_GAME_WON_STR;
 // Show a popup message: You Won
 void show_win_message(uint8_t guess_count) {
 
-    // Patch the number of guesses into the string at char 'X'
+    // Patch the number of guesses into the string at char '^'
     uint8_t * p_str = game_won_str;
-    while (*p_str != 'X') p_str++;
+    while (*p_str != '^') p_str++;
     *p_str = guess_count + '0';
 
     win_dialog_show_message(DIALOG_WON_MESSAGE_WIN_Y, game_won_str, NULL);
 
     // Restore X marker char
-    *p_str = 'X';
+    *p_str = '^';
 }
 
 

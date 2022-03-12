@@ -56,7 +56,7 @@
 /*  |------------------| Available space (18 chars wide) */\
     "You won!\n" \
     "\n" \
-    "On Guess X of 6"
+    "On Guess ^ of 6"
 
 
 #define __MESSAGE_WORD_TOO_SHORT_STR \
@@ -77,15 +77,15 @@
 
 #define __STATS_TEMPLATE_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    " Played  ____X\n" \
-    " Streak  ____X\n" \
-    " Wins    ____X\n" \
-    " Losses  ____X\n" \
+    " Played  ____^\n" \
+    " Streak  ____^\n" \
+    " Wins    ____^\n" \
+    " Losses  ____^\n" \
     "\n" \
     "Guesses to Win\n" \
-    " Least   ____X\n" \
-    " Most    ____X\n" \
-    " Average ____X\n"   // <-- All "____X" get replaced by numbers
+    " Least   ____^\n" \
+    " Most    ____^\n" \
+    " Average ____^\n"   // <-- All "____X" get replaced by numbers
 
 // Should be no more than 12 chars
 #define __INTRO_PRESS_START_STR "PRESS START"
