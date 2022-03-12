@@ -53,12 +53,11 @@ CFLAGS += -Wf-MMD
 SRCDIR      = src
 LANGDIR     = $(SRCDIR)/lang_$(LANG_CODE)
 
-OBJDIR      = obj/$(EXT)
-OBJDIR_LANG = $(OBJDIR)/$(LANG_CODE)
+OBJDIR      = obj/$(EXT)/$(LANG_CODE)
 
 RESDIR      = res
 BINDIR      = build/$(EXT)
-MKDIRS      = $(OBJDIR) $(OBJDIR_LANG) $(BINDIR) # See bottom of Makefile for directory auto-creation
+MKDIRS      = $(OBJDIR) $(BINDIR) # See bottom of Makefile for directory auto-creation
 
 BINS	    = $(OBJDIR)/$(PROJECTNAME).$(EXT)
 CSOURCES    = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c)))
@@ -69,7 +68,7 @@ ASMSOURCES  = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s)))
 
 OBJS        = $(CSOURCES:%.c=$(OBJDIR)/%.o)
 OBJS        += $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
-OBJS        += $(CSOURCES_LANG:%.c=$(OBJDIR_LANG)/%.o)
+OBJS        += $(CSOURCES_LANG:%.c=$(OBJDIR)/%.o)
 
 # Builds all targets sequentially
 all: $(TARGETS)
@@ -87,8 +86,8 @@ $(OBJDIR)/%.o:	$(SRCDIR)/%.c
 $(OBJDIR)/%.o:	$(RESDIR)/%.c
 	$(LCC) $(CFLAGS) -c -o $@ $<
 
-# Compile .c files in "res/" to .o object files
-$(OBJDIR)/$(LANG_CODE)/%.o:	$(LANGDIR)/%.c
+# Compile .c files in "src/<LANG_CODE>/" to .o object files
+$(OBJDIR)/%.o:	$(LANGDIR)/%.c
 	$(LCC) $(CFLAGS) -c -o $@ $<
 
 # Compile .s assembly files in "src/" to .o object files
@@ -113,8 +112,23 @@ langs:
 	${MAKE} LANG_CODE=it
 	${MAKE} LANG_CODE=nl
 	${MAKE} LANG_CODE=la
-#   PT full answer file is too big	
+#   PT full answer file is too big
 #	${MAKE} LANG_CODE=pt
+
+langs-clean:
+	${MAKE} clean LANG_CODE=de
+	${MAKE} clean LANG_CODE=en
+	${MAKE} clean LANG_CODE=es
+	${MAKE} clean LANG_CODE=fr
+	${MAKE} clean LANG_CODE=it
+	${MAKE} clean LANG_CODE=nl
+	${MAKE} clean LANG_CODE=la
+#   PT full answer file is too big
+#	${MAKE} LANG_CODE=pt
+
+langs-compress:
+	make -C compress compress-all-langs
+
 
 romusage:
 # Ignores failure if romusage not in path
