@@ -22,7 +22,7 @@
 #include "stats.h"
 
 #include "gameplay.h"
-#include "lang_text.h"
+#include <lang_text.h>
 
 #define GAMEPLAY_SET_GAMEOVER  game_state = GAME_STATE_OVER
 
@@ -31,11 +31,11 @@
 
 void show_intro_message(void) {
 
-    win_dialog_show_message(DIALOG_WELCOME_WIN_Y, intro_message_str, NULL);
+    win_dialog_show_message(DIALOG_WELCOME_WIN_Y, __INTRO_MESSAGE_STR, NULL);
 }
 
-
-uint8_t game_won_str[] = "You won!\n\nOn Guess X of 6";
+// Should not be const, gets modified
+uint8_t game_won_str[] = __MESSAGE_GAME_WON_STR;
 
 // Show a popup message: You Won
 void show_win_message(uint8_t guess_count) {
@@ -55,7 +55,7 @@ void show_win_message(uint8_t guess_count) {
 // Show a popup message: You Lost
 void show_lose_message(char *correct_word) {
 
-    win_dialog_show_message(DIALOG_LOSE_MESSAGE_WIN_Y, "You lose. Sorry!\n\nAnswer is: ", correct_word);
+    win_dialog_show_message(DIALOG_LOSE_MESSAGE_WIN_Y, __MESSAGE_LOSE_STR, correct_word);
 }
 
 
@@ -63,17 +63,11 @@ void show_options_message(void) {
 
     uint8_t  ret_keys_ticked;
 
-    ret_keys_ticked = win_dialog_show_message(DIALOG_MENU_WIN_Y,
-                        "OPTIONS\n\n"
-                        "SHOW STATS ....  B\n\n"
-                        "RESET STATS ... RT\n"
-                        "FORFEIT ROUND . UP\n\n"
-                        "EXIT MENU .... ANY"
-                        ,NULL);
+    ret_keys_ticked = win_dialog_show_message(DIALOG_MENU_WIN_Y, __OPTIONS_MENU_STR, NULL);
     switch (ret_keys_ticked) {
         case J_RIGHT:
             stats_reset();
-            win_dialog_show_message(DIALOG_INFO_WIN_Y, "STATS RESET!" ,NULL);
+            win_dialog_show_message(DIALOG_INFO_WIN_Y, __MESSAGE_STATS_RESET_STR ,NULL);
             // Fall through to show stats
         case J_B:
             stats_show();
@@ -107,12 +101,12 @@ void gameplay_handle_guess(void) {
     if (strlen(guess) != WORD_LENGTH) {
 
         // Insufficient length
-        win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is too short!\n\nNeeds 5 Letters", NULL);
+        win_dialog_show_message(DIALOG_GAME_INFO_Y, __MESSAGE_WORD_TOO_SHORT_STR, NULL);
     }
     else if (!filterWord(guess)) {
 
         // Word not in dictionary
-        win_dialog_show_message(DIALOG_GAME_INFO_Y, "Word is not in\n\ndictionary!", NULL);
+        win_dialog_show_message(DIALOG_GAME_INFO_Y, __MESSAGE_WORD_NOT_IN_DICT_STR, NULL);
     } else {
 
         // Otherwise process the guess word
@@ -213,6 +207,12 @@ void gameplay_restart(void) {
     board_update_cursor();
 
     keyboard_reset();
+
+    // print_gotoxy(4u,0, PRINT_BKG);
+    // print_str("gb  wordyl\n");
+    // print_gotoxy(19u - 6u, 0u, PRINT_BKG);
+    // print_str("bbbbbr\n");
+
 }
 
 

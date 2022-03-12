@@ -4,8 +4,8 @@
 #define _COMMON_H
 
 
-#define _DO_EXPAND(VAL)  VAL ## 1
-#define EXPAND(VAL)     _DO_EXPAND(VAL)
+// #define _DO_EXPAND(VAL)  VAL ## 1
+// #define EXPAND(VAL)     _DO_EXPAND(VAL)
 
 #define _STR(s) #s
 #define STR(s) _STR(s)

@@ -16,6 +16,8 @@
 #include "board.h"
 #include "intro_splash.h"
 
+#include <lang_text.h>
+
 
 void splash_run(void) {
 
@@ -85,8 +87,8 @@ void splash_init_maps(void) {
     if (IS_CGB)
         splash_initgfx_cgb();
 
-    print_gotoxy((DEVICE_SCREEN_WIDTH - 11u) / 2u,DEVICE_SCREEN_HEIGHT - 4u, PRINT_BKG);
-    print_str("PRESS START");
+    print_gotoxy((DEVICE_SCREEN_WIDTH - (sizeof(__INTRO_PRESS_START_STR) - 1)) / 2u,DEVICE_SCREEN_HEIGHT - 4u, PRINT_BKG);
+    print_str(__INTRO_PRESS_START_STR);
 }
 
 #define CHR_NUM(c) (c - 'A')

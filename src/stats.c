@@ -7,6 +7,7 @@
 
 #include "common.h"
 #include "window.h"
+#include <lang_text.h>
 
 
 #define STATS_GUESSES_MAX
@@ -57,16 +58,7 @@ void stats_update(bool game_won, uint8_t guess_num) {
 }
 
 
-const uint8_t stats_str_template[] =
-    " Played  ____X\n"
-    " Streak  ____X\n"
-    " Wins    ____X\n"
-    " Losses  ____X\n"
-    "\n"
-    "Guesses to Win\n"
-    " Least   ____X\n"
-    " Most    ____X\n"
-    " Average ____X\n";
+const uint8_t stats_str_template[] = __STATS_TEMPLATE_STR;
 
 uint8_t stats_str[sizeof(stats_str_template)];
 
