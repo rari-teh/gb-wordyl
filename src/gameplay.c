@@ -151,14 +151,6 @@ void gameplay_handle_guess(void) {
 // Modifies global: word
 void gameplay_init_answer_word(void) {
 
-    static bool random_initialized = false;
-
-    // Random number generation init if not already done
-    if (random_initialized == false) {
-        initrand(LY_REG  | ((uint16_t)DIV_REG << 8));
-        random_initialized = true;
-    }
-
     uint16_t r = randw() % NUM_ANSWERS;
 
     #ifdef DEBUG_FORCE_WORD_BY_NUM
@@ -178,14 +170,6 @@ void gameplay_init_answer_word(void) {
     #endif
 }
 
-
-// TODO: deleteable
-// void gameplay_init_turn_gfx_on(void) {
-//     SHOW_WIN;
-//     SHOW_BKG;
-//     SHOW_SPRITES;
-//     DISPLAY_ON;
-// }
 
 // Run once on startup to prepare gameplay board graphics maps
 //
@@ -229,8 +213,6 @@ void gameplay_restart(void) {
     board_update_cursor();
 
     keyboard_reset();
-
-    gameplay_init_answer_word();
 }
 
 

@@ -12,6 +12,7 @@
 #include <gbdk/incbin.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <rand.h>
 
 #include "common.h"
 #include "input.h"
@@ -25,6 +26,9 @@
 #include "stats.h"
 
 bool is_first_run = true;
+
+fixed rand_seed = {.w = 0x0000u};
+
 
 void main() {
 
@@ -43,6 +47,8 @@ void main() {
 
             case GAME_STATE_INTRO:
                 splash_run();
+                // First half of random init (button press to exit splash)
+                rand_seed.h = DIV_REG;
                 // screen now: faded out
                 BOARD_SET_LAYOUT_GAME;
                 gameplay_init_maps();
@@ -55,7 +61,11 @@ void main() {
                 if (is_first_run) {
                     show_intro_message();
                     is_first_run = false;
+                    // Second half of random init (button press to exit welcome dialog)
+                    rand_seed.l = DIV_REG;
+                    initrand(rand_seed.w);
                 }
+                gameplay_init_answer_word();
                 game_state = GAME_STATE_RUNNING;
                 break;
 
