@@ -9,7 +9,7 @@
 
 // == #define overrides for language strings go here
 
-// German
+// German (edit+fix by skite2001 ^_-)
 
 #undef __INTRO_MESSAGE_STR
 #define __INTRO_MESSAGE_STR \
@@ -18,24 +18,24 @@
     "WORDYL\n" \
     "\n" \
     "SPRACHE ....... " STR(LANG_CODE) "\n" \
-    "  NUR A..Z\n" \
-    "  KEINE SONDERZCHN\n" \
+    "  NUR A..Z OHNE\n" \
+    "  SONDERZEICHEN\n" \
     "\n" \
-    "IN GAME MENU:  SEL\n" \
+    "OPTIONEN:   SELECT\n" \
     "\n" \
-    "TASTE ZUM STARTEN"
+    "TASTE DRUECKEN"
 
 
 #undef __OPTIONS_MENU_STR
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "OPTIONEN\n\n" \
-    "ZEIEG STATS:     B\n" \
+    "ZEIGE STATS:     B\n" \
     "\n" \
-    "NULL STATS:     RT\n" \
+    "STATS ERNEUERN: RT\n" \
     "RUNDE AUFGEBEN: UP\n" \
     "\n" \
-    "TASTE ZUM WEITER"
+    "TASTE DRUECKEN"
 
 
 #undef __MESSAGE_LOSE_STR
@@ -53,7 +53,7 @@
 /*  |------------------| Available space (18 chars wide) */\
     "DU HAST GEWONNEN!\n" \
     "\n" \
-    "AUF RATE X von 6"
+    "VERSUCH X von 6"
 
 
 #undef __MESSAGE_WORD_TOO_SHORT_STR
@@ -61,7 +61,7 @@
 /*  |------------------| Available space (18 chars wide) */\
     "WORT IST ZU KURZ!\n" \
     "\n" \
-    "BRAUCHT 5 ZEICHEN"
+    "5 BUCHSTABEN BITTE"
 
 #undef __MESSAGE_WORD_NOT_IN_DICT_STR
 #define __MESSAGE_WORD_NOT_IN_DICT_STR \
@@ -74,26 +74,43 @@
 #undef __MESSAGE_STATS_RESET_STR
 #define __MESSAGE_STATS_RESET_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "STATS NEUSTARTEN!"
+    "STATS ERNEUERT!"
 
 
 #undef __STATS_TEMPLATE_STR
 #define __STATS_TEMPLATE_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    " Runden   ____X\n" \
-    " Streak   ____X\n" \
-    " Gewinnt  ____X\n" \
-    " Verluste ____X\n" \
+    " RUNDEN   ____X\n" \
+    " SERIE    ____X\n" \
+    " GEWONNEN ____X\n" \
+    " VERLOREN ____X\n" \
     "\n" \
-    "Vermutungen zu\n" \
-    "gewinnen\n" \
-    " Least    ____X\n" \
-    " Most     ____X\n" \
-    " Average  ____X\n"   // <-- All "____X" get replaced by numbers
+    "\n" \
+    "GEWINNVERSUCHE\n" \
+    " MIN      ____X\n" \
+    " MAX      ____X\n" \
+    " MITTE    ____X\n"   // <-- All "____X" get replaced by numbers
 
 
-// Should be no more than 12 chars
+// Should be no more than 18 chars
 #undef __INTRO_PRESS_START_STR
-#define __INTRO_PRESS_START_STR "PUSHEN START"
+#define __INTRO_PRESS_START_STR "DRUECKE START"
+
+
+// X, Y controls upper-left corner coordinates
+#undef __INTRO_CREDITS_STR
+#define __INTRO_CREDITS_STR \
+/*  |--------------------| */\
+        "2022\n" \
+        "BBBBBR\n" \
+        "\n" \
+        "THX TO:\n" \
+        "ARPRUSS\n" \
+        "STACKSMASHING\n" \
+        "SKITE2001\n" \
+        "\n" \
+        "GBDK2020\n" \
+        "EMULICIOUS"
+
 
 #endif

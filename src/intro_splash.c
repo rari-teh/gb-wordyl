@@ -26,16 +26,8 @@ void splash_run(void) {
     // == INITIAL CREDITS SCREEN ==
     fade_in();
 
-    print_gotoxy(4u, (DEVICE_SCREEN_HEIGHT - 9u) / 2u, PRINT_BKG);
-    print_str(
-        "2022\n"
-        "BBBBBR\n\n"
-        "THX TO:\n"
-        "ARPRUSS\n"
-        "STACKSMASHING\n\n"
-        "GBDK2020\n"
-        "EMULICIOUS"
-        );
+    print_gotoxy(__INTRO_CREDITS_X, __INTRO_CREDITS_Y, PRINT_BKG);
+    print_str(__INTRO_CREDITS_STR);
     if (IS_CGB) delay(4000);
     else        delay(2000);
     fade_out();
