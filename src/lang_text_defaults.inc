@@ -3,9 +3,11 @@
 #include <stdbool.h>
 
 #include "../common.h"
+#include "../window.h"
 
 #ifndef LANG_IS_EN
 
+    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(9)
     #define __INTRO_MESSAGE_STR \
     /*  |------------------| Available space (18 chars wide) */\
         "WELCOME TO WORDYL \n" \
@@ -20,6 +22,7 @@
 
 #else
 
+    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(7)
     #define __INTRO_MESSAGE_STR \
     /*  |------------------| Available space (18 chars wide) */\
         "WELCOME TO WORDYL \n" \
@@ -33,15 +36,21 @@
 #endif
 
 
+#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(8)
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "OPTIONS\n\n" \
-    "SHOW STATS ....  B\n\n" \
+    "OPTIONS\n" \
+    "\n" \
+    "SHOW STATS ....  B\n" \
+    "\n" \
     "RESET STATS ... RT\n" \
-    "FORFEIT ROUND . UP\n\n" \
+    "FORFEIT ROUND . UP\n" \
+    "\n" \
     "EXIT MENU .... ANY"
 
 
+// Avoid incerasing this popup height so it doesn't obscure the board
+#define LOSE_MESSAGE_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __MESSAGE_LOSE_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "You lose. Sorry!\n" \
@@ -51,7 +60,8 @@
 
 // NOTE! X gets replaced with guess 5 letter word num
 //
-// Intentionally not const! X gets replaced with guess num
+// Avoid incerasing this popup height so it doesn't obscure the board
+#define WON_MESSAGE_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __MESSAGE_GAME_WON_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "You won!\n" \
@@ -59,22 +69,31 @@
     "On Guess ^ of 6"
 
 
+// Avoid incerasing this popup height so it doesn't obscure the board
+#define WORD_TOO_SHORT_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __MESSAGE_WORD_TOO_SHORT_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "Word is too short!\n" \
     "\n" \
     "Needs 5 Letters"
 
+
+// Avoid incerasing this popup height so it doesn't obscure the board
+#define WORD_NOT_IN_DICT_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __MESSAGE_WORD_NOT_IN_DICT_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "Word is not in\n" \
     "\n" \
     "dictionary!"
 
+
+#define STATS_RESET_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __MESSAGE_STATS_RESET_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "STATS RESET!"
 
+
+#define STATS_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(9)
 #define __STATS_TEMPLATE_STR \
 /*  |------------------| Available space (18 chars wide) */\
     " Played  ____^\n" \

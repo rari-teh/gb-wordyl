@@ -31,7 +31,7 @@
 
 void show_intro_message(void) {
 
-    win_dialog_show_message(DIALOG_WELCOME_WIN_Y, __INTRO_MESSAGE_STR, NULL);
+    win_dialog_show_message(INTRO_DIALOG_WIN_Y, __INTRO_MESSAGE_STR, NULL);
 }
 
 // Should not be const, gets modified
@@ -45,7 +45,7 @@ void show_win_message(uint8_t guess_count) {
     while (*p_str != '^') p_str++;
     *p_str = guess_count + '0';
 
-    win_dialog_show_message(DIALOG_WON_MESSAGE_WIN_Y, game_won_str, NULL);
+    win_dialog_show_message(WON_MESSAGE_DIALOG_WIN_Y, game_won_str, NULL);
 
     // Restore X marker char
     *p_str = '^';
@@ -55,7 +55,7 @@ void show_win_message(uint8_t guess_count) {
 // Show a popup message: You Lost
 void show_lose_message(char *correct_word) {
 
-    win_dialog_show_message(DIALOG_LOSE_MESSAGE_WIN_Y, __MESSAGE_LOSE_STR, correct_word);
+    win_dialog_show_message(LOSE_MESSAGE_DIALOG_WIN_Y, __MESSAGE_LOSE_STR, correct_word);
 }
 
 
@@ -63,11 +63,11 @@ void show_options_message(void) {
 
     uint8_t  ret_keys_ticked;
 
-    ret_keys_ticked = win_dialog_show_message(DIALOG_MENU_WIN_Y, __OPTIONS_MENU_STR, NULL);
+    ret_keys_ticked = win_dialog_show_message(OPTIONS_MENU_DIALOG_WIN_Y, __OPTIONS_MENU_STR, NULL);
     switch (ret_keys_ticked) {
         case J_RIGHT:
             stats_reset();
-            win_dialog_show_message(DIALOG_INFO_WIN_Y, __MESSAGE_STATS_RESET_STR ,NULL);
+            win_dialog_show_message(STATS_RESET_DIALOG_WIN_Y, __MESSAGE_STATS_RESET_STR ,NULL);
             // Fall through to show stats
         case J_B:
             stats_show();
@@ -101,12 +101,12 @@ void gameplay_handle_guess(void) {
     if (strlen(guess) != WORD_LENGTH) {
 
         // Insufficient length
-        win_dialog_show_message(DIALOG_GAME_INFO_Y, __MESSAGE_WORD_TOO_SHORT_STR, NULL);
+        win_dialog_show_message(WORD_TOO_SHORT_DIALOG_WIN_Y, __MESSAGE_WORD_TOO_SHORT_STR, NULL);
     }
     else if (!filterWord(guess)) {
 
         // Word not in dictionary
-        win_dialog_show_message(DIALOG_GAME_INFO_Y, __MESSAGE_WORD_NOT_IN_DICT_STR, NULL);
+        win_dialog_show_message(WORD_NOT_IN_DICT_DIALOG_WIN_Y, __MESSAGE_WORD_NOT_IN_DICT_STR, NULL);
     } else {
 
         // Otherwise process the guess word

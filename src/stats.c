@@ -84,6 +84,6 @@ void stats_show(void) {
     str_u16_left_at_X(stats_str, stats_guesses_max);
     str_u16_left_at_X(stats_str, stats_guesses_sum / stats_games_won);
 
-    win_dialog_show_message(DIALOG_STATS_MESSAGE_WIN_Y, stats_str, NULL);
+    win_dialog_show_message(STATS_DIALOG_WIN_Y, stats_str, NULL);
 }
 

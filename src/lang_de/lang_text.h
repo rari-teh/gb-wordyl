@@ -11,6 +11,8 @@
 
 // German (edit+fix by skite2001 ^_-)
 
+#undef INTRO_DIALOG_WIN_Y
+#define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(10)
 #undef __INTRO_MESSAGE_STR
 #define __INTRO_MESSAGE_STR \
 /*  |------------------| Available space (18 chars wide) */\
@@ -29,7 +31,8 @@
 #undef __OPTIONS_MENU_STR
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "OPTIONEN\n\n" \
+    "OPTIONEN\n" \
+    "\n" \
     "ZEIGE STATS:     B\n" \
     "\n" \
     "STATS ERNEUERN: RT\n" \
@@ -84,7 +87,6 @@
     " SERIE    ____^\n" \
     " GEWONNEN ____^\n" \
     " VERLOREN ____^\n" \
-    "\n" \
     "\n" \
     "GEWINNVERSUCHE\n" \
     " MIN      ____^\n" \
