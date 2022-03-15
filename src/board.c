@@ -300,10 +300,10 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
 // == Lookup tables for colorizing board letters ==
 
 const uint8_t board_cgb_colors[] = {
-    SET_BOARD_CGB_PAL_NORMAL,    // LETTER_NOT_SET
-    SET_BOARD_CGB_PAL_NORMAL,    // LETTER_NOT_MATCHED
-    SET_BOARD_CGB_PAL_CONTAINS,  // LETTER_WRONG_PLACE
-    SET_BOARD_CGB_PAL_MATCHED,   // LETTER_RIGHT_PLACE
+    SET_BOARD_CGB_PAL_NORMAL,      // LETTER_NOT_SET
+    SET_BOARD_CGB_PAL_NOT_IN_WORD, // LETTER_NOT_MATCHED
+    SET_BOARD_CGB_PAL_CONTAINS,    // LETTER_WRONG_PLACE
+    SET_BOARD_CGB_PAL_MATCHED,     // LETTER_RIGHT_PLACE
 };
 
 // DMG color array is 2x colors per entry
@@ -330,9 +330,15 @@ void board_set_color_for_letter(uint8_t row, uint8_t col, uint8_t do_highlight) 
         // Default to normal style (in case of no highlighting)
         uint8_t color = SET_BOARD_CGB_PAL_NORMAL;
 
+
         // If highlighting look up CGB style from LUT
-        if (do_highlight)
+        if (do_highlight) {
+            // For CGB, lighten tile is not matched
+            if (match_type == LETTER_NOT_MATCHED)
+                SET_BOARD_CGB_COLOR_NOT_IN_WORD;
+
             color = board_cgb_colors[match_type];
+        }
 
         // Apply the CGB coloring
         board_fill_letter_cgb_pal(row, col, color);

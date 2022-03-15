@@ -12,7 +12,10 @@ uint8_t board_cgb_addrs_last;
 
 
 const palette_color_t cgb_palettes[] = {
-                               RGB8(255u,255u,255u), RGB8(170u,170u,170u),           RGB8(85u,85u,85u),RGB8(0u,0u,0u),
+                                // First Pal (White) has second color a little darker than others
+                                // so that it shows up ok on unmodded CGB hardware when used
+                                // to show not-matched-letter tiles
+                               RGB8(255u,255u,255u), RGB8(125u,125u,125u),           RGB8(85u,85u,85u),RGB8(0u,0u,0u),
                                RGB8(255u,243u, 86u), RGB8(255u /2, 243u /2, 86u  /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = yellow
                                RGB8(130u,255u,130u), RGB8(130u /2, 255u /2, 130u /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = green
                                RGB8(168u,210u,255u), RGB8(168u /2, 240u /2, 255u /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = blue
