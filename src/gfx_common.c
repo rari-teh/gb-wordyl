@@ -62,36 +62,41 @@ void print_char(char letter) {
 // Print a string on background or window at location set by print_gotoxy()
 void print_str(char * txt) {
 
+    uint8_t src_chr;
     uint8_t letter;
-    uint8_t line_wrap_x_addr = (((uint8_t)print_vram_addr) & 0x1Fu);// (uint8_t)((uint16_t)print_vram_addr & 0x001Fu);
+    uint8_t line_wrap_x_addr = (((uint8_t)print_vram_addr) & 0x1Fu);// (uint8_t)((uint16_t)print_vram_addr & 0x001Fu);    
 
-    while(*txt) {
+    src_chr = *txt++; // Next character
+    while(src_chr) {
 
-        if (*txt == '\n') {
+        if (src_chr == '\n') {
             // Mask out X location, reset it to line wrap location, move to next line
             print_vram_addr = (uint16_t *)(((uint16_t)print_vram_addr & 0xFFE0u) + (line_wrap_x_addr + 0x20u));
-            txt++;
+            src_chr = *txt++; // Next character
             continue;
         }
-        else if(*txt >= 'A' && *txt <= 'Z') {
-            letter = BG_TILES_FONT_START + (unsigned char)(*txt - 'A');
-        } else if(*txt >= 'a' && *txt <= 'z') {
-            letter = BG_TILES_FONT_START + (unsigned char)(*txt - 'a');
-        } else if(*txt >= '0' && *txt <= '9') {
-            letter = BG_TILES_FONT_NUM_START + (unsigned char)(*txt - '0');
-        } else if(*txt == '.')
-            letter = BG_TILES_FONT_PERIOD;
-        else if(*txt == '!')
-            letter = BG_TILES_FONT_EXCLAIM;
-        else if(*txt == ':')
-            letter = BG_TILES_FONT_COLON;
-        else {
-            // Default is blank tile for Space or any other unknown chars
-            letter = BG_TILES_BLANK_START;
+        else if (src_chr >= 'A' && src_chr <= 'Z') {
+            letter = BG_TILES_FONT_START + (unsigned char)(src_chr - 'A');
+        } else if (src_chr >= 'a' && src_chr <= 'z') {
+            letter = BG_TILES_FONT_START + (unsigned char)(src_chr - 'a');
+        } else if (src_chr >= '0' && src_chr <= '9') {
+            letter = BG_TILES_FONT_NUM_START + (unsigned char)(src_chr - '0');
+        } else {
+            switch (src_chr) {
+                case '.': letter = BG_TILES_FONT_PERIOD; break;
+                case '!': letter = BG_TILES_FONT_EXCLAIM; break;
+                case ':': letter = BG_TILES_FONT_COLON; break;
+                case '<': letter = BG_TILES_FONT_BUTTON_L; break;
+                case '>': letter = BG_TILES_FONT_BUTTON_R; break;
+                case '^': letter = BG_TILES_FONT_BUTTON_U; break;
+                case '/': letter = BG_TILES_FONT_BUTTON_D; break;
+                // Default is blank tile for Space or any other unknown chars
+                default:  letter = BG_TILES_BLANK_START; break;
+            }
         }
 
         set_vram_byte(print_vram_addr++, letter);
-        txt++; // Next character
+        src_chr = *txt++; // Next character
     }
 }
 

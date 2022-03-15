@@ -35,8 +35,8 @@
     "\n" \
     "ZEIGE STATS:     B\n" \
     "\n" \
-    "STATS ERNEUERN: RT\n" \
-    "RUNDE AUFGEBEN: UP\n" \
+    "STATS ERNEUERN:  >\n" \
+    "RUNDE AUFGEBEN:  ^\n" \
     "\n" \
     "TASTE DRUECKEN"
 

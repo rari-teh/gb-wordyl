@@ -43,8 +43,8 @@
     "\n" \
     "SHOW STATS ....  B\n" \
     "\n" \
-    "RESET STATS ... RT\n" \
-    "FORFEIT ROUND . UP\n" \
+    "RESET STATS ...  >\n" \
+    "FORFEIT ROUND .  ^\n" \
     "\n" \
     "EXIT MENU .... ANY"
 
