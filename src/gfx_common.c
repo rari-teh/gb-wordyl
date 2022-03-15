@@ -66,13 +66,17 @@ void print_str(char * txt) {
     uint8_t letter;
     uint8_t line_wrap_x_addr = (((uint8_t)print_vram_addr) & 0x1Fu);// (uint8_t)((uint16_t)print_vram_addr & 0x001Fu);    
 
-    src_chr = *txt++; // Next character
-    while(src_chr) {
+    // src_chr = *txt++; // Next character
+    // while(src_chr) {
+    // SIZE: this loop structure saves about 60 bytes vs above
+    while (1) {
+        src_chr = *txt++; // Next character
+        if (!src_chr) return;
 
         if (src_chr == '\n') {
             // Mask out X location, reset it to line wrap location, move to next line
             print_vram_addr = (uint16_t *)(((uint16_t)print_vram_addr & 0xFFE0u) + (line_wrap_x_addr + 0x20u));
-            src_chr = *txt++; // Next character
+            // src_chr = *txt++; // Next character
             continue;
         }
         else if (src_chr >= 'A' && src_chr <= 'Z') {
@@ -96,7 +100,7 @@ void print_str(char * txt) {
         }
 
         set_vram_byte(print_vram_addr++, letter);
-        src_chr = *txt++; // Next character
+        // src_chr = *txt++; // Next character
     }
 }
 
