@@ -35,7 +35,11 @@
 #define BOARD_HIGHLIGHT_NO  false
 #define BOARD_HIGHLIGHT_YES true
 
-// Order of values is important and relied on for sorting, do not change
+// IMPORANT: Order of values is important and relied on for sorting, do not change!
+// Used :
+// * Printing color lookup table
+// * Letter matching evaluation ranking
+// * Ensuring keyboard highlighting only gets upgraded and not downgraded with progressive guesses
 #define LETTER_RIGHT_PLACE 3u
 #define LETTER_WRONG_PLACE 2u
 #define LETTER_NOT_MATCHED 1u

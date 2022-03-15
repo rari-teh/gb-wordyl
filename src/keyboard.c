@@ -72,53 +72,58 @@ void keyboard_fill_letter_cgb_pal(uint8_t row, uint8_t col, uint8_t palnum) {
 }
 
 
+const uint8_t keyboard_cgb_colors[] = {
+
+    SET_BOARD_CGB_PAL_NORMAL,       // LETTER_NOT_SET
+    SET_KEYBD_CGB_PAL_NOT_IN_WORD,  // LETTER_NOT_MATCHED
+    SET_BOARD_CGB_PAL_CONTAINS,     // LETTER_WRONG_PLACE
+    SET_BOARD_CGB_PAL_MATCHED,      // LETTER_RIGHT_PLACE
+};
+
+// DMG color array is 2x colors per entry
+const uint8_t keyboard_dmg_colors[] = {
+    KEYBD_COLOR_NORMAL,          // LETTER_NOT_SET
+    KEYBD_COLOR_NOT_IN_WORD,     // LETTER_NOT_MATCHED
+    KEYBD_COLOR_CONTAINS,        // LETTER_WRONG_PLACE
+    KEYBD_COLOR_MATCHED,         // LETTER_RIGHT_PLACE
+};
+
+
 // Set highlight color for a letter on the keyboard based on guess status
 void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type, uint8_t tile_id) {
+
 
     // Reject color letter downgrades (only allowed after a keyboard status reset)
     // Otherwise update status
     if (match_type < kb_status[row][col])
         return;
     else
-        (kb_status[row][col] = match_type);
+        kb_status[row][col] = match_type;
 
-    // CGB doesn't use DMG style VRAM tile redrawing except on
-    // clean redraw where it uses normal print style
-    if (IS_CGB)
+
+    if (IS_CGB) {
+
+        // CGB doesn't use DMG style VRAM tile redrawing except on
+        // clean redraw where it uses normal print style
         SET_PRINT_COLOR_NORMAL;
 
-    if (match_type == LETTER_RIGHT_PLACE) {
-
-        if (IS_CGB)
-            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_MATCHED);
-        else
-            SET_KEYBD_COLOR_MATCHED;
+        // Apply the CGB coloring
+        keyboard_fill_letter_cgb_pal(row, col, keyboard_cgb_colors[match_type]);
     }
-    else if (match_type == LETTER_WRONG_PLACE) {
+    else {
+        // DMG mode
 
-        if (IS_CGB)
-            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_CONTAINS);
-        else
-            SET_KEYBD_COLOR_CONTAINS;
-    }
-    else if (match_type == LETTER_NOT_MATCHED) {
-        if (IS_CGB)
-            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_NOT_IN_WORD);
-        else
-            SET_KEYBD_COLOR_NOT_IN_WORD;
-    }
-    else { // implied: if (match_type == LETTER_NOT_SET) {
-
-        // Keyboard default: no highlight
-        if (IS_CGB)
-            keyboard_fill_letter_cgb_pal(row, col, SET_KEYBD_CGB_PAL_NORMAL);
-        else
-            SET_KEYBD_COLOR_NORMAL;
+        // DMG color array is 2x colors per entry
+        match_type <<= 1; // This doesn't mess with test further below since (!IS_CGB) will be true
+        set_1bpp_colors(keyboard_dmg_colors[match_type], keyboard_dmg_colors[match_type + 1]);
     }
 
-    // Only needed for DMG unless it's a clean redraw since CGB just updates the attribute map
-    if ((!IS_CGB) || (match_type == LETTER_NOT_SET))
+    // DMG: Always needs to draw
+    // CGB: Only draw when redrawing whole keyboard (match_type == LETTER_NOT_SET) CGB just updates the attribute map
+    // if (needs_redraw)
+    if ((match_type == LETTER_NOT_SET) || (!IS_CGB))
         draw_letter_to_tileid(kb[row][col], tile_id);
+
 }
 
 

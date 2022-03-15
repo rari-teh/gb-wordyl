@@ -297,43 +297,54 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
 }
 
 
+// == Lookup tables for colorizing board letters ==
+
+const uint8_t board_cgb_colors[] = {
+    SET_BOARD_CGB_PAL_NORMAL,    // LETTER_NOT_SET
+    SET_BOARD_CGB_PAL_NORMAL,    // LETTER_NOT_MATCHED
+    SET_BOARD_CGB_PAL_CONTAINS,  // LETTER_WRONG_PLACE
+    SET_BOARD_CGB_PAL_MATCHED,   // LETTER_RIGHT_PLACE
+};
+
+// DMG color array is 2x colors per entry
+const uint8_t board_dmg_colors[] = {
+    BOARD_DMG_COLOR_NORMAL,       // LETTER_NOT_SET
+    BOARD_DMG_COLOR_NORMAL,       // LETTER_NOT_MATCHED
+    BOARD_DMG_COLOR_CONTAINS,     // LETTER_WRONG_PLACE
+    BOARD_DMG_COLOR_MATCHED,      // LETTER_RIGHT_PLACE
+};
+
+
 // TODO: optimize this for size/speed
 // Set highlight color for a letter on baord based on guess status
 void board_set_color_for_letter(uint8_t row, uint8_t col, uint8_t do_highlight) {
 
-    if (IS_CGB)
-        SET_PRINT_COLOR_NORMAL;
+    uint8_t match_type = guess_eval[col];
 
-    // If highlighting is turned off just use normal style
-    if (!do_highlight) {
+    // CGB: Always used
+    // DMG: Used when not highlighting
+    SET_PRINT_COLOR_NORMAL;
 
-        if (IS_CGB)
-            board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_NORMAL);
-        else
-            SET_BOARD_COLOR_NORMAL;
-    } else {
+    if (IS_CGB) {
 
-        if (guess_eval[col] == LETTER_RIGHT_PLACE) {
+        // Default to normal style (in case of no highlighting)
+        uint8_t color = SET_BOARD_CGB_PAL_NORMAL;
 
-            if (IS_CGB) {
-                board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_MATCHED);
-            }
-            else
-                SET_BOARD_COLOR_MATCHED;
+        // If highlighting look up CGB style from LUT
+        if (do_highlight)
+            color = board_cgb_colors[match_type];
 
-        } else if (guess_eval[col] == LETTER_WRONG_PLACE) {
+        // Apply the CGB coloring
+        board_fill_letter_cgb_pal(row, col, color);
+    }
+    else {
+        // DMG mode
 
-            if (IS_CGB)
-                board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_CONTAINS);
-            else
-                SET_BOARD_COLOR_CONTAINS;
-
-        } else { // implied: if (guess_eval[col] == LETTER_NOT_IN_WORD) {
-
-            if (IS_CGB)
-                board_fill_letter_cgb_pal(row, col, SET_BOARD_CGB_PAL_NORMAL);
-            else
-                SET_BOARD_COLOR_NORMAL;
+        // Override the SET_PRINT_COLOR_NORMAL from above
+        if (do_highlight) {
+            // DMG color array is 2x colors per entry
+            match_type <<= 1;
+            set_1bpp_colors(board_dmg_colors[match_type], board_dmg_colors[match_type + 1]);
         }
     }
 }

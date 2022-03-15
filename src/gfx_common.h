@@ -178,18 +178,26 @@ void gfx_load(void);
 // Alt color scheme #2 (lighter board, less inversion)
 // Printing
 #define SET_PRINT_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)     // Full contrast text
+
 // Board
-#define SET_BOARD_COLOR_NORMAL       set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)
-#define SET_BOARD_COLOR_CONTAINS     set_1bpp_colors(DMG_WHITE, DMG_DARK_GRAY)
-#define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(DMG_BLACK, DMG_WHITE)
-// #define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)
-// #define SET_BOARD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)
+#define BOARD_DMG_COLOR_NORMAL       DMG_LITE_GRAY, DMG_WHITE
+#define BOARD_DMG_COLOR_CONTAINS     DMG_WHITE,     DMG_DARK_GRAY
+#define BOARD_DMG_COLOR_MATCHED      DMG_BLACK,     DMG_WHITE
+    // Board
+    #define SET_BOARD_COLOR_NORMAL       set_1bpp_colors(BOARD_DMG_COLOR_NORMAL)
+    #define SET_BOARD_COLOR_CONTAINS     set_1bpp_colors(BOARD_DMG_COLOR_CONTAINS)
+    #define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(BOARD_DMG_COLOR_MATCHED)
+
 // Keyboard
-#define SET_KEYBD_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)
-#define SET_KEYBD_COLOR_CONTAINS     set_1bpp_colors(DMG_WHITE, DMG_LITE_GRAY)
-#define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_WHITE, DMG_BLACK)
-// #define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(DMG_BLACK, DMG_WHITE)
-#define SET_KEYBD_COLOR_NOT_IN_WORD  set_1bpp_colors(DMG_LITE_GRAY, DMG_WHITE)
+#define KEYBD_COLOR_NORMAL       DMG_BLACK, DMG_WHITE
+#define KEYBD_COLOR_CONTAINS     DMG_WHITE, DMG_LITE_GRAY
+#define KEYBD_COLOR_MATCHED      DMG_WHITE, DMG_BLACK
+#define KEYBD_COLOR_NOT_IN_WORD  DMG_LITE_GRAY, DMG_WHITE
+
+    #define SET_KEYBD_COLOR_NORMAL       set_1bpp_colors(KEYBD_COLOR_NORMAL)
+    #define SET_KEYBD_COLOR_CONTAINS     set_1bpp_colors(KEYBD_COLOR_CONTAINS)
+    #define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(KEYBD_COLOR_MATCHED)
+    #define SET_KEYBD_COLOR_NOT_IN_WORD  set_1bpp_colors(KEYBD_COLOR_NOT_IN_WORD)
 
 /*
 // Board Letter box colors: Foreground, Background
