@@ -190,6 +190,7 @@ agone
 agons
 agony
 agood
+agora
 agree
 agria
 agrin
@@ -1116,6 +1117,7 @@ bises
 bisks
 bisom
 bison
+bitch
 biter
 bites
 bitos
@@ -1937,6 +1939,7 @@ chimp
 china
 chine
 ching
+chink
 chino
 chins
 chips
@@ -2254,6 +2257,7 @@ cooly
 coomb
 cooms
 coomy
+coons
 coops
 coopt
 coost
@@ -2616,6 +2620,7 @@ dargs
 daric
 daris
 darks
+darky
 darns
 darre
 darts
@@ -3239,6 +3244,8 @@ dwine
 dyads
 dyers
 dying
+dyked
+dykes
 dykon
 dynel
 dynes
@@ -3566,6 +3573,7 @@ faery
 faffs
 faffy
 fagin
+fagot
 faiks
 fails
 faine
@@ -3732,6 +3740,7 @@ fezzy
 fiars
 fiats
 fiber
+fibre
 fibro
 fices
 fiche
@@ -4768,6 +4777,7 @@ gyoza
 gypos
 gyppo
 gyppy
+gypsy
 gyral
 gyred
 gyres
@@ -5812,6 +5822,7 @@ kiers
 kieve
 kievs
 kight
+kikes
 kikoi
 kiley
 kilim
@@ -6221,6 +6232,7 @@ lepta
 lered
 leres
 lerps
+lesbo
 leses
 lests
 letch
@@ -6568,6 +6580,7 @@ lycra
 lying
 lymes
 lymph
+lynch
 lynes
 lyres
 lyric
@@ -8669,6 +8682,7 @@ punto
 punts
 punty
 pupae
+pupal
 pupas
 pupil
 puppy
@@ -8690,6 +8704,7 @@ purty
 puses
 pushy
 pusle
+pussy
 putid
 puton
 putti
@@ -10166,6 +10181,7 @@ slash
 slate
 slats
 slaty
+slave
 slaws
 slays
 slebs
@@ -10229,6 +10245,7 @@ slurp
 slurs
 sluse
 slush
+sluts
 slyer
 slyly
 slype
@@ -12391,6 +12408,7 @@ welly
 welsh
 welts
 wembs
+wench
 wends
 wenge
 wenny
@@ -12460,6 +12478,7 @@ whoof
 whoop
 whoot
 whops
+whore
 whorl
 whort
 whose

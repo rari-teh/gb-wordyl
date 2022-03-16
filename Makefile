@@ -126,6 +126,8 @@ langs-clean:
 #   PT full answer file is too big
 #	${MAKE} LANG_CODE=pt
 
+dictionaries: langs-compress
+
 langs-compress:
 	make -C compress compress-all-langs
 
