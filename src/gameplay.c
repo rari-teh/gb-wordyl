@@ -99,7 +99,6 @@ void gameplay_handle_guess(void) {
 
     // TODO: special handling for word_len = 0 -> don't send popup?
     if (strlen(guess) != WORD_LENGTH) {
-
         // Insufficient length
         win_dialog_show_message(WORD_TOO_SHORT_DIALOG_WIN_Y, __MESSAGE_WORD_TOO_SHORT_STR, NULL);
     }
@@ -107,7 +106,14 @@ void gameplay_handle_guess(void) {
 
         // Word not in dictionary
         win_dialog_show_message(WORD_NOT_IN_DICT_DIALOG_WIN_Y, __MESSAGE_WORD_NOT_IN_DICT_STR, NULL);
-    } else {
+    }
+    else if (opt_hard_mode_enabled) {
+        // Validate hard mode
+        if ((guess_num > 0) && (evaluate_guess_hard_mode(guess) == false)) {
+            win_dialog_show_message(HARD_MODE_GUESS_NOT_VALID_WIN_Y, __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR, NULL);
+        }
+    }
+    else {
 
         // Otherwise process the guess word
 
@@ -134,6 +140,9 @@ void gameplay_handle_guess(void) {
         } else {
             board_update_cursor();
         }
+
+        // Store guess / Eval results, for hard mode
+        copy_or_reset_prev_guess(guess);
 
         // Reset guess to empty and prepare for next one
         memset(guess, 0, WORD_LENGTH);

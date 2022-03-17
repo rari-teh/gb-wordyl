@@ -49,7 +49,7 @@
     "EXIT MENU .... ANY"
 
 
-// Avoid incerasing this popup height so it doesn't obscure the board
+// Avoid increasing this popup height so it doesn't obscure the board
 #define LOSE_MESSAGE_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __MESSAGE_LOSE_STR \
 /*  |------------------| Available space (18 chars wide) */\
@@ -58,9 +58,18 @@
     "Answer is: "    // <-- Needs 5 chars left for answer word!
 
 
+// Avoid increasing this popup height so it doesn't obscure the board
+#define HARD_MODE_GUESS_NOT_VALID_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
+#define __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR \
+/*  |------------------| Available space (18 chars wide) */\
+    "HARD MODE: GUESS\n" \
+    "MUST HAVE ALL\n" \
+    "REVEALED CLUES"
+
+
 // NOTE! X gets replaced with guess 5 letter word num
 //
-// Avoid incerasing this popup height so it doesn't obscure the board
+// Avoid increasing this popup height so it doesn't obscure the board
 #define WON_MESSAGE_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __MESSAGE_GAME_WON_STR \
 /*  |------------------| Available space (18 chars wide) */\
@@ -69,7 +78,7 @@
     "On Guess ^ of 6"
 
 
-// Avoid incerasing this popup height so it doesn't obscure the board
+// Avoid increasing this popup height so it doesn't obscure the board
 #define WORD_TOO_SHORT_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __MESSAGE_WORD_TOO_SHORT_STR \
 /*  |------------------| Available space (18 chars wide) */\
@@ -78,7 +87,7 @@
     "Needs 5 Letters"
 
 
-// Avoid incerasing this popup height so it doesn't obscure the board
+// Avoid increasing this popup height so it doesn't obscure the board
 #define WORD_NOT_IN_DICT_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __MESSAGE_WORD_NOT_IN_DICT_STR \
 /*  |------------------| Available space (18 chars wide) */\

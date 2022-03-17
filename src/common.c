@@ -9,11 +9,18 @@
 
 uint8_t game_state;
 
+bool opt_hard_mode_enabled = false;
+
+
+uint8_t prev_guess_eval[WORD_LENGTH];
 uint8_t guess_eval[WORD_LENGTH];
+
 bool answer_letter_used[WORD_LENGTH];
+bool guess_letter_used[WORD_LENGTH];
 
 uint8_t guess_num;
 
+char prev_guess[WORD_LENGTH+1];
 char guess[WORD_LENGTH+1];
 char word[WORD_LENGTH+1];  // TODO: rename this to "answer_word"
 
@@ -91,4 +98,70 @@ void evaluate_letters(char* guess) {
             }
         }
     }
+}
+
+
+// Used for hard mode evaluation
+void copy_or_reset_prev_guess(char* guess) {
+
+    for (uint8_t i=0; i < WORD_LENGTH; i++) {
+        prev_guess[i] = guess[i];
+        prev_guess_eval[i] = guess_eval[i];
+    }
+}
+
+
+// Validate hard mode
+// Returns false if criteria not met
+//   - Green: must be in exact space
+//   - Yellow: must be used
+bool evaluate_guess_hard_mode(char* guess) {
+
+    // First scan guess for exact letter matches
+    // Fail if any exact matches aren't present
+    for (uint8_t i=0; i < WORD_LENGTH; i++) {
+
+        // Reset current guess letter status
+        guess_letter_used[i] = false;
+
+        if (prev_guess_eval[i] == LETTER_RIGHT_PLACE) {
+
+            if (guess[i] == prev_guess[i])
+                guess_letter_used[i] = true;
+            else
+                return false;
+//                return prev_guess_eval[i];
+        }
+    }
+
+    // Then scan for right letter wrong place matches
+    // Fail if any of those can't be found
+    for (static uint8_t idx_p=0; idx_p < WORD_LENGTH; idx_p++) {
+
+        if (prev_guess_eval[idx_p] == LETTER_WRONG_PLACE) {
+
+            bool found_prev_guess_letter = false;
+
+            // Scan through unused guess word letters
+            for (uint8_t idx_g=0; idx_g < WORD_LENGTH;idx_g++) {
+
+                if ((guess_letter_used[idx_g] == false) &&
+                    (prev_guess[idx_p] == guess[idx_g])) {
+
+                    // Found a match, mark char as used and break out
+                    found_prev_guess_letter = true;
+                    guess_letter_used[idx_g] = true;
+                    break;
+                }
+            }
+
+            if (found_prev_guess_letter == false)
+                return false;
+//                return prev_guess_eval[idx_p];
+        }
+    }
+
+    // If nothing failed up to this point then hard validation passed, turn success
+//    return '\0';
+    return true;
 }

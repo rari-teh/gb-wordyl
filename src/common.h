@@ -3,6 +3,7 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+#include <stdbool.h>
 
 // #define _DO_EXPAND(VAL)  VAL ## 1
 // #define EXPAND(VAL)     _DO_EXPAND(VAL)
@@ -53,16 +54,23 @@
 
 extern uint8_t game_state;
 
-extern uint8_t guess_eval[5];
+extern bool opt_hard_mode_enabled;
 
 extern uint8_t guess_num;
 
+extern uint8_t prev_guess_eval[WORD_LENGTH];
+extern uint8_t guess_eval[WORD_LENGTH];
+
+extern char prev_guess[WORD_LENGTH+1];
 extern char guess[WORD_LENGTH+1];
 extern char word[WORD_LENGTH+1];
 
 uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num);
 
+void copy_or_reset_prev_guess(char* guess);
+
 // uint8_t contains(char *str, char c); // TODO: DEAD CODE
-void evaluate_letters(char* guess);
+void evaluate_letters(char * guess);
+bool evaluate_guess_hard_mode(char * guess);
 
 #endif
