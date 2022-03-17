@@ -10,7 +10,12 @@ LCC = $(GBDK_HOME)bin/lcc
 ifndef LANG_CODE
 	LANG_CODE=en
 endif
+
 CFLAGS += -DLANG_CODE=$(LANG_CODE)
+# CFLAGS += -Wf--max-allocs-per-node50000
+# CFLAGS += -Wf--max-allocs-per-node150000 # diminishing (but present) size returns after this
+# CFLAGS += -Wf--max-allocs-per-node500000
+# CFLAGS += -Wf--opt-code-size # This doesn't shrink code size much vs -Wf--max-allocs-per-node150000
 
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
 # They can also be built/cleaned individually: "make gg" and "make gg-clean"
