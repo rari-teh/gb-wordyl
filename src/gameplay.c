@@ -73,6 +73,15 @@ void show_options_message(void) {
             stats_show();
             break;
 
+        case J_A:
+            if (guess_num > 0)
+                win_dialog_show_message(LOSE_MESSAGE_DIALOG_WIN_Y, "HARD MODE: CAN\nONLY CHANGE AT\nSTART OF ROUND", NULL);
+            else {
+                opt_hard_mode_enabled ^= 1u; // invert value
+                opt_hardmode_display();
+            }
+            break;
+
         case J_UP:
             // sets: GAMEPLAY_SET_GAMEOVER
             gameplay_handle_lose();
@@ -107,45 +116,46 @@ void gameplay_handle_guess(void) {
         // Word not in dictionary
         win_dialog_show_message(WORD_NOT_IN_DICT_DIALOG_WIN_Y, __MESSAGE_WORD_NOT_IN_DICT_STR, NULL);
     }
-    else if (opt_hard_mode_enabled) {
-        // Validate hard mode
-        if ((guess_num > 0) && (evaluate_guess_hard_mode(guess) == false)) {
-            win_dialog_show_message(HARD_MODE_GUESS_NOT_VALID_WIN_Y, __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR, NULL);
-        }
-    }
     else {
 
-        // Otherwise process the guess word
-
-        board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
-        guess_num += 1;
-        keyboard_update_from_guess();
-        // keyboard_update_cursor();
-
-        // == Handle Game Over scenarios ==
-
-        // Check for correct match
-        bool game_was_won = (strcmp(word, guess) == 0);
-
-        if (game_was_won) {
-            // Hide cursor so it doesn't flash between popups
-            board_hide_cursor();
-            show_win_message(guess_num);
-            stats_update(GAME_WAS_WON, guess_num);
-            GAMEPLAY_SET_GAMEOVER;
+        // Validate hard mode
+        if ((opt_hard_mode_enabled) && (guess_num > 0) && (evaluate_guess_hard_mode(guess) == false)) {
+            win_dialog_show_message(HARD_MODE_GUESS_NOT_VALID_WIN_Y, __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR, NULL);
         }
-        else if (guess_num == MAX_GUESSES) {
-            // sets: GAMEPLAY_SET_GAMEOVER;
-            gameplay_handle_lose();
-        } else {
-            board_update_cursor();
+        else {
+
+            // Otherwise process the guess word
+
+            board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
+            guess_num += 1;
+            keyboard_update_from_guess();
+            // keyboard_update_cursor();
+
+            // == Handle Game Over scenarios ==
+
+            // Check for correct match
+            bool game_was_won = (strcmp(word, guess) == 0);
+
+            if (game_was_won) {
+                // Hide cursor so it doesn't flash between popups
+                board_hide_cursor();
+                show_win_message(guess_num);
+                stats_update(GAME_WAS_WON, guess_num);
+                GAMEPLAY_SET_GAMEOVER;
+            }
+            else if (guess_num == MAX_GUESSES) {
+                // sets: GAMEPLAY_SET_GAMEOVER;
+                gameplay_handle_lose();
+            } else {
+                board_update_cursor();
+            }
+
+            // Store guess / Eval results, for hard mode
+            copy_or_reset_prev_guess(guess);
+
+            // Reset guess to empty and prepare for next one
+            memset(guess, 0, WORD_LENGTH);
         }
-
-        // Store guess / Eval results, for hard mode
-        copy_or_reset_prev_guess(guess);
-
-        // Reset guess to empty and prepare for next one
-        memset(guess, 0, WORD_LENGTH);
     }
 }
 

@@ -36,12 +36,13 @@
 #endif
 
 
-#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(8)
+#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(9)
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "OPTIONS\n" \
     "\n" \
     "SHOW STATS ....  B\n" \
+    "HARD MODE .....  A\n" \
     "\n" \
     "RESET STATS ...  >\n" \
     "FORFEIT ROUND .  ^\n" \
@@ -56,6 +57,12 @@
     "You lose. Sorry!\n" \
     "\n" \
     "Answer is: "    // <-- Needs 5 chars left for answer word!
+
+
+// Display hard mdoe indicator just above keyboard on left
+#define OPT_HARDMODE_DISPLAY_X 15
+#define OPT_HARDMODE_DISPLAY_Y 12
+#define __STR_HARD_MODE_DISPLAY "HARD"
 
 
 // Avoid increasing this popup height so it doesn't obscure the board

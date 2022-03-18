@@ -14,6 +14,8 @@
 
 #include "window.h"
 
+#include "lang_text.h"
+
 // Printing cursor position, updated by print_gotoxy
 uint8_t * print_vram_addr = NULL;
 
@@ -60,7 +62,7 @@ void print_char(char letter) {
 
 
 // Print a string on background or window at location set by print_gotoxy()
-void print_str(char * txt) {
+void print_str(const char * txt) {
 
     uint8_t src_chr;
     uint8_t letter;
@@ -102,6 +104,23 @@ void print_str(char * txt) {
         set_vram_byte(print_vram_addr++, letter);
         // src_chr = *txt++; // Next character
     }
+}
+
+
+const char hardmode_on[] = __STR_HARD_MODE_DISPLAY;
+const char hardmode_off[] = "    ";
+
+void opt_hardmode_display(void) {
+
+    const char * p_str;
+
+    if (opt_hard_mode_enabled)
+        p_str = hardmode_on;
+    else
+        p_str = hardmode_off;
+
+    print_gotoxy(OPT_HARDMODE_DISPLAY_X, OPT_HARDMODE_DISPLAY_Y, PRINT_BKG);
+    print_str(p_str);
 }
 
 

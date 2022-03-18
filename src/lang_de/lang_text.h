@@ -34,11 +34,27 @@
     "OPTIONEN\n" \
     "\n" \
     "ZEIGE STATS:     B\n" \
+    "HARD MODE .....  A\n" \
     "\n" \
     "STATS ERNEUERN:  >\n" \
     "RUNDE AUFGEBEN:  ^\n" \
     "\n" \
     "TASTE DRUECKEN"
+
+
+// Display hard mdoe indicator just above keyboard on left
+#define OPT_HARDMODE_DISPLAY_X 15
+#define OPT_HARDMODE_DISPLAY_Y 12
+#define __STR_HARD_MODE_DISPLAY "HARD"
+
+
+// Avoid increasing this popup height so it doesn't obscure the board
+#define HARD_MODE_GUESS_NOT_VALID_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
+#define __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR \
+/*  |------------------| Available space (18 chars wide) */\
+    "HARD MODE: GUESS\n" \
+    "MUST HAVE ALL\n" \
+    "REVEALED CLUES"
 
 
 #undef __MESSAGE_LOSE_STR

@@ -37,9 +37,12 @@ extern const uint8_t tile_blank[];
 void print_gotoxy(uint8_t x, uint8_t y, uint8_t target);
 void print_str(char * txt);
 
+void opt_hardmode_display(void);
+
 void draw_letter_to_tileid(uint8_t letter, uint8_t index);
 
 void gfx_load(void);
+
 
 
 // Hardware correction factor for X position of Window when displayed on screen
