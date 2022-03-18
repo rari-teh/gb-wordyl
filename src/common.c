@@ -9,6 +9,7 @@
 
 uint8_t game_state;
 
+// Options
 bool opt_hard_mode_enabled = false;
 
 
@@ -117,6 +118,8 @@ void copy_or_reset_prev_guess(char* guess) {
 //   - Yellow: must be used
 bool evaluate_guess_hard_mode(char* guess) {
 
+    static uint8_t idx_p;
+
     // First scan guess for exact letter matches
     // Fail if any exact matches aren't present
     for (uint8_t i=0; i < WORD_LENGTH; i++) {
@@ -130,13 +133,13 @@ bool evaluate_guess_hard_mode(char* guess) {
                 guess_letter_used[i] = true;
             else
                 return false;
-//                return prev_guess_eval[i];
+//                return prev_guess_eval[i]; // Could missing return letter
         }
     }
 
     // Then scan for right letter wrong place matches
     // Fail if any of those can't be found
-    for (static uint8_t idx_p=0; idx_p < WORD_LENGTH; idx_p++) {
+    for (idx_p=0; idx_p < WORD_LENGTH; idx_p++) {
 
         if (prev_guess_eval[idx_p] == LETTER_WRONG_PLACE) {
 
@@ -157,11 +160,11 @@ bool evaluate_guess_hard_mode(char* guess) {
 
             if (found_prev_guess_letter == false)
                 return false;
-//                return prev_guess_eval[idx_p];
+//                return prev_guess_eval[idx_p]; // Could missing return letter
         }
     }
 
     // If nothing failed up to this point then hard validation passed, turn success
-//    return '\0';
+//    return '\0'; // Return NULL if letter not found
     return true;
 }
