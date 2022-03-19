@@ -22,14 +22,14 @@ uint8_t kb_status[KEYBD_ROWS][10];
 
 
 // Length of each keyboard row in characters
-int8_t kb_coords[KEYBD_ROWS] = {
+const int8_t kb_row_len[KEYBD_ROWS] = {
     10,
     9,
     7
 };
 
 // Which tile column each keyboard row starts on
-int8_t kb_offsets[KEYBD_ROWS] = {
+const int8_t kb_offsets[KEYBD_ROWS] = {
     0,
     1,
     2
@@ -137,7 +137,7 @@ void keyboard_update_from_guess(void) {
     // Loop through keyboard, check for letters to highlight
     for(uint8_t row = 0; row < 3; row++) {
 
-        uint8_t kbl = strlen(kb[row]);
+        uint8_t kbl = kb_row_len[row];
         for(uint8_t col=0; col < kbl; col++) {
 
             char letter = kb[row][col];
@@ -168,7 +168,7 @@ void keyboard_redraw_clean(void) {
     uint8_t tile_id = BG_TILES_KEYBD_START;
     for(uint8_t row = 0; row < 3; row++) {
 
-        uint8_t kbl = strlen(kb[row]);
+        uint8_t kbl = kb_row_len[row];
         for(uint8_t col=0; col < kbl; col++) {
 
             // Reset keyboard status
@@ -188,7 +188,7 @@ void keyboard_draw_map(void) {
     uint8_t tile_id = BG_TILES_KEYBD_START;
 
     for(uint8_t row = 0; row < 3; row++) {
-        uint8_t kbl = strlen(kb[row]);
+        uint8_t kbl = kb_row_len[row];
 
         // Add a blank space between every horizontal letter
         for(uint8_t col=0; col < kbl * 2; col += 2) {
@@ -233,8 +233,8 @@ void keyboard_move_cursor(int8_t move_x, int8_t move_y) {
         }
 
         // Bump X to end or row if it's shorter X if needed on row change
-        if(kb_x >= kb_coords[kb_y]) {
-            kb_x = kb_coords[kb_y] - 1;
+        if(kb_x >= kb_row_len[kb_y]) {
+            kb_x = kb_row_len[kb_y] - 1;
         }
     }
 
@@ -242,10 +242,10 @@ void keyboard_move_cursor(int8_t move_x, int8_t move_y) {
     // Update X and handle wraparound
     kb_x += move_x;
 
-    if (kb_x >= kb_coords[kb_y])
+    if (kb_x >= kb_row_len[kb_y])
         kb_x = 0;
     else if (kb_x < 0)
-        kb_x = kb_coords[kb_y] - 1;
+        kb_x = kb_row_len[kb_y] - 1;
 
 
     keyboard_update_cursor();
