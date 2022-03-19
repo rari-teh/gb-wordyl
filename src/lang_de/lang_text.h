@@ -39,13 +39,28 @@
 /*  |------------------| Available space (18 chars wide) */\
     "OPTIONEN\n" \
     "\n" \
-    "ZEIGE STATS:     B\n" \
-    "HARD MODE .....  A\n" \
+    "ZEIGE STATS:     A\n" \
+    "HARD MODE .....  >\n" \
     "\n" \
-    "STATS ERNEUERN:  >\n" \
+    "STATS ERNEUERN:  <\n" \
     "RUNDE AUFGEBEN:  ^\n" \
     "\n" \
     "TASTE DRUECKEN"
+
+
+#define CONFIRM_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(6)
+#undef __CONFIRM_DIALOG_STR
+#define __CONFIRM_DIALOG_STR \
+/*  |------------------| Available space (18 chars wide) */ \
+    "CONFIRM:^\n" \
+    "CANCEL: OTHER KEYS\n"\
+    "..................\n" \
+    "\n" \
+
+#undef __CONFIRM_STATS_RESET_STR
+#undef __CONFIRM_FORFEIT_STR
+#define __CONFIRM_STATS_RESET_STR "RESET STATS?"
+#define __CONFIRM_FORFEIT_STR     "FORFEIT ROUND?"
 
 
 // Display hard mdoe indicator just above keyboard on left

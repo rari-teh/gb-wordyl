@@ -55,13 +55,25 @@
 /*  |------------------| Available space (18 chars wide) */\
     "OPTIONS\n" \
     "\n" \
-    "SHOW STATS ....  B\n" \
-    "HARD MODE .....  A\n" \
+    "SHOW STATS ....  A\n" \
+    "HARD MODE .....  >\n" \
     "\n" \
-    "RESET STATS ...  >\n" \
+    "RESET STATS ...  <\n" \
     "FORFEIT ROUND .  ^\n" \
     "\n" \
     "EXIT MENU .... ANY"
+
+
+#define CONFIRM_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(6)
+#define __CONFIRM_DIALOG_STR \
+/*  |------------------| Available space (18 chars wide) */ \
+    "CONFIRM:^\n" \
+    "CANCEL: OTHER KEYS\n"\
+    "..................\n" \
+    "\n" \
+
+#define __CONFIRM_STATS_RESET_STR "RESET STATS?"
+#define __CONFIRM_FORFEIT_STR     "FORFEIT ROUND?"
 
 
 // Display hard mdoe indicator just above keyboard on left

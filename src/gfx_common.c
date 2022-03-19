@@ -91,6 +91,7 @@ void print_str(const char * txt) {
             switch (src_chr) {
                 case '.': letter = BG_TILES_FONT_PERIOD; break;
                 case '!': letter = BG_TILES_FONT_EXCLAIM; break;
+                case '?': letter = BG_TILES_FONT_QMARK; break;
                 case ':': letter = BG_TILES_FONT_COLON; break;
                 case '+': letter = BG_TILES_FONT_PLUS; break;
                 case '<': letter = BG_TILES_FONT_BUTTON_L; break;

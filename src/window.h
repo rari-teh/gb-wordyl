@@ -4,6 +4,7 @@
 #define _WINDOW_H
 
 void win_dialog_draw(void);
+bool win_confirm_dialog(char * str_message);
 uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * str_2);
 
 #define PX_PER_TILE        8

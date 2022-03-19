@@ -12,12 +12,23 @@
 #include "gameboy_color.h"
 
 #include "window.h"
+#include "lang_text.h"
 
 
 // Draw dialog box outline on the window
 void win_dialog_draw(void) {
 
     set_win_based_tiles(0,0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, map_decomp_buf, BG_TILES_INTRO_DIALOG_START);
+}
+
+#define DIALOG_CONFIRM_BUTTON  (J_UP)
+
+// Prompts the user to confirm based on: str_message
+// Returns TRUE if confirmed
+bool win_confirm_dialog(char * str_message) {
+    uint8_t  ret_keys_ticked;
+
+    return (DIALOG_CONFIRM_BUTTON == win_dialog_show_message(CONFIRM_DIALOG_WIN_Y, __CONFIRM_DIALOG_STR, str_message));
 }
 
 

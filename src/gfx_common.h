@@ -123,19 +123,20 @@ void gfx_load(void);
 
 
 #define BG_TILES_FONT_START   (BG_TILES_INTRO_DIALOG_START + BG_TILES_INTRO_DIALOG_LEN)
-#define BG_TILES_FONT_LEN     (26u + 4u + 4u) // 26 letters + 4 special chars: ".", "!", ":" + 4 button chars
+#define BG_TILES_FONT_LEN     (26u + 5u + 4u) // 26 letters + 5 special chars: ".!?:+" + 4 button chars
 #define BG_TILES_FONT_PERIOD  (BG_TILES_FONT_START + 26u)
 #define BG_TILES_FONT_EXCLAIM (BG_TILES_FONT_START + 27u)
-#define BG_TILES_FONT_COLON   (BG_TILES_FONT_START + 28u)
-#define BG_TILES_FONT_PLUS    (BG_TILES_FONT_START + 29u)
+#define BG_TILES_FONT_QMARK   (BG_TILES_FONT_START + 28u)
+#define BG_TILES_FONT_COLON   (BG_TILES_FONT_START + 29u)
+#define BG_TILES_FONT_PLUS    (BG_TILES_FONT_START + 30u)
 
 // Gamepad Buttons
 // #define BG_TILES_FONT_BUTTON_A (BG_TILES_FONT_START + 29u)
 // #define BG_TILES_FONT_BUTTON_B (BG_TILES_FONT_START + 30u)
-#define BG_TILES_FONT_BUTTON_U (BG_TILES_FONT_START + 30u) // '^' char
-#define BG_TILES_FONT_BUTTON_D (BG_TILES_FONT_START + 31u) // '/' char
-#define BG_TILES_FONT_BUTTON_L (BG_TILES_FONT_START + 32u) // '<' char
-#define BG_TILES_FONT_BUTTON_R (BG_TILES_FONT_START + 33u) // '>' char
+#define BG_TILES_FONT_BUTTON_U (BG_TILES_FONT_START + 31u) // '^' char
+#define BG_TILES_FONT_BUTTON_D (BG_TILES_FONT_START + 32u) // '/' char
+#define BG_TILES_FONT_BUTTON_L (BG_TILES_FONT_START + 33u) // '<' char
+#define BG_TILES_FONT_BUTTON_R (BG_TILES_FONT_START + 34u) // '>' char
 
 
 #define BG_TILES_FONT_NUM_START   (BG_TILES_FONT_START + BG_TILES_FONT_LEN)

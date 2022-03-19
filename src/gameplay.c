@@ -65,15 +65,20 @@ void show_options_message(void) {
 
     ret_keys_ticked = win_dialog_show_message(OPTIONS_MENU_DIALOG_WIN_Y, __OPTIONS_MENU_STR, NULL);
     switch (ret_keys_ticked) {
-        case J_RIGHT:
-            stats_reset();
-            win_dialog_show_message(STATS_RESET_DIALOG_WIN_Y, __MESSAGE_STATS_RESET_STR ,NULL);
-            // Fall through to show stats
-        case J_B:
-            stats_show();
+        case J_LEFT:
+            // Reset Stats
+            if (win_confirm_dialog(__CONFIRM_STATS_RESET_STR)) {
+                stats_reset();
+                win_dialog_show_message(STATS_RESET_DIALOG_WIN_Y, __MESSAGE_STATS_RESET_STR ,NULL);
+            }
             break;
 
         case J_A:
+            stats_show();
+            break;
+
+        case J_RIGHT:
+            // Hard mode toggle
             if (guess_num > 0)
                 win_dialog_show_message(LOSE_MESSAGE_DIALOG_WIN_Y, "HARD MODE: CAN\nONLY CHANGE AT\nSTART OF ROUND", NULL);
             else {
@@ -83,8 +88,10 @@ void show_options_message(void) {
             break;
 
         case J_UP:
+            // Forfeit Round
             // sets: GAMEPLAY_SET_GAMEOVER
-            gameplay_handle_lose();
+            if (win_confirm_dialog(__CONFIRM_FORFEIT_STR))
+                gameplay_handle_lose();
             break;
     }
 }
