@@ -186,7 +186,7 @@ void gfx_load(void) {
 
 
     // == Cursors ==
-    // Sprite Data
+    // Shared Cursor Sprite Tile Data
     // Load 4bpp gbcompressed sprite cursor data
     gb_decompress_sprite_data((SP_TILES_CURSOR_START), cursor_tiles);
     // set_sprite_data((SP_TILES_CURSOR_START), SP_TILES_CURSOR_COUNT_TOTAL, cursor_tiles);
@@ -203,20 +203,25 @@ void gfx_load(void) {
     set_sprite_prop(SP_ID_CURSOR_KBD_START + 1u, S_FLIPX);
     set_sprite_prop(SP_ID_CURSOR_KBD_START + 2u, S_FLIPY);
     set_sprite_prop(SP_ID_CURSOR_KBD_START + 3u, S_FLIPX | S_FLIPY);
-    // Takes more ROM space:
-    // c = 0;
-    // for (uint8_t i = SP_ID_CURSOR_KBD_START; i < (SP_ID_CURSOR_KBD_START + SP_ID_CURSOR_KBD_LEN); i++) {
-    //     set_sprite_tile(i, SP_TILES_CURSOR_KBD_START);
-    //     set_sprite_prop(i, sp_cursor_kbd_props[c++]);
-    // }
-
 
     // Board Row Cursor
-    c = 0;
+    c = SP_TILES_CURSOR_BOARD_START;
     for (uint8_t i = SP_ID_CURSOR_BOARD_START; i < (SP_ID_CURSOR_BOARD_START + SP_ID_CURSOR_BOARD_LEN); i++) {
-        set_sprite_tile(i, SP_TILES_CURSOR_BOARD_START + c++);
+        set_sprite_tile(i, c++);
         set_sprite_prop(i, CGB_PAL_3);
     }
+
+    // Letter cursor (as dotted frame)
+    set_sprite_tile(SP_ID_CURSOR_LETTER_START + 0u, SP_TILES_CURSOR_LETTER_START);
+    set_sprite_tile(SP_ID_CURSOR_LETTER_START + 1u, SP_TILES_CURSOR_LETTER_START + 1u);
+    set_sprite_tile(SP_ID_CURSOR_LETTER_START + 2u, SP_TILES_CURSOR_LETTER_START + 1u);
+    set_sprite_tile(SP_ID_CURSOR_LETTER_START + 3u, SP_TILES_CURSOR_LETTER_START);
+
+    set_sprite_prop(SP_ID_CURSOR_LETTER_START + 0u, OAMF_PAL1 | CGB_PAL_WHITE_2);
+    set_sprite_prop(SP_ID_CURSOR_LETTER_START + 1u, OAMF_PAL1 | CGB_PAL_WHITE_2); // | S_FLIPX);
+    set_sprite_prop(SP_ID_CURSOR_LETTER_START + 2u, OAMF_PAL1 | CGB_PAL_WHITE_2 | S_FLIPX | S_FLIPY); //| S_FLIPY);
+    set_sprite_prop(SP_ID_CURSOR_LETTER_START + 3u, OAMF_PAL1 | CGB_PAL_WHITE_2 | S_FLIPX | S_FLIPY);
+
 
     // Clear window and move it offscreen at the bottom
     move_win(0 + WIN_X_OFFSET, DEVICE_SCREEN_PX_HEIGHT); // Window is offscreen by default

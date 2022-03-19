@@ -26,11 +26,6 @@ extern uint8_t map_decomp_buf[];
 extern uint8_t board_letters_decomp_buf[];
 extern uint8_t font_letters_decomp_buf[];
 
-// Optimized out
-// extern const uint8_t sp_cursor_kbd_props[];
-// extern const uint8_t sp_cursor_offset_x[];
-// extern const uint8_t sp_cursor_offset_y[];
-
 
 extern const uint8_t tile_blank[];
 
@@ -50,17 +45,28 @@ void gfx_load(void);
 
 
 #define SP_TILES_CURSOR_START               0u
+    // Keyboard current letter cursor
     #define SP_TILES_CURSOR_KBD_START       (SP_TILES_CURSOR_START)
     #define SP_TILES_CURSOR_KBD_LEN         1u
+
+    // Board row cursor
     #define SP_TILES_CURSOR_BOARD_START     (SP_TILES_CURSOR_KBD_START + SP_TILES_CURSOR_KBD_LEN)
     #define SP_TILES_CURSOR_BOARD_LEN       4u
-#define SP_TILES_CURSOR_COUNT_TOTAL          (SP_TILES_CURSOR_KBD_LEN + SP_TILES_CURSOR_BOARD_LEN)
+
+    // Cursor that makes a border around the current letter tile
+    #define SP_TILES_CURSOR_LETTER_START    (SP_TILES_CURSOR_BOARD_START + SP_TILES_CURSOR_BOARD_LEN)
+    #define SP_TILES_CURSOR_LETTER_LEN      2u
+#define SP_TILES_CURSOR_COUNT_TOTAL         (SP_TILES_CURSOR_KBD_LEN + SP_TILES_CURSOR_BOARD_LEN + SP_TILES_CURSOR_LETTER_LEN)
 
 
-#define SP_ID_CURSOR_KBD_START   0u
-#define SP_ID_CURSOR_KBD_LEN     4u
-#define SP_ID_CURSOR_BOARD_START (SP_ID_CURSOR_KBD_START + SP_ID_CURSOR_KBD_LEN)
-#define SP_ID_CURSOR_BOARD_LEN   4u
+#define SP_ID_CURSORS_START            0u
+    #define SP_ID_CURSOR_KBD_START     0u
+    #define SP_ID_CURSOR_KBD_LEN       4u
+    #define SP_ID_CURSOR_BOARD_START   (SP_ID_CURSOR_KBD_START + SP_ID_CURSOR_KBD_LEN)
+    #define SP_ID_CURSOR_BOARD_LEN     4u
+    #define SP_ID_CURSOR_LETTER_START  (SP_ID_CURSOR_BOARD_START + SP_ID_CURSOR_BOARD_LEN)
+    #define SP_ID_CURSOR_LETTER_LEN    4u
+#define SP_ID_CURSORS_COUNT_TOTAL      (SP_ID_CURSOR_KBD_LEN + SP_ID_CURSOR_BOARD_LEN + SP_ID_CURSOR_LETTER_LEN)
 
 
 // TODO: could move to keybaord.h

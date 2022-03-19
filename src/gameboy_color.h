@@ -22,14 +22,15 @@
 #define CGB_PAL_7  7u
 
 
-#define CGB_PAL_WHITE  CGB_PAL_0
-#define CGB_PAL_YELLOW CGB_PAL_1
-#define CGB_PAL_GREEN  CGB_PAL_2
-#define CGB_PAL_BLUE   CGB_PAL_3
-#define CGB_PAL_RED    CGB_PAL_4
-#define CGB_PAL_BLUE_2 CGB_PAL_5
+#define CGB_PAL_WHITE   CGB_PAL_0
+#define CGB_PAL_YELLOW  CGB_PAL_1
+#define CGB_PAL_GREEN   CGB_PAL_2
+#define CGB_PAL_BLUE    CGB_PAL_3
+#define CGB_PAL_RED     CGB_PAL_4
+#define CGB_PAL_BLUE_2  CGB_PAL_5
+#define CGB_PAL_WHITE_2 CGB_PAL_6
 
-#define CGB_PAL_COUNT 6
+#define CGB_PAL_COUNT 7
 
 #define CGB_PAL_SCREEN_BKG CGB_PAL_BLUE_2
 

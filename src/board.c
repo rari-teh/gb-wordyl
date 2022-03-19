@@ -19,6 +19,8 @@ char empty_word_buf[WORD_LENGTH + 1] = "     ";
 
 uint8_t g_board_tile_flip_speed;
 
+uint8_t g_board_letter_cursor = 0;
+
 /*
 // 5 x 6 array of 2x2 metatiles arranged as first row:0,1 second row: 2,3
 const uint8_t board_map[]  = {
@@ -126,10 +128,45 @@ const uint8_t board_flip_anim[] = {
 };
 
 
+
+#define BOARD_LETTER_CURSOR_X_AT_COL(col) (5u + (BOARD_GRID_X * 8u) + (col * (BOARD_TILE_W * 8u)) + DEVICE_SPRITE_PX_OFFSET_X)
+#define BOARD_LETTER_CURSOR_Y_AT_ROW(row) (1u + (row * (BOARD_TILE_W * 8u)) + (BOARD_TILE_Y_START * 8u) + DEVICE_SPRITE_PX_OFFSET_Y)
+
+// Move the cursor to highlight the current row
+void board_update_letter_cursor(void) {
+
+    uint8_t x = BOARD_LETTER_CURSOR_X_AT_COL(guess_letter_cursor);
+    uint8_t y = BOARD_LETTER_CURSOR_Y_AT_ROW(guess_num);
+
+    move_sprite(SP_ID_CURSOR_LETTER_START     , x     , y);
+    move_sprite(SP_ID_CURSOR_LETTER_START + 1u, x + 8u, y);
+    move_sprite(SP_ID_CURSOR_LETTER_START + 2u, x -2u    , y + 8u -2u);
+    move_sprite(SP_ID_CURSOR_LETTER_START + 3u, x + 8u - 2u, y + 8u - 2u);
+}
+
+// Move the cursor to highlight the current row
+void board_hide_letter_cursor(void) {
+
+    for (uint8_t i = 0; i < SP_ID_CURSOR_LETTER_LEN; i++) {
+        hide_sprite(SP_ID_CURSOR_LETTER_START + i);
+    }
+}
+
+
+
+// Move the cursor to highlight the current row
+void board_hide_row_cursor(void) {
+
+    for (uint8_t i = 0; i < SP_ID_CURSOR_BOARD_LEN; i++) {
+        hide_sprite(SP_ID_CURSOR_BOARD_START + i);
+    }
+}
+
+
 #define CURSOR_BOARD_X_POS (((BOARD_TILE_X_START * 8)- 16u) + DEVICE_SPRITE_PX_OFFSET_X)
 
 // Move the cursor to highlight the current row
-void board_update_cursor(void) {
+void board_update_row_cursor(void) {
 
     // guess_num is desired row
     uint8_t x = CURSOR_BOARD_X_POS;
@@ -139,6 +176,7 @@ void board_update_cursor(void) {
     move_sprite(SP_ID_CURSOR_BOARD_START + 1u, x + 8u, y);
     move_sprite(SP_ID_CURSOR_BOARD_START + 2u, x     , y + 8u);
     move_sprite(SP_ID_CURSOR_BOARD_START + 3u, x + 8u, y + 8u);
+
     // Takes more ROM space:
     /*
     for (uint8_t i = 0; i < SP_ID_CURSOR_BOARD_LEN; i++) {
@@ -161,29 +199,43 @@ void board_hide_cursor(void) {
 
 
 // Draw the letters for a guess as they are entered
-void board_render_guess_letter(uint8_t col) {
+void board_render_guess_letter_at_cursor(void) {
 
     BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_FAST);
 
     // Cheat Mode: Highlight word letters as typed in debug mode
     #ifdef DEBUG_REVEAL_WHILE_TYPE
+        // Note: This debug feature might be broken since adding a movable letter cursor
+        //
         // evaluate_letters(guess);
         // board_set_color_for_letter(guess_num, col, BOARD_HIGHLIGHT_YES);
         board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
     #else
-        board_draw_letter(guess_num, col, guess[col], BOARD_HIGHLIGHT_NO);
+        // Hide and then re-show the letter cursor so it doesn't obstruct the animation
+        board_hide_letter_cursor();
+        board_draw_letter(guess_num, guess_letter_cursor, guess[guess_letter_cursor], BOARD_HIGHLIGHT_NO);
+        board_update_letter_cursor();
     #endif
 }
+
 
 
 // Add a guess letter to the board
 void board_add_guess_letter(void) {
 
-    uint8_t guess_len = strlen(guess);
+    // NOTE: To disallow overwriting existing letters
+    //       this check can be enabled before setting
+    //         guess[guess_letter_cursor] = keyboard_get_letter();
+    // Add letter to the space if it's not already filled
+    // if (! guess[guess_letter_cursor]) {
 
-    if (guess_len < WORD_LENGTH) {
-        guess[guess_len] = keyboard_get_letter();
-        board_render_guess_letter(guess_len);
+    // Add or replace the letter
+    guess[guess_letter_cursor] = keyboard_get_letter();
+    board_render_guess_letter_at_cursor();
+
+    // Advance the cursor if applicible
+    if (guess_letter_cursor < LETTER_CURSOR_MAX) {
+        guess_letter_cursor++;
     }
 }
 
@@ -191,11 +243,15 @@ void board_add_guess_letter(void) {
 // Add a guess letter to the board
 void board_remove_guess_letter(void) {
 
-    uint8_t guess_len = strlen(guess);
+    // If current letter is blank, act as Backspace key
+    // otherwise behave as a Delete key
+    if (! guess[guess_letter_cursor])
+        if (guess_letter_cursor > LETTER_CURSOR_START)
+            guess_letter_cursor--;
 
-    if (guess_len > 0) {
-        guess[guess_len-1] = GUESS_LETTER_EMPTY;
-        board_render_guess_letter(guess_len-1);
+    if (guess[guess_letter_cursor]) {
+        guess[guess_letter_cursor] = 0;
+        board_render_guess_letter_at_cursor();
     }
 }
 

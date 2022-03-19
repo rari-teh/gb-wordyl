@@ -20,6 +20,7 @@ bool answer_letter_used[WORD_LENGTH];
 bool guess_letter_used[WORD_LENGTH];
 
 uint8_t guess_num;
+uint8_t guess_letter_cursor;
 
 char prev_guess[WORD_LENGTH+1];
 char guess[WORD_LENGTH+1];

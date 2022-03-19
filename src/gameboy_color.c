@@ -21,6 +21,7 @@ const palette_color_t cgb_palettes[] = {
                                RGB8(168u,210u,255u), RGB8(168u /2, 240u /2, 255u /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = blue
                                RGB8(255u,150u,150u), RGB8(255u /2, 150u /2, 150u /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = red
                                RGB8(168u,210u,255u), RGB8(168u /2, 240u /2, 255u /2),RGB8(85u,85u,85u),RGB8(168u /2, 240u /2, 255u /2), // col 0 = blue #2
+                               RGB8(255u,255u,255u), RGB8(255u,255u,255u),           RGB8(85u,85u,85u),RGB8(0u,0u,0u),  // White v2
                           };
 
 // Now handled by Fade in/out instead

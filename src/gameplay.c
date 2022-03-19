@@ -92,7 +92,8 @@ void show_options_message(void) {
 
 void gameplay_handle_lose(void) {
     // Hide cursor so it doesn't flash between popups
-    board_hide_cursor();
+    board_hide_row_cursor();
+    board_hide_letter_cursor();
     show_lose_message(word);
     stats_update(GAME_NOT_WON, guess_num);
     GAMEPLAY_SET_GAMEOVER;
@@ -106,7 +107,6 @@ void gameplay_handle_lose(void) {
 //   from the main gameplay loop
 void gameplay_handle_guess(void) {
 
-    // TODO: special handling for word_len = 0 -> don't send popup?
     if (strlen(guess) != WORD_LENGTH) {
         // Insufficient length
         win_dialog_show_message(WORD_TOO_SHORT_DIALOG_WIN_Y, __MESSAGE_WORD_TOO_SHORT_STR, NULL);
@@ -138,7 +138,8 @@ void gameplay_handle_guess(void) {
 
             if (game_was_won) {
                 // Hide cursor so it doesn't flash between popups
-                board_hide_cursor();
+                board_hide_row_cursor();
+                board_hide_letter_cursor();
                 show_win_message(guess_num);
                 stats_update(GAME_WAS_WON, guess_num);
                 GAMEPLAY_SET_GAMEOVER;
@@ -147,14 +148,16 @@ void gameplay_handle_guess(void) {
                 // sets: GAMEPLAY_SET_GAMEOVER;
                 gameplay_handle_lose();
             } else {
-                board_update_cursor();
+                guess_letter_cursor = LETTER_CURSOR_START; // reset letter cursor to start of row
+                board_update_row_cursor();
+                board_update_letter_cursor();
             }
 
             // Store guess / Eval results, for hard mode
             copy_or_reset_prev_guess(guess);
 
             // Reset guess to empty and prepare for next one
-            memset(guess, 0, WORD_LENGTH);
+            memset(guess, 0, sizeof(guess));
         }
     }
 }
@@ -219,11 +222,13 @@ void gameplay_init_maps(void) {
 void gameplay_restart(void) {
 
     guess_num = 0;
+    guess_letter_cursor = LETTER_CURSOR_START;
     memset(guess, 0, sizeof(guess));
 
     // Draws initial empty board and keyboard
     board_redraw_clean();
-    board_update_cursor();
+    board_update_row_cursor();
+    board_update_letter_cursor();
 
     keyboard_reset();
 
@@ -238,6 +243,7 @@ void gameplay_restart(void) {
 // Runs the main gameplay: word entry, answer checking, messaging
 void gameplay_run(void)
 {
+    bool keys_select_consumed = false;
 
     while(game_state == GAME_STATE_RUNNING) {
         wait_vbl_done();
@@ -279,14 +285,32 @@ void gameplay_run(void)
             }
         }
 
-        if (KEY_TICKED(J_A | J_B | J_SELECT | J_START)) {
-            switch(keys) {
+        if (KEY_RELEASED(J_SELECT)) {
+            switch(previous_keys) {
 
                 // Show Options menu
                 case J_SELECT:
                     // Can set game_state to lost (exiting loop)
-                    show_options_message();
+                    //
+                    // * Select is also used as a modifier, so
+                    //   only trigger if it wasn't used for that
+                    if (!keys_select_consumed) {
+                        show_options_message();
+
+                        // Make sure select is released to avoid re-triggering menu immediately
+                        while (joypad() & J_SELECT) { wait_vbl_done(); }
+                        UPDATE_KEYS();
+                    }
+
+                    // reset modified state
+                    keys_select_consumed = false;
                     break;
+            }
+        }
+
+
+        if (KEY_TICKED(J_A | J_B | J_START)) {
+            switch(keys & (J_A | J_B | J_START)) {
 
                 // Check a guess
                 case J_START:
@@ -296,11 +320,29 @@ void gameplay_run(void)
 
                 // Add/Remove letters from a guess
                 case J_A:
-                    board_add_guess_letter();
+                    if (keys & J_SELECT) {
+                        if (guess_letter_cursor < LETTER_CURSOR_MAX)
+                            guess_letter_cursor++;
+
+                        keys_select_consumed = true;
+                    } else
+                        board_add_guess_letter();
+
+                    // TODO: FIXME Redundant with board_remove_guess_letter(), but not for cursor movement alone
+                    board_update_letter_cursor();
                     break;
 
                 case J_B:
-                    board_remove_guess_letter();
+                    if (keys & J_SELECT) {
+                        if (guess_letter_cursor > LETTER_CURSOR_START)
+                            guess_letter_cursor--;
+
+                        keys_select_consumed = true;
+                    } else
+                        board_remove_guess_letter();
+
+                    // TODO: FIXME Redundant with board_remove_guess_letter(), but not for cursor movement alone
+                    board_update_letter_cursor();
                     break;
             }
         }

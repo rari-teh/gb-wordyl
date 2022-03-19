@@ -26,6 +26,9 @@
 #define WORD_LENGTH 5
 #define MAX_GUESSES 6
 
+#define LETTER_CURSOR_START 0
+#define LETTER_CURSOR_MAX   (WORD_LENGTH - 1)
+
 // Cheats for testing
 // #define DEBUG_REVEAL_WHILE_TYPE
 // #define DEBUG_FORCE_WORD "AMPLE"
@@ -58,6 +61,7 @@ extern uint8_t game_state;
 extern bool opt_hard_mode_enabled;
 
 extern uint8_t guess_num;
+extern uint8_t guess_letter_cursor;
 
 extern uint8_t prev_guess_eval[WORD_LENGTH];
 extern uint8_t guess_eval[WORD_LENGTH];

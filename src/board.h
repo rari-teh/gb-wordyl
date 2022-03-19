@@ -25,11 +25,15 @@ extern const uint8_t * p_board_layout;
 
 void board_map_fill();
 
-void board_hide_cursor(void);
-void board_update_cursor(void);
+void board_update_letter_cursor(void);
+void board_hide_letter_cursor(void);
+
+
+void board_hide_row_cursor(void);
+void board_update_row_cursor(void);
 
 void board_redraw_clean(void);
-void board_render_guess_letter(uint8_t col);
+void board_render_guess_letter_at_cursor(void);
 void board_add_guess_letter(void);
 void board_remove_guess_letter(void);
 
