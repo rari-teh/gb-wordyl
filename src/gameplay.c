@@ -268,24 +268,7 @@ void gameplay_run(void)
                     RESET_KEY_REPEAT(KEY_REPEAT_DPAD_RELOAD_VAL);
 
                 // Filter with D-Pad to allow movement while still pressing A / B
-                switch(keys & J_DPAD) {
-                    // Keyboard Movement
-                    case J_RIGHT:
-                        keyboard_move_cursor(1, 0);
-                        break;
-
-                    case J_LEFT:
-                        keyboard_move_cursor(-1, 0);
-                        break;
-
-                    case J_UP:
-                        keyboard_move_cursor(0, -1);
-                        break;
-
-                    case J_DOWN:
-                        keyboard_move_cursor(0, 1);
-                        break;
-                }
+                keyboard_move_cursor(keys & J_DPAD);
             }
         }
 

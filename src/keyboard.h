@@ -27,6 +27,6 @@ void keyboard_redraw_clean(void);
 void keyboard_draw_map(void);
 
 void keyboard_update_cursor(void);
-void keyboard_move_cursor(int8_t move_x, int8_t move_y);
+void keyboard_move_cursor(uint8_t dpad_key);
 
 #endif

@@ -219,7 +219,27 @@ void keyboard_update_cursor(void) {
 }
 
 
-void keyboard_move_cursor(int8_t move_x, int8_t move_y) {
+
+const int8_t keyboard_dpad_movement[] = {
+    1,  0, // J_RIGHT 0x01
+   -1,  0, // J_LEFT  0x02
+    0, -1, // J_UP    0x04
+    0,  0, // shim for gap
+    0,  1, // J_DOWN  0x08
+};
+
+void keyboard_move_cursor(uint8_t dpad_key) {
+
+    // Using this LUT saves about 50 bytes versus a switch()
+    // in main loop and passing x,y dirs
+    //
+    // LUT is 2 entries per key
+    // Mask lowest dpad bit (J_RIGHT) to get
+    // So this: 1 2 4 8 -> becomes -> 0 2 4 ~6~ 8
+    // Then just use a single shim entry for missing 6 slot
+    dpad_key &= 0xFEu;
+    int8_t move_x = keyboard_dpad_movement[dpad_key++];
+    int8_t move_y = keyboard_dpad_movement[dpad_key];
 
     // Update Y first (may change X) and handle wraparound
     if (move_y != 0) {
