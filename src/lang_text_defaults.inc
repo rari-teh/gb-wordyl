@@ -7,7 +7,7 @@
 
 #ifndef LANG_IS_EN
 
-    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(9)
+    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(13)
     #define __INTRO_MESSAGE_STR \
     /*  |------------------| Available space (18 chars wide) */\
         "WELCOME TO WORDYL \n" \
@@ -16,20 +16,28 @@
         "  A..Z  ONLY\n" \
         "  NO SPECIAL CHARS\n" \
         "\n" \
-        "IN GAME MENU . SEL\n" \
+        "IN GAME MENU:\n" \
+        "  SELECT\n" \
+        "\n" \
+        "BOARD CURSOR:\n" \
+        "  SELECT + B A\n" \
         "\n" \
         "ANY KEY TO START"
 
 #else
 
-    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(7)
+    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(11)
     #define __INTRO_MESSAGE_STR \
     /*  |------------------| Available space (18 chars wide) */\
         "WELCOME TO WORDYL \n" \
         "\n" \
         "LANGUAGE ...... " STR(LANG_CODE) "\n" \
         "\n" \
-        "IN GAME MENU . SEL\n" \
+        "IN GAME MENU:\n" \
+        "  SELECT\n" \
+        "\n" \
+        "BOARD CURSOR:\n" \
+        "  SELECT + B A\n" \
         "\n" \
         "ANY KEY TO START"
 
