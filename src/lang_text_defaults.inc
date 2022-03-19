@@ -50,15 +50,6 @@
     "EXIT MENU .... ANY"
 
 
-// Avoid increasing this popup height so it doesn't obscure the board
-#define LOSE_MESSAGE_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
-#define __MESSAGE_LOSE_STR \
-/*  |------------------| Available space (18 chars wide) */\
-    "You lose. Sorry!\n" \
-    "\n" \
-    "Answer is: "    // <-- Needs 5 chars left for answer word!
-
-
 // Display hard mdoe indicator just above keyboard on left
 #define OPT_HARDMODE_DISPLAY_X 15
 #define OPT_HARDMODE_DISPLAY_Y 12
@@ -72,6 +63,15 @@
     "HARD MODE: GUESS\n" \
     "MUST HAVE ALL\n" \
     "REVEALED CLUES"
+
+
+// Avoid increasing this popup height so it doesn't obscure the board
+#define LOSE_MESSAGE_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
+#define __MESSAGE_LOSE_STR \
+/*  |------------------| Available space (18 chars wide) */\
+    "You lose. Sorry!\n" \
+    "\n" \
+    "Answer is: "    // <-- Needs 5 chars left for answer word!
 
 
 // NOTE! X gets replaced with guess 5 letter word num
