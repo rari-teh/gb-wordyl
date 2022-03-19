@@ -289,7 +289,7 @@ void gameplay_run(void)
         }
 
         if (KEY_RELEASED(J_SELECT)) {
-            switch(previous_keys) {
+            switch(previous_keys & J_SELECT) {
 
                 // Show Options menu
                 case J_SELECT:
