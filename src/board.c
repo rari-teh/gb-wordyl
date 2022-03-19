@@ -77,6 +77,7 @@ const uint8_t * p_board_layout;
 // 2x2 BG metatiles on the board
 const uint8_t board_map_letter[]  = {0, 1, 2, 3};
 
+
 // This is about smaller in code size than the const map version above ^^^
 //
 // Draw the board tile map
@@ -114,6 +115,19 @@ void board_map_fill() {
 }
 
 
+// Auto-populate current guess with exact matches from previous guess
+void board_autofill_matched_letters(void) {
+
+    // Don't auto-fill on the first guess (nothing to fill with)
+    if (guess_num > 0) {
+        for (uint8_t c = 0; c < WORD_LENGTH; c++) {
+            if (prev_guess_eval[c] == LETTER_RIGHT_PLACE) {
+                guess[c] = prev_guess[c];
+                board_draw_letter(guess_num, c, guess[c], BOARD_HIGHLIGHT_NO);
+            }
+        }
+    }
+}
 
 
 // Tile flip animation frames
@@ -229,10 +243,11 @@ void board_add_guess_letter(void) {
         guess[guess_letter_cursor] = keyboard_get_letter();
         board_render_guess_letter_at_cursor();
 
-        // Advance the cursor if applicible
-        if (guess_letter_cursor < LETTER_CURSOR_MAX) {
-            guess_letter_cursor++;
-        }
+    }
+
+    // Advance the cursor if applicible
+    if (guess_letter_cursor < LETTER_CURSOR_MAX) {
+        guess_letter_cursor++;
     }
 }
 

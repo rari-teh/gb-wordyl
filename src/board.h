@@ -23,7 +23,10 @@ extern const uint8_t * p_board_layout;
 // Use with BOARD_TILE_FLIP_*
 #define BOARD_SET_FLIP_SPEED(speed) g_board_tile_flip_speed = (speed)
 
+
 void board_map_fill();
+
+void board_autofill_matched_letters(void);
 
 void board_update_letter_cursor(void);
 void board_hide_letter_cursor(void);

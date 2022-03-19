@@ -244,6 +244,7 @@ void gameplay_restart(void) {
 void gameplay_run(void)
 {
     bool keys_select_consumed = false;
+    uint8_t menu_select_count = 0;
 
     // make sure all keys are released before starting gameplay
     waitpadreleased_lowcpu(J_ANY_KEY);
@@ -298,9 +299,14 @@ void gameplay_run(void)
                     // * Select is also used as a modifier, so
                     //   only trigger if it wasn't used for that
                     if (!keys_select_consumed) {
-                        show_options_message();
 
-                        waitpadreleased_lowcpu(J_SELECT);
+                        // Require N select presses in a row to spawn menu
+                        menu_select_count++;
+                        if (menu_select_count >= MENU_SELECT_COUNT_TRIGGER) {
+                            show_options_message();
+                            waitpadreleased_lowcpu(J_SELECT);
+                            menu_select_count = MENU_SELECT_COUNT_RESET;
+                        }
                     }
 
                     // reset modified state
@@ -315,8 +321,12 @@ void gameplay_run(void)
 
                 // Check a guess
                 case J_START:
-                    // Can set game_state to won / lost (exiting loop)
-                    gameplay_handle_guess();
+                    if (keys & J_SELECT) {
+                        board_autofill_matched_letters();
+                        keys_select_consumed = true;
+                    } else
+                        // Can set game_state to won / lost (exiting loop)
+                        gameplay_handle_guess();
                     break;
 
                 // Add/Remove letters from a guess

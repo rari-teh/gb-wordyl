@@ -12,7 +12,7 @@
 // German (edit+fix by skite2001 ^_-)
 
 #undef INTRO_DIALOG_WIN_Y
-#define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(10)
+#define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(16)
 #undef __INTRO_MESSAGE_STR
 #define __INTRO_MESSAGE_STR \
 /*  |------------------| Available space (18 chars wide) */\
@@ -23,7 +23,13 @@
     "  NUR A..Z OHNE\n" \
     "  SONDERZEICHEN\n" \
     "\n" \
-    "OPTIONEN:   SELECT\n" \
+    "OPTIONEN:3x SELECT\n" \
+    "\n" \
+    "BOARD CURSOR:\n" \
+    "  SELECT + B A\n" \
+    "\n" \
+    "AUTO FILL:\n" \
+    "  SELECT + START\n" \
     "\n" \
     "TASTE DRUECKEN"
 

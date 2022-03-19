@@ -6,6 +6,11 @@
 #define GAME_NOT_WON false
 #define GAME_WAS_WON true
 
+
+// Number of consecutive button presses to trigger menu
+#define MENU_SELECT_COUNT_TRIGGER 3u
+#define MENU_SELECT_COUNT_RESET   0u
+
 void gameplay_init_answer_word(void);
 
 void show_intro_message(void);

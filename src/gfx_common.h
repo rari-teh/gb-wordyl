@@ -123,7 +123,7 @@ void gfx_load(void);
 
 
 #define BG_TILES_FONT_START   (BG_TILES_INTRO_DIALOG_START + BG_TILES_INTRO_DIALOG_LEN)
-#define BG_TILES_FONT_LEN     (26u + 3u + 4u) // 26 letters + 3 special chars: ".", "!", ":" + 4 button chars
+#define BG_TILES_FONT_LEN     (26u + 4u + 4u) // 26 letters + 4 special chars: ".", "!", ":" + 4 button chars
 #define BG_TILES_FONT_PERIOD  (BG_TILES_FONT_START + 26u)
 #define BG_TILES_FONT_EXCLAIM (BG_TILES_FONT_START + 27u)
 #define BG_TILES_FONT_COLON   (BG_TILES_FONT_START + 28u)
