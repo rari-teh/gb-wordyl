@@ -212,9 +212,10 @@ void board_render_guess_letter_at_cursor(void) {
         board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
     #else
         // Hide and then re-show the letter cursor so it doesn't obstruct the animation
+        // the letter cursor will get restored and updated in main loop
         board_hide_letter_cursor();
         board_draw_letter(guess_num, guess_letter_cursor, guess[guess_letter_cursor], BOARD_HIGHLIGHT_NO);
-        board_update_letter_cursor();
+        // board_update_letter_cursor();
     #endif
 }
 

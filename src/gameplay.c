@@ -329,7 +329,6 @@ void gameplay_run(void)
                     } else
                         board_add_guess_letter();
 
-                    // TODO: FIXME Redundant with board_remove_guess_letter(), but not for cursor movement alone
                     board_update_letter_cursor();
                     break;
 
@@ -342,7 +341,6 @@ void gameplay_run(void)
                     } else
                         board_remove_guess_letter();
 
-                    // TODO: FIXME Redundant with board_remove_guess_letter(), but not for cursor movement alone
                     board_update_letter_cursor();
                     break;
             }
