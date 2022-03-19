@@ -224,19 +224,15 @@ void board_render_guess_letter_at_cursor(void) {
 // Add a guess letter to the board
 void board_add_guess_letter(void) {
 
-    // NOTE: To disallow overwriting existing letters
-    //       this check can be enabled before setting
-    //         guess[guess_letter_cursor] = keyboard_get_letter();
     // Add letter to the space if it's not already filled
-    // if (! guess[guess_letter_cursor]) {
+    if (! guess[guess_letter_cursor]) {
+        guess[guess_letter_cursor] = keyboard_get_letter();
+        board_render_guess_letter_at_cursor();
 
-    // Add or replace the letter
-    guess[guess_letter_cursor] = keyboard_get_letter();
-    board_render_guess_letter_at_cursor();
-
-    // Advance the cursor if applicible
-    if (guess_letter_cursor < LETTER_CURSOR_MAX) {
-        guess_letter_cursor++;
+        // Advance the cursor if applicible
+        if (guess_letter_cursor < LETTER_CURSOR_MAX) {
+            guess_letter_cursor++;
+        }
     }
 }
 
