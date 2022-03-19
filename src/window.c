@@ -53,7 +53,7 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
         wait_vbl_done();
     }
 
-    waitpadticked_lowcpu(J_ANY_KEY, NULL);
+    waitpadticked_lowcpu(J_ANY_KEY);
     ret_keys_ticked = KEYS_GET_TICKED();
 
     // Scroll window out of view (with a small ease-out)

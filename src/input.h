@@ -31,7 +31,9 @@
 
 #define ANY_KEY_PRESSED (keys)
 
-void waitpadticked_lowcpu(uint8_t button_mask, volatile uint8_t * loop_control);
+void waitpadreleased_lowcpu(uint8_t button_mask);
+void waitpadticked_lowcpu(uint8_t button_mask);
+// void waitpadticked_lowcpu(uint8_t button_mask, volatile uint8_t * loop_control);
 
 extern uint8_t keys;
 extern uint8_t previous_keys;

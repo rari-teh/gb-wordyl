@@ -44,7 +44,7 @@ void splash_run(void) {
     fade_in();
 
     splash_animate_title();
-    waitpadticked_lowcpu(J_START, NULL);
+    waitpadticked_lowcpu(J_START);
 
     fade_out();
     // Revert to normal palette

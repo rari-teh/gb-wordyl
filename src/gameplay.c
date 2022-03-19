@@ -245,6 +245,9 @@ void gameplay_run(void)
 {
     bool keys_select_consumed = false;
 
+    // make sure all keys are released before starting gameplay
+    waitpadreleased_lowcpu(J_ANY_KEY);
+
     while(game_state == GAME_STATE_RUNNING) {
         wait_vbl_done();
 
@@ -297,9 +300,7 @@ void gameplay_run(void)
                     if (!keys_select_consumed) {
                         show_options_message();
 
-                        // Make sure select is released to avoid re-triggering menu immediately
-                        while (joypad() & J_SELECT) { wait_vbl_done(); }
-                        UPDATE_KEYS();
+                        waitpadreleased_lowcpu(J_SELECT);
                     }
 
                     // reset modified state
