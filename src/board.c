@@ -120,13 +120,23 @@ void board_autofill_matched_letters(void) {
 
     // Don't auto-fill on the first guess (nothing to fill with)
     if (guess_num > 0) {
-        for (uint8_t c = 0; c < WORD_LENGTH; c++) {
+        // Fill in end to start for ease of setting the cursor left-most
+        for (int8_t c = WORD_LENGTH - 1; c >= 0; c--) {
             if (prev_guess_eval[c] == LETTER_RIGHT_PLACE) {
                 guess[c] = prev_guess[c];
-                board_draw_letter(guess_num, c, guess[c], BOARD_HIGHLIGHT_NO);
+                // BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_NONE); // Seems ok with normal tile flips, no need to suppress for now
+                board_draw_letter(guess_num, c, guess[c], BOARD_HIGHLIGHT_YES);
+            }
+            else if (!guess[c]) {
+                // This will end up with cursor set at left-most
+                // un-filled letter in the current guess
+                guess_letter_cursor = c;
             }
         }
     }
+
+    // Redraw the letter cursor in case it moved
+    board_update_letter_cursor();
 }
 
 
