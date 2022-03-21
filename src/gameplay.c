@@ -171,11 +171,12 @@ void gameplay_handle_guess(void) {
             // Store guess / Eval results, for hard mode
             copy_or_reset_prev_guess(guess);
 
-            // Reset guess to empty and prepare for next one
+            // Reset guess to empty and prepare for next guess
             for (uint8_t c = 0; c < WORD_LENGTH; c++)
                 guess[c] = 0;
 
-            if (opt_autofill_enabled)
+            // Try to auto-fill if game is not over
+            if ((opt_autofill_enabled) && (game_state != GAME_STATE_OVER))
                 board_autofill_matched_letters();
         }
     }
@@ -240,10 +241,14 @@ void gameplay_init_maps(void) {
 // Runs on startup and before start of a new gameplay round
 void gameplay_restart(void) {
 
+    // Reset round level vars
     guess_num = 0;
     guess_letter_cursor = LETTER_CURSOR_START;
-    for (uint8_t c = 0; c < WORD_LENGTH; c++)
+
+    for (uint8_t c = 0; c < WORD_LENGTH; c++) {
         guess[c] = 0;
+        exact_matches[c] = 0;
+    }
 
     // Draws initial empty board and keyboard
     board_redraw_clean();

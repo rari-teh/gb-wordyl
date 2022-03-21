@@ -67,6 +67,7 @@ extern uint8_t guess_letter_cursor;
 extern uint8_t prev_guess_eval[WORD_LENGTH];
 extern uint8_t guess_eval[WORD_LENGTH];
 
+extern char exact_matches[WORD_LENGTH+1];
 extern char prev_guess[WORD_LENGTH+1];
 extern char guess[WORD_LENGTH+1];
 extern char word[WORD_LENGTH+1];

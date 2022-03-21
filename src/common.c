@@ -23,8 +23,9 @@ bool guess_letter_used[WORD_LENGTH];
 uint8_t guess_num;
 uint8_t guess_letter_cursor;
 
-char prev_guess[WORD_LENGTH+1];
-char guess[WORD_LENGTH+1];
+char exact_matches[WORD_LENGTH+1]; // Used for auto-fill of previous exact matched letters
+char prev_guess[WORD_LENGTH+1]; // Used for hard-mode enforcement
+char guess[WORD_LENGTH+1]; // Current guess
 char word[WORD_LENGTH+1];  // TODO: rename this to "answer_word"
 
 
@@ -73,6 +74,8 @@ void evaluate_letters(char* guess) {
     for (uint8_t i=0; i < WORD_LENGTH; i++) {
 
         if (guess[i] == word[i]) {
+            // Store all exact matches (across multiple guesses) for auto-fill
+            exact_matches[i] = word[i];
             guess_eval[i] = LETTER_RIGHT_PLACE;
             answer_letter_used[i] = true;
         }

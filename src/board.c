@@ -129,8 +129,12 @@ void board_autofill_matched_letters(void) {
     if ((guess_num > 0) && (guess_num < MAX_GUESSES)) {
         // Fill in end to start for ease of setting the cursor left-most
         for (int8_t c = WORD_LENGTH - 1; c >= 0; c--) {
-            if (prev_guess_eval[c] == LETTER_RIGHT_PLACE) {
-                guess[c] = prev_guess[c];
+
+            if (exact_matches[c]) {
+                // Copy letter into current guess
+                guess[c] = exact_matches[c];
+                // Make sure autofill coloring will draw corerctly
+                guess_eval[c] = LETTER_RIGHT_PLACE;
                 board_draw_letter(guess_num, c, guess[c], BOARD_HIGHLIGHT_YES);
             }
             else if (!guess[c]) {
