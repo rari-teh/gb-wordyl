@@ -172,7 +172,8 @@ void gameplay_handle_guess(void) {
             copy_or_reset_prev_guess(guess);
 
             // Reset guess to empty and prepare for next one
-            memset(guess, 0, sizeof(guess));
+            for (uint8_t c = 0; c < WORD_LENGTH; c++)
+                guess[c] = 0;
 
             if (opt_autofill_enabled)
                 board_autofill_matched_letters();
@@ -241,7 +242,8 @@ void gameplay_restart(void) {
 
     guess_num = 0;
     guess_letter_cursor = LETTER_CURSOR_START;
-    memset(guess, 0, sizeof(guess));
+    for (uint8_t c = 0; c < WORD_LENGTH; c++)
+        guess[c] = 0;
 
     // Draws initial empty board and keyboard
     board_redraw_clean();
