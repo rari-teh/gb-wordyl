@@ -25,10 +25,10 @@
     "\n" \
     "OPTIONEN:3x SELECT\n" \
     "\n" \
-    "BOARD CURSOR:\n" \
+    "STELLENAUSWAHL:\n" \
     "  SELECT + B A\n" \
     "\n" \
-    "AUTO FILL:\n" \
+    "AUTOEINGABE:\n" \
     "  SELECT + START\n" \
     "\n" \
     "TASTE DRUECKEN"
@@ -40,8 +40,8 @@
     "OPTIONEN\n" \
     "\n" \
     "ZEIGE STATS:     A\n" \
-    "HARD MODE:       >\n" \
-    "AUTO FILL:       /\n" \
+    "PROFI MODUS....  >\n" \
+    "AUTOEINGABE:     /\n" \
     "\n" \
     "RUNDE AUFGEBEN:  ^\n" \
     "STATS ERNEUERN:  <\n" \
@@ -53,30 +53,44 @@
 #undef __CONFIRM_DIALOG_STR
 #define __CONFIRM_DIALOG_STR \
 /*  |------------------| Available space (18 chars wide) */ \
-    "CONFIRM:^\n" \
-    "CANCEL: OTHER KEYS\n"\
+    "WEITER:^\n" \
+    "STOP: ANDERE TASTE\n"\
     "..................\n" \
     "\n" \
 
-#undef __CONFIRM_STATS_RESET_STR
 #undef __CONFIRM_FORFEIT_STR
-#define __CONFIRM_STATS_RESET_STR "RESET STATS?"
-#define __CONFIRM_FORFEIT_STR     "FORFEIT ROUND?"
+#define __CONFIRM_FORFEIT_STR     "RUNDE AUFGEBEN?"
+
+#undef __CONFIRM_STATS_RESET_STR
+#define __CONFIRM_STATS_RESET_STR "STATS ERNEUERN?"
+
+#undef __AUTOFILL_ON__STR
+#undef __AUTOFILL_OFF__STR
+#define __AUTOFILL_ON__STR "AUTOEINGABE: AN"
+#define __AUTOFILL_OFF__STR "AUTOEINGABE: AUS"
 
 
 // Display hard mdoe indicator just above keyboard on left
-#define OPT_HARDMODE_DISPLAY_X 15
-#define OPT_HARDMODE_DISPLAY_Y 12
-#define __STR_HARD_MODE_DISPLAY "HARD"
+#undef OPT_HARDMODE_DISPLAY_X
+#undef __STR_HARD_MODE_DISPLAY
+#define OPT_HARDMODE_DISPLAY_X 14
+#define __STR_HARD_MODE_DISPLAY "PROFI"
 
 
-// Avoid increasing this popup height so it doesn't obscure the board
-#define HARD_MODE_GUESS_NOT_VALID_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
+#undef __MESSAGE_HARD_MODE_CANT_CHANGE_STR
+#define __MESSAGE_HARD_MODE_CANT_CHANGE_STR \
+/*  |------------------| Available space (18 chars wide) */\
+    "PROFI MODUS: NUR\n" \
+    "BEI NEUER RUNDE\n" \
+    "WECHSELBAR"
+
+
+#undef __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR
 #define __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "HARD MODE: GUESS\n" \
-    "MUST HAVE ALL\n" \
-    "REVEALED CLUES"
+    "PROFI MODUS: ALLE \n" \
+    "GEFUNDENE HINWEISE\n" \
+    "MUESSEN DABEI SEIN"
 
 
 #undef __MESSAGE_LOSE_STR
@@ -85,6 +99,7 @@
     "DU VERLIERST!\n" \
     "\n" \
     "ANTWORT IST: "    // <-- Needs 5 chars left for answer word
+
 
 // NOTE! X gets replaced with guess 5 letter word num
 //

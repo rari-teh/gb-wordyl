@@ -73,13 +73,27 @@
     "..................\n" \
     "\n" \
 
-#define __CONFIRM_STATS_RESET_STR "RESET STATS?"
 #define __CONFIRM_FORFEIT_STR     "FORFEIT ROUND?"
+
+#define __CONFIRM_STATS_RESET_STR "RESET STATS?"
+
+#define AUTOFILL_INFO_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
+#define __AUTOFILL_ON__STR "AUTO FILL: ON"
+#define __AUTOFILL_OFF__STR "AUTO FILL: OFF"
+
 
 // Display hard mdoe indicator just above keyboard on left
 #define OPT_HARDMODE_DISPLAY_X 15
 #define OPT_HARDMODE_DISPLAY_Y 12
 #define __STR_HARD_MODE_DISPLAY "HARD"
+
+
+#define HARD_MODE_CANT_CHANGE_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
+#define __MESSAGE_HARD_MODE_CANT_CHANGE_STR \
+/*  |------------------| Available space (18 chars wide) */\
+    "HARD MODE: CAN\n" \
+    "ONLY CHANGE AT\n" \
+    "START OF ROUND"
 
 
 // Avoid increasing this popup height so it doesn't obscure the board

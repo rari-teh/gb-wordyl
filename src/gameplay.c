@@ -80,7 +80,7 @@ void show_options_message(void) {
         case J_RIGHT:
             // Hard mode toggle
             if (guess_num > 0)
-                win_dialog_show_message(LOSE_MESSAGE_DIALOG_WIN_Y, "HARD MODE: CAN\nONLY CHANGE AT\nSTART OF ROUND", NULL);
+                win_dialog_show_message(HARD_MODE_CANT_CHANGE_WIN_Y, __MESSAGE_HARD_MODE_CANT_CHANGE_STR, NULL);
             else {
                 opt_hard_mode_enabled ^= 1u; // invert value
                 opt_hardmode_display();
@@ -91,8 +91,8 @@ void show_options_message(void) {
             // Auto-fill toggle
             opt_autofill_enabled ^= 1u; // invert value
             // Going to try and get away with not using this notice for now
-            // win_dialog_show_message(LOSE_MESSAGE_DIALOG_WIN_Y, "AUTO FILL: ",
-            //                        (opt_autofill_enabled ? "ON" : "OFF"));
+            win_dialog_show_message(AUTOFILL_INFO_WIN_Y,
+                                    (opt_autofill_enabled ? __AUTOFILL_ON__STR : __AUTOFILL_OFF__STR), NULL);
             break;
 
         case J_UP:
