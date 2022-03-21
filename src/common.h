@@ -59,6 +59,7 @@
 extern uint8_t game_state;
 
 extern bool opt_hard_mode_enabled;
+extern bool opt_autofill_enabled;
 
 extern uint8_t guess_num;
 extern uint8_t guess_letter_cursor;

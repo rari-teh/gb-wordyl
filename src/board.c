@@ -116,15 +116,21 @@ void board_map_fill() {
 
 
 // Auto-populate current guess with exact matches from previous guess
+//
+// Can be called manually (hotkey) or automatically via an option
 void board_autofill_matched_letters(void) {
 
+    // Tile flip is ON for manual trigger, but OFF for automatic since it
+    // creates a disorienting blur between guess reveal and subsequent copy-down.
+    if (opt_autofill_enabled)
+        BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_NONE);
+
     // Don't auto-fill on the first guess (nothing to fill with)
-    if (guess_num > 0) {
+    if ((guess_num > 0) && (guess_num < MAX_GUESSES)) {
         // Fill in end to start for ease of setting the cursor left-most
         for (int8_t c = WORD_LENGTH - 1; c >= 0; c--) {
             if (prev_guess_eval[c] == LETTER_RIGHT_PLACE) {
                 guess[c] = prev_guess[c];
-                // BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_NONE); // Seems ok with normal tile flips, no need to suppress for now
                 board_draw_letter(guess_num, c, guess[c], BOARD_HIGHLIGHT_YES);
             }
             else if (!guess[c]) {

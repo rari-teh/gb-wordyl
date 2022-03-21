@@ -40,10 +40,11 @@
     "OPTIONEN\n" \
     "\n" \
     "ZEIGE STATS:     A\n" \
-    "HARD MODE .....  >\n" \
+    "HARD MODE:       >\n" \
+    "AUTO FILL:       /\n" \
     "\n" \
-    "STATS ERNEUERN:  <\n" \
     "RUNDE AUFGEBEN:  ^\n" \
+    "STATS ERNEUERN:  <\n" \
     "\n" \
     "TASTE DRUECKEN"
 

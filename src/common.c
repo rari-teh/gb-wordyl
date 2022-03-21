@@ -11,6 +11,7 @@ uint8_t game_state;
 
 // Options
 bool opt_hard_mode_enabled = false;
+bool opt_autofill_enabled = false;
 
 
 uint8_t prev_guess_eval[WORD_LENGTH];

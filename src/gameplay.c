@@ -87,6 +87,14 @@ void show_options_message(void) {
             }
             break;
 
+        case J_DOWN:
+            // Auto-fill toggle
+            opt_autofill_enabled ^= 1u; // invert value
+            // Going to try and get away with not using this notice for now
+            // win_dialog_show_message(LOSE_MESSAGE_DIALOG_WIN_Y, "AUTO FILL: ",
+            //                        (opt_autofill_enabled ? "ON" : "OFF"));
+            break;
+
         case J_UP:
             // Forfeit Round
             // sets: GAMEPLAY_SET_GAMEOVER
@@ -165,6 +173,9 @@ void gameplay_handle_guess(void) {
 
             // Reset guess to empty and prepare for next one
             memset(guess, 0, sizeof(guess));
+
+            if (opt_autofill_enabled)
+                board_autofill_matched_letters();
         }
     }
 }

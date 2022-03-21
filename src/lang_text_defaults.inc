@@ -50,16 +50,17 @@
 #endif
 
 
-#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(9)
+#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(10)
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "OPTIONS\n" \
     "\n" \
     "SHOW STATS ....  A\n" \
     "HARD MODE .....  >\n" \
+    "AUTO FILL .....  /\n" \
     "\n" \
-    "RESET STATS ...  <\n" \
     "FORFEIT ROUND .  ^\n" \
+    "RESET STATS ...  <\n" \
     "\n" \
     "EXIT MENU .... ANY"
 
@@ -74,7 +75,6 @@
 
 #define __CONFIRM_STATS_RESET_STR "RESET STATS?"
 #define __CONFIRM_FORFEIT_STR     "FORFEIT ROUND?"
-
 
 // Display hard mdoe indicator just above keyboard on left
 #define OPT_HARDMODE_DISPLAY_X 15
