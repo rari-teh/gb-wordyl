@@ -28,7 +28,7 @@
 #define CGB_PAL_BLUE    CGB_PAL_3
 #define CGB_PAL_RED     CGB_PAL_4
 #define CGB_PAL_BLUE_2  CGB_PAL_5
-#define CGB_PAL_WHITE_2 CGB_PAL_6
+#define CGB_PAL_WHITE_2 CGB_PAL_6  // Used for Sprite overlay (non-transparent white) and faded board letters
 
 #define CGB_PAL_COUNT 7
 
@@ -39,7 +39,7 @@
 #define SET_BOARD_CGB_PAL_NORMAL       CGB_PAL_WHITE
 #define SET_BOARD_CGB_PAL_CONTAINS     CGB_PAL_YELLOW
 #define SET_BOARD_CGB_PAL_MATCHED      CGB_PAL_GREEN
-#define SET_BOARD_CGB_PAL_NOT_IN_WORD  CGB_PAL_WHITE
+#define SET_BOARD_CGB_PAL_NOT_IN_WORD  CGB_PAL_WHITE_2
 // Keyboard
 #define SET_KEYBD_CGB_PAL_NORMAL       CGB_PAL_WHITE
 #define SET_KEYBD_CGB_PAL_CONTAINS     CGB_PAL_YELLOW

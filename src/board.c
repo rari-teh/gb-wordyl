@@ -420,13 +420,8 @@ void board_set_color_for_letter(uint8_t row, uint8_t col, uint8_t do_highlight) 
 
 
         // If highlighting look up CGB style from LUT
-        if (do_highlight) {
-            // For CGB, lighten tile is not matched
-            if (match_type == LETTER_NOT_MATCHED)
-                SET_BOARD_CGB_COLOR_NOT_IN_WORD;
-
+        if (do_highlight)
             color = board_cgb_colors[match_type];
-        }
 
         // Apply the CGB coloring
         board_fill_letter_cgb_pal(row, col, color);
