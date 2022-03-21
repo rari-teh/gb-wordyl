@@ -175,7 +175,7 @@ void gameplay_handle_guess(void) {
             for (uint8_t c = 0; c < WORD_LENGTH; c++)
                 guess[c] = 0;
 
-            // Try to auto-fill if game is not over
+            // If requested, try to auto-fill next guess if game is not over
             if ((opt_autofill_enabled) && (game_state != GAME_STATE_OVER))
                 board_autofill_matched_letters();
         }
