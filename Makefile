@@ -4,6 +4,8 @@ GBDK_HOME = ../../../../gbdk2020/gbdk-2020-git/build/gbdk/
 # GBDK_HOME = ../../../
 LCC = $(GBDK_HOME)bin/lcc
 
+VERSION=0.79
+
 # Alternate languages can be passed in as follows
 # de en es fr it nl pt
 # make LANG_CODE=<lang code>
@@ -33,8 +35,8 @@ LCCFLAGS_gg      =
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
 
-# Set ROM name
-LCCFLAGS += -Wm-yn"$(PROJECTNAME)"
+# Set ROM name (11 chars max in CGB land)
+LCCFLAGS += -Wm-yn"GB-WORDYL"
 
 # No autobanking needed for 32k ROM
 # LCCFLAGS += -Wl-j -Wm-yoA -Wm-ya4 -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
@@ -43,7 +45,7 @@ LCCFLAGS += -debug # Uncomment to enable debug output
 
 
 # You can set the name of the ROM file here
-PROJECTNAME = GBWORDYL_$(LANG_CODE)
+PROJECTNAME = GBWORDYL_$(VERSION)_$(LANG_CODE)
 
 # Add language directory to include path
 CFLAGS += -Wf-I"$(LANGDIR)/"
@@ -139,7 +141,7 @@ langs-compress:
 
 romusage:
 # Ignores failure if romusage not in path
-	-romusage build/gb/GBWORDYL_$(LANG_CODE).noi; romusage build/gb/GBWORDYL_$(LANG_CODE).noi > romusage.txt
+	-romusage build/gb/GBWORDYL_$(VERSION)_$(LANG_CODE).noi; romusage build/gb/GBWORDYL_$(VERSION)_$(LANG_CODE).noi > romusage.txt
 
 clean:
 	@echo Cleaning
