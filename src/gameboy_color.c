@@ -21,11 +21,11 @@ const palette_color_t cgb_palettes[] = {
                                RGB8(168u,210u,255u), RGB8(168u /2, 240u /2, 255u /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u), // col 0 = blue
                                //RGB8(255u,150u,150u), RGB8(255u /2, 150u /2, 150u /2),RGB8(85u,85u,85u),RGB8(0u,0u,0u),        // Pink BG  / Black Text
                                // RGB8(255u,150u,150u), RGB8(255u /2, 150u /2, 150u /2),RGB8(85u,85u,85u),RGB8(255u,255u,255u), // Pink BG  / White Text
-                               RGB8(255u,170u,170u), RGB8(255u /2, 150u /2, 150u /2),RGB8(85u,85u,85u),RGB8(160u,59u,55u),      // Pink BG  / Red Text
+                               RGB8(255u,190u,190u), RGB8(255u /2, 150u /2, 150u /2),RGB8(85u,85u,85u),RGB8(160u,59u,55u),      // Pink BG  / Red Text
                                // RGB8(255u,255u,255u), RGB8(255u,255u,255u),           RGB8(85u,85u,85u),RGB8(190u,190u,190u), // White BG / Light Grey Text
                                // RGB8(180u,180u,180u), RGB8(255u,255u,255u),           RGB8(85u,85u,85u),RGB8(255u,255u,255u), // Light Grey BG / White Text
                                RGB8(168u,210u,255u), RGB8(168u /2, 240u /2, 255u /2),RGB8(85u,85u,85u),RGB8(168u /2, 240u /2, 255u /2), // col 0 = blue #2
-                               RGB8(255u,255u,255u), RGB8(255u,255u,255u),           RGB8(0u,0u,0u),   RGB8(160u,160u,160u), // White v2 (used for sprite overlay, needs non-transparent white)
+                               RGB8(255u,255u,255u), RGB8(255u,255u,255u),           RGB8(0u,0u,0u),   RGB8(136u,136u,136u), // White v2 (used for sprite overlay, needs non-transparent white)
                           };
 
 // Now handled by Fade in/out instead
