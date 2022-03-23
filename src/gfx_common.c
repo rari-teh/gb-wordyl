@@ -109,20 +109,11 @@ void print_str(const char * txt) {
 }
 
 
-const char hardmode_on[] = __STR_HARD_MODE_DISPLAY;
-const char hardmode_off[] = "    ";
-
+// Draw hard mode status indicator if enabled, otherwise overwrite it with spaces
 void opt_hardmode_display(void) {
 
-    const char * p_str;
-
-    if (opt_hard_mode_enabled)
-        p_str = hardmode_on;
-    else
-        p_str = hardmode_off;
-
     print_gotoxy(OPT_HARDMODE_DISPLAY_X, OPT_HARDMODE_DISPLAY_Y, PRINT_BKG);
-    print_str(p_str);
+    print_str(opt_hard_mode_enabled ? __STR_HARD_MODE_DISPLAY : "     ");
 }
 
 

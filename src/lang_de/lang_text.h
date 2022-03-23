@@ -71,10 +71,8 @@
 
 
 // Display hard mdoe indicator just above keyboard on left
-#undef OPT_HARDMODE_DISPLAY_X
 #undef __STR_HARD_MODE_DISPLAY
-#define OPT_HARDMODE_DISPLAY_X 14
-#define __STR_HARD_MODE_DISPLAY "PROFI"
+#define __STR_HARD_MODE_DISPLAY "PROFI" // 5 chars max
 
 
 #undef __MESSAGE_HARD_MODE_CANT_CHANGE_STR
@@ -88,9 +86,10 @@
 #undef __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR
 #define __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "PROFI MODUS: ALLE \n" \
-    "GEFUNDENE HINWEISE\n" \
-    "MUESSEN DABEI SEIN"
+    "PROFI MODUS:\n" \
+    "RICHTIGE HINWEISE\n" \
+    "SIND BINDEND!"
+
 
 
 #undef __MESSAGE_LOSE_STR

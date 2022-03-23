@@ -83,9 +83,9 @@
 
 
 // Display hard mdoe indicator just above keyboard on left
-#define OPT_HARDMODE_DISPLAY_X 15
+#define OPT_HARDMODE_DISPLAY_X 14
 #define OPT_HARDMODE_DISPLAY_Y 12
-#define __STR_HARD_MODE_DISPLAY "HARD"
+#define __STR_HARD_MODE_DISPLAY " HARD" // 5 chars max (padded leading space intentional)
 
 
 #define HARD_MODE_CANT_CHANGE_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
