@@ -9,7 +9,7 @@ It adds a full dictionary (versus the bloom filter), thousands more solution wor
 
 ### Download ROMs and Play Online
 
-Downloads and playable online at: https://bbbbbr.itch.io/gb-wordyl
+Downloads and online playable version are at: https://bbbbbr.itch.io/gb-wordyl
 
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo_cgb.gif)
 
@@ -17,8 +17,8 @@ Downloads and playable online at: https://bbbbbr.itch.io/gb-wordyl
 ### Credits and Thanks
 
 UI Language Translation credits:
-  - German: [Skite2001(https://twitter.com/skite2001)
-  - Dutch: [Ferrante Pescara](https://ferrantecrafts.com)
+  - German: Skite2001 - https://twitter.com/skite2001
+  - Dutch: Ferrante Pescara - https://ferrantecrafts.com
 
 Additional improvements from:
   - [arpruss](https://github.com/arpruss/gb-fiver) : Highlighting fixes, Improved Dictionary compression and lookup speed
