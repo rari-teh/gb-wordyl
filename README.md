@@ -7,10 +7,11 @@ This is a mostly re-written and greatly expanded fork (by [bbbbbr](https://githu
 It adds a full dictionary (versus the bloom filter), thousands more solution words, multiple dictionary languages, Game Boy Color support, and many other features.
 
 
-### Play Online
-Playable online at: https://bbbbbr.itch.io/gb-wordyl
+### Download ROMs and Play Online
 
-Downloads: See Releases for ROMS or at [itch.io]( https://bbbbbr.itch.io/gb-wordyl)
+Downloads and playable online at: https://bbbbbr.itch.io/gb-wordyl
+
+![GB-Wordyl gameplay](/info/gb-wordyl_demo_cgb.gif)
 
 
 ### Credits and Thanks
@@ -45,5 +46,5 @@ Additional improvements from:
 Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020)
 
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo.gif)
-![GB-Wordyl gameplay](/info/gb-wordyl_demo_cgb.gif)
+
 
