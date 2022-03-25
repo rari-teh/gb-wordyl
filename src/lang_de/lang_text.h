@@ -40,7 +40,7 @@
     "OPTIONEN\n" \
     "\n" \
     "ZEIGE STATS:     A\n" \
-    "PROFI MODUS....  >\n" \
+    "PROFI MODUS:     >\n" \
     "AUTOEINGABE:     /\n" \
     "\n" \
     "RUNDE AUFGEBEN:  ^\n" \
@@ -70,9 +70,13 @@
 #define __AUTOFILL_OFF__STR "AUTOEINGABE: AUS"
 
 
-// Display hard mdoe indicator just above keyboard on left
+// Display hard mode indicator just above keyboard on right
+#undef OPT_HARDMODE_DISPLAY_X
+#define OPT_HARDMODE_DISPLAY_X 14
 #undef __STR_HARD_MODE_DISPLAY
-#define __STR_HARD_MODE_DISPLAY "PROFI" // 5 chars max
+#undef __STR_HARD_MODE_HIDE
+#define __STR_HARD_MODE_DISPLAY "PROFI" // 5 chars max at this location
+#define __STR_HARD_MODE_HIDE    "     "
 
 
 #undef __MESSAGE_HARD_MODE_CANT_CHANGE_STR
@@ -100,9 +104,9 @@
     "ANTWORT IST: "    // <-- Needs 5 chars left for answer word
 
 
-// NOTE! X gets replaced with guess 5 letter word num
+// NOTE! ^ gets replaced with guess 5 letter word num
 //
-// Intentionally not const! X gets replaced with guess num
+// Intentionally not const! ^ gets replaced with guess num
 #undef __MESSAGE_GAME_WON_STR
 #define __MESSAGE_GAME_WON_STR \
 /*  |------------------| Available space (18 chars wide) */\
