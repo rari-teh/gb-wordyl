@@ -4,7 +4,7 @@ GBDK_HOME = ../../../../gbdk2020/gbdk-2020-git/build/gbdk/
 # GBDK_HOME = ../../../
 LCC = $(GBDK_HOME)bin/lcc
 
-VERSION=0.79
+VERSION=0.85
 
 # Alternate languages can be passed in as follows
 # de en es fr it nl pt

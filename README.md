@@ -2,20 +2,26 @@
 
 A Wordle clone for the Nintendo Game Boy / Color and Analogue Pocket!
 
-This is a mostly re-written and greatly expanded fork of the original version by [stacksmashing](https://github.com/stacksmashing/gb-wordle)  ([twitter](http://twitter.com/ghidraninja)).
+This is a mostly re-written and greatly expanded fork (by [bbbbbr](https://github.com/bbbbbr/gb-wordle)) of the original version by [stacksmashing](https://github.com/stacksmashing/gb-wordle)  ([twitter](http://twitter.com/ghidraninja)).
 
-It adds a full dictionary (versus bloom filter), thousands more solution words, Game Boy Color support, and many other features (by [bbbbbr](https://github.com/bbbbbr/gb-wordle)).
+It adds a full dictionary (versus the bloom filter), thousands more solution words, multiple dictionary languages, Game Boy Color support, and many other features.
 
-
-- Additional iprovements from:
-  - [arpruss](https://github.com/arpruss/gb-fiver) : Highlighting fixes, Improved Dictionary compression and lookup speed
-  - [zeta_two](https://github.com/ZetaTwo/gb-wordle) : Previous dictionary compression
-  - Skite2001 : German UI text translation
 
 ### Play Online
 Playable online at: https://bbbbbr.itch.io/gb-wordyl
 
 Downloads: See Releases for ROMS or at [itch.io]( https://bbbbbr.itch.io/gb-wordyl)
+
+
+### Credits and Thanks
+
+UI Language Translation credits:
+  - German: [Skite2001(https://twitter.com/skite2001)
+  - Dutch: [Ferrante Pescara](https://ferrantecrafts.com)
+
+Additional improvements from:
+  - [arpruss](https://github.com/arpruss/gb-fiver) : Highlighting fixes, Improved Dictionary compression and lookup speed
+  - [zeta_two](https://github.com/ZetaTwo/gb-wordle) : Previous dictionary compression
 
 
 ### Features
@@ -32,7 +38,7 @@ Downloads: See Releases for ROMS or at [itch.io]( https://bbbbbr.itch.io/gb-word
     - SELECT + START: Auto-fill exact matches of previous guesses
     - 3 x SELECT: Options menu (Stats, Reset Stats, Forfeit Round)
   - Multiple language dictionaries (different ROM for each)
-    - Deutsch (DE), English (EN), Español (ES), Français (FR), Italiano (IT), Nederlands, Latin (LA)
+    - Deutsch (DE), English (EN), Español (ES), Français (FR), Italiano (IT), Nederlands (NL), Latin (LA)
     - No words with special chars, just English A-Z letters    
 
 
