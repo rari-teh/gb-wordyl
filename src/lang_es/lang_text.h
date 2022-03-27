@@ -138,7 +138,7 @@
 #undef __MESSAGE_STATS_RESET_STR
 #define __MESSAGE_STATS_RESET_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "BORRAR STATS!"
+    "STATS BORRADAS!"
 
 
 #undef __STATS_TEMPLATE_STR
