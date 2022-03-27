@@ -82,10 +82,10 @@
 #define __AUTOFILL_OFF__STR "AUTO FILL: OFF"
 
 
-// Display hard mdoe indicator just above keyboard on right
+// Display hard mode indicator just above keyboard on right
 #define OPT_HARDMODE_DISPLAY_X 15
 #define OPT_HARDMODE_DISPLAY_Y 12
-#define __STR_HARD_MODE_DISPLAY "HARD" // 5 chars max (padded leading space intentional)
+#define __STR_HARD_MODE_DISPLAY "HARD" // 5 chars max at this location
 #define __STR_HARD_MODE_HIDE    "    "
 
 
@@ -115,7 +115,7 @@
     "Answer is: "    // <-- Needs 5 chars left for answer word!
 
 
-// NOTE! X gets replaced with guess 5 letter word num
+// NOTE! ^ gets replaced with guess 5 letter word num
 //
 // Avoid increasing this popup height so it doesn't obscure the board
 #define WON_MESSAGE_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
@@ -161,7 +161,7 @@
     "Guesses to Win\n" \
     " Least   ____^\n" \
     " Most    ____^\n" \
-    " Average ____^\n"   // <-- All "____X" get replaced by numbers
+    " Average ____^\n"   // <-- All "____^" get replaced by numbers
 
 // Should be no more than 12 chars
 #define __INTRO_PRESS_START_STR "PRESS START"
