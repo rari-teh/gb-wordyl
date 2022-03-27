@@ -40,7 +40,8 @@ Additional improvements from:
     - 3 x SELECT: Options menu (Stats, Reset Stats, Forfeit Round)
   - Multiple language dictionaries (different ROM for each)
     - Deutsch (DE), English (EN), Español (ES), Français (FR), Italiano (IT), Nederlands (NL), Latin (LA)
-    - No words with special chars, just English A-Z letters    
+    - No words with special chars, just English A-Z letters
+    - Translated UI text for Deutsch (DE), English (EN), Español (ES), Nederlands (NL)
 
 
 Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020)
