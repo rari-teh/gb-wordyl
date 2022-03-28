@@ -112,9 +112,9 @@
 #undef __MESSAGE_GAME_WON_STR
 #define __MESSAGE_GAME_WON_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "Ganas!\n" \
+    "GANAS!\n" \
     "\n" \
-    "Intento ^ of 6"
+    "INTENTO ^ DE 6"
 
 
 // Avoid increasing this popup height so it doesn't obscure the board
