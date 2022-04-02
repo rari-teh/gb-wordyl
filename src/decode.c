@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdbool.h>
 
+#include <asm/types.h>
 #include "encoded.h"
 
 
@@ -15,7 +17,7 @@ static char     * str_return_buffer;
 #ifdef _ASM_UPDATEWORD
 
 // high byte of currentWord is always zero
-void updateWord(void) {
+void updateWord(void) OLDCALL {
 __asm
     ld a,(#_blobPtr)
     ld l,a
@@ -96,7 +98,7 @@ __endasm ;
 
 #else
 
-void updateWord(void) {
+void updateWord(void) OLDCALL {
     uint8_t b = *blobPtr++;
     uint32_t v;
     v = b & 0x7F;
@@ -169,7 +171,7 @@ uint8_t filterWord(char* s) {
 
 // C version is about 70-80 bytes larger than ASM version right now,
 // speed comparable once bucket size is increased to 50
-void getSpecialWord(uint16_t _n, char* buffer) {
+void getSpecialWord(uint16_t _n, char* buffer) OLDCALL {
 
     str_return_buffer = buffer;
     static uint16_t w;
@@ -215,7 +217,7 @@ void getSpecialWord(uint16_t _n, char* buffer) {
 
 
 // TODO: OLDCALL as precaution against upcoming SDCC calling convention change
-void getSpecialWord(uint16_t special_word_num, char* str_buffer) {
+void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
 
     __asm \
 
