@@ -119,6 +119,7 @@ langs:
 	${MAKE} LANG_CODE=it
 	${MAKE} LANG_CODE=nl
 	${MAKE} LANG_CODE=la
+	${MAKE} LANG_CODE=pt-br
 #   PT full answer file is too big
 #	${MAKE} LANG_CODE=pt
 
@@ -130,6 +131,7 @@ langs-clean:
 	${MAKE} clean LANG_CODE=it
 	${MAKE} clean LANG_CODE=nl
 	${MAKE} clean LANG_CODE=la
+	${MAKE} clean LANG_CODE=pt-br
 #   PT full answer file is too big
 #	${MAKE} LANG_CODE=pt
 
