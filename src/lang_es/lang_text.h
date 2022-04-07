@@ -7,7 +7,7 @@
 #include "../lang_text_defaults.inc"
 
 // == #define overrides for language strings go here
-// Spanish translation (thank you!)
+// Spanish translation (Adamantibus)
 
 #undef INTRO_DIALOG_WIN_Y
 #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(16)
@@ -163,15 +163,14 @@
 #undef __INTRO_CREDITS_STR
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
-        "2022\n" \
-        "BBBBBR\n" \
-        "\n" \
         "GRACIAS:\n" \
+        "TOXA\n" \
         "ARPRUSS\n" \
         "STACKSMASHING\n" \
         "\n" \
         "GBDK2020\n" \
-        "EMULICIOUS"
+        "EMULICIOUS\n" \
+        "FERRANTE CRAFTS"
 
 
 #endif

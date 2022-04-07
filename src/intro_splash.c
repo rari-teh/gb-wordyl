@@ -79,8 +79,14 @@ void splash_init_maps(void) {
     if (IS_CGB)
         splash_initgfx_cgb();
 
-    print_gotoxy((DEVICE_SCREEN_WIDTH - (sizeof(__INTRO_PRESS_START_STR) - 1)) / 2u,DEVICE_SCREEN_HEIGHT - 4u, PRINT_BKG);
+    print_gotoxy((DEVICE_SCREEN_WIDTH - (sizeof(__INTRO_PRESS_START_STR) - 1)) / 2u, DEVICE_SCREEN_HEIGHT - 4u, PRINT_BKG);
     print_str(__INTRO_PRESS_START_STR);
+
+    // print_gotoxy((DEVICE_SCREEN_WIDTH - (sizeof("BBBBBR 2022") - 1)) / 2u, DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
+    print_gotoxy(2u, DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
+    print_str("BBBBBR");
+    print_gotoxy(DEVICE_SCREEN_WIDTH - 5u - 1u, DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
+    print_str("2022");
 }
 
 #define CHR_NUM(c) (c - 'A')

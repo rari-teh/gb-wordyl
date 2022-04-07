@@ -163,13 +163,11 @@
 #undef __INTRO_CREDITS_STR
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
-        "2022\n" \
-        "BBBBBR\n" \
-        "\n" \
         "THX TO:\n" \
+        "TOXA\n" \
         "ARPRUSS\n" \
         "STACKSMASHING\n" \
-        "FERRANTE PESCARA\n" \
+        "FERRANTE CRAFTS\n" \
         "\n" \
         "GBDK2020\n" \
         "EMULICIOUS"

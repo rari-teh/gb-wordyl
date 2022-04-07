@@ -2,7 +2,7 @@
 
 A Wordle clone for the Nintendo Game Boy / Color and Analogue Pocket!
 
-This is a mostly re-written and greatly expanded fork (by [bbbbbr](https://github.com/bbbbbr/gb-wordle)) of the original version by [stacksmashing](https://github.com/stacksmashing/gb-wordle)  ([twitter](http://twitter.com/ghidraninja)).
+This is a re-written and greatly expanded fork (by [bbbbbr](https://github.com/bbbbbr/gb-wordle)) of the original version by [stacksmashing](https://github.com/stacksmashing/gb-wordle) ([twitter](http://twitter.com/ghidraninja)).
 
 It adds a full dictionary (versus the bloom filter), thousands more solution words, multiple dictionary languages, Game Boy Color support, and many other features.
 
@@ -14,15 +14,17 @@ Downloads and online playable version are at: https://bbbbbr.itch.io/gb-wordyl
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo_cgb.gif)
 
 
-### Credits and Thanks
+### Credits, Contributors and Thanks
 
 UI Language Translation credits:
   - German: Skite2001 - https://twitter.com/skite2001
-  - Dutch: Ferrante Pescara - https://ferrantecrafts.com
+  - Dutch: Ferrante Crafts - https://ferrantecrafts.com
 
-Additional improvements from:
+Additional code and contributions from:
+  - [toxa](https://github.com/untoxa/) : Ferrante Crafts 31k ROM + 1k Flash cart support
   - [arpruss](https://github.com/arpruss/gb-fiver) : Highlighting fixes, Improved Dictionary compression and lookup speed
   - [zeta_two](https://github.com/ZetaTwo/gb-wordle) : Previous dictionary compression
+  - [stacksmashing](https://github.com/stacksmashing/gb-wordle) : original base code (mostly now rewritten)
 
 
 ### Features
