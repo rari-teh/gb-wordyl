@@ -17,9 +17,11 @@ void cartsave_restore_data(void) {
 }
 
 
-// TODO: warning on failure to save?
 void cartsave_save_data(void) {
 
-    if (!erase_flash()) return 0;
-    return write_flash((void *)&game_settings, sizeof(game_settings));
+    // TODO: warning on failure to save?
+    // if (!erase_flash()) return 0;
+    // return write_flash((void *)&game_settings, sizeof(game_settings));
+    if (erase_flash())
+        write_flash((void *)&game_settings, sizeof(game_settings));
 }
