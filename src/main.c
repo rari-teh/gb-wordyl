@@ -38,7 +38,6 @@ void main() {
 
     cgb_check_and_init();
     gfx_load();
-    stats_reset();
     game_state = GAME_STATE_INTRO;
 
     while(1) {
@@ -66,6 +65,9 @@ void main() {
 
                     // Wait to turn on all sprites until after first popup intro message
                     SHOW_SPRITES;
+
+                    // Load or reset stats depending on cart type
+                    stats_load();
                 }
                 gameplay_init_answer_word();
                 game_state = GAME_STATE_RUNNING;
