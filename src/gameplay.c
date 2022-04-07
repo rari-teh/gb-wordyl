@@ -84,7 +84,10 @@ void show_options_message(void) {
             if (guess_num > 0)
                 win_dialog_show_message(HARD_MODE_CANT_CHANGE_WIN_Y, __MESSAGE_HARD_MODE_CANT_CHANGE_STR, NULL);
             else {
-                game_settings.opt_hard_mode_enabled ^= 1u; // invert value
+                if (game_settings.opt_hard_mode_enabled == true)
+                    game_settings.opt_hard_mode_enabled = false;
+                else game_settings.opt_hard_mode_enabled = true;
+
                 opt_hardmode_display();
                 // For relevant carts, save the reset stats
                 #if defined(CART_31k_1kflash) || defined(CART_mbc5)
@@ -95,7 +98,10 @@ void show_options_message(void) {
 
         case J_DOWN:
             // Auto-fill toggle
-            game_settings.opt_autofill_enabled ^= 1u; // invert value
+            if (game_settings.opt_autofill_enabled == true)
+                game_settings.opt_autofill_enabled = false;
+            else game_settings.opt_autofill_enabled = true;
+
             // Going to try and get away with not using this notice for now
             win_dialog_show_message(AUTOFILL_INFO_WIN_Y,
                                     (game_settings.opt_autofill_enabled ? __AUTOFILL_ON__STR : __AUTOFILL_OFF__STR), NULL);

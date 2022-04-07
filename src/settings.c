@@ -30,7 +30,7 @@ void settings_load(void) {
         // Check signature, reset stats and notify if signature failed
         // It is expected to fail on first power-up
         cartsave_restore_data();
-        // TODO: calculate and check CRC on data?
+        // No CRC calc on data to allow growing record struct without resetting it
 
         if ((game_settings.save_check0 != STATS_SIG_CHECK_0) || (game_settings.save_check1 != STATS_SIG_CHECK_1)) {
             stats_reset();

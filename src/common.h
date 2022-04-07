@@ -84,7 +84,6 @@ typedef struct settings_rec {
     // Stats
     uint16_t save_check0;
     uint16_t save_check1;
-    uint8_t  save_crc;
     uint16_t games_count;
     uint16_t games_won;
     uint16_t games_lost;
