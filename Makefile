@@ -147,28 +147,39 @@ $(BINS):	$(OBJS)
 
 
 langs:
-	${MAKE} LANG_CODE=de
-	${MAKE} LANG_CODE=en
-	${MAKE} LANG_CODE=es
-	${MAKE} LANG_CODE=fr
-	${MAKE} LANG_CODE=it
-	${MAKE} LANG_CODE=nl
-	${MAKE} LANG_CODE=la
-	${MAKE} LANG_CODE=pt-br
+	${MAKE} LANG_CODE=de    CART_TYPE=$(CART_TYPE)
+	${MAKE} LANG_CODE=en    CART_TYPE=$(CART_TYPE)
+	${MAKE} LANG_CODE=es    CART_TYPE=$(CART_TYPE)
+	${MAKE} LANG_CODE=fr    CART_TYPE=$(CART_TYPE)
+	${MAKE} LANG_CODE=it    CART_TYPE=$(CART_TYPE)
+	${MAKE} LANG_CODE=nl    CART_TYPE=$(CART_TYPE)
+	${MAKE} LANG_CODE=la    CART_TYPE=$(CART_TYPE)
+	${MAKE} LANG_CODE=pt-br CART_TYPE=$(CART_TYPE)
 #   PT full answer file is too big
 #	${MAKE} LANG_CODE=pt
 
 langs-clean:
-	${MAKE} clean LANG_CODE=de
-	${MAKE} clean LANG_CODE=en
-	${MAKE} clean LANG_CODE=es
-	${MAKE} clean LANG_CODE=fr
-	${MAKE} clean LANG_CODE=it
-	${MAKE} clean LANG_CODE=nl
-	${MAKE} clean LANG_CODE=la
-	${MAKE} clean LANG_CODE=pt-br
+	${MAKE} clean LANG_CODE=de     CART_TYPE=$(CART_TYPE)
+	${MAKE} clean LANG_CODE=en     CART_TYPE=$(CART_TYPE)
+	${MAKE} clean LANG_CODE=es     CART_TYPE=$(CART_TYPE)
+	${MAKE} clean LANG_CODE=fr     CART_TYPE=$(CART_TYPE)
+	${MAKE} clean LANG_CODE=it     CART_TYPE=$(CART_TYPE)
+	${MAKE} clean LANG_CODE=nl     CART_TYPE=$(CART_TYPE)
+	${MAKE} clean LANG_CODE=la     CART_TYPE=$(CART_TYPE)
+	${MAKE} clean LANG_CODE=pt-br  CART_TYPE=$(CART_TYPE)
 #   PT full answer file is too big
 #	${MAKE} LANG_CODE=pt
+
+
+carts:
+	${MAKE} CART_TYPE=31k_1kflash langs
+	${MAKE} CART_TYPE=mbc5 langs
+
+
+carts-clean:
+	${MAKE} CART_TYPE=31k_1kflash langs-clean
+	${MAKE} CART_TYPE=mbc5 langs-clean
+
 
 dictionaries: langs-compress
 
