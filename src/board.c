@@ -122,7 +122,7 @@ void board_autofill_matched_letters(void) {
 
     // Tile flip is ON for manual trigger, but OFF for automatic since it
     // creates a disorienting blur between guess reveal and subsequent copy-down.
-    if (opt_autofill_enabled)
+    if (game_settings.opt_autofill_enabled)
         BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_NONE);
 
     // Don't auto-fill on the first guess (nothing to fill with)

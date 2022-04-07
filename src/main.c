@@ -15,6 +15,7 @@
 #include <rand.h>
 
 #include "common.h"
+#include "settings.h"
 #include "input.h"
 #include "gfx_common.h"
 #include "gameboy_color.h"
@@ -67,7 +68,7 @@ void main() {
                     SHOW_SPRITES;
 
                     // Load or reset stats depending on cart type
-                    stats_load();
+                    settings_load();
                 }
                 gameplay_init_answer_word();
                 game_state = GAME_STATE_RUNNING;

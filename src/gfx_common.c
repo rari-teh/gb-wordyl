@@ -113,7 +113,7 @@ void print_str(const char * txt) {
 void opt_hardmode_display(void) {
 
     print_gotoxy(OPT_HARDMODE_DISPLAY_X, OPT_HARDMODE_DISPLAY_Y, PRINT_BKG);
-    print_str(opt_hard_mode_enabled ? __STR_HARD_MODE_DISPLAY : __STR_HARD_MODE_HIDE);
+    print_str(game_settings.opt_hard_mode_enabled ? __STR_HARD_MODE_DISPLAY : __STR_HARD_MODE_HIDE);
 }
 
 

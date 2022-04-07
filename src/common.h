@@ -58,9 +58,6 @@
 
 extern uint8_t game_state;
 
-extern bool opt_hard_mode_enabled;
-extern bool opt_autofill_enabled;
-
 extern uint8_t guess_num;
 extern uint8_t guess_letter_cursor;
 
@@ -71,6 +68,45 @@ extern char exact_matches[WORD_LENGTH+1];
 extern char prev_guess[WORD_LENGTH+1];
 extern char guess[WORD_LENGTH+1];
 extern char word[WORD_LENGTH+1];
+
+
+// Save record signature check
+#define STATS_SIG_CHECK_0 0xA50Fu
+#define STATS_SIG_CHECK_1 0x1E78u
+
+// Struct containing the save game
+// For MBC5 will be mapped to the SRAM through a pointer
+typedef struct settings_rec {
+
+    // Don't change order, it will scramble cart saves
+    // For additions, just add to the bottom
+
+    // Stats
+    uint16_t save_check0;
+    uint16_t save_check1;
+    uint8_t  save_crc;
+    uint16_t games_count;
+    uint16_t games_won;
+    uint16_t games_lost;
+    uint16_t games_streak;
+
+    uint16_t guesses_min;
+    uint16_t guesses_max;
+    uint16_t guesses_sum;
+
+    // Options
+    bool opt_hard_mode_enabled;
+    bool opt_autofill_enabled;
+        // Not implemented
+        bool opt_sound_fx_enabled;
+        uint8_t opt_music_type;
+        bool opt_tile_flip_enabled;
+} settings_rec;
+
+extern settings_rec game_settings;
+
+
+void settings_load(void);
 
 uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num);
 

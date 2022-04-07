@@ -22,7 +22,9 @@
 #include "stats.h"
 
 #include "gameplay.h"
+
 #include <lang_text.h>
+#include <cartsave.h>
 
 #define GAMEPLAY_SET_GAMEOVER  game_state = GAME_STATE_OVER
 
@@ -82,17 +84,25 @@ void show_options_message(void) {
             if (guess_num > 0)
                 win_dialog_show_message(HARD_MODE_CANT_CHANGE_WIN_Y, __MESSAGE_HARD_MODE_CANT_CHANGE_STR, NULL);
             else {
-                opt_hard_mode_enabled ^= 1u; // invert value
+                game_settings.opt_hard_mode_enabled ^= 1u; // invert value
                 opt_hardmode_display();
+                // For relevant carts, save the reset stats
+                #if defined(CART_31k_1kflash) || defined(CART_mbc5)
+                    cartsave_save_data();
+                #endif
             }
             break;
 
         case J_DOWN:
             // Auto-fill toggle
-            opt_autofill_enabled ^= 1u; // invert value
+            game_settings.opt_autofill_enabled ^= 1u; // invert value
             // Going to try and get away with not using this notice for now
             win_dialog_show_message(AUTOFILL_INFO_WIN_Y,
-                                    (opt_autofill_enabled ? __AUTOFILL_ON__STR : __AUTOFILL_OFF__STR), NULL);
+                                    (game_settings.opt_autofill_enabled ? __AUTOFILL_ON__STR : __AUTOFILL_OFF__STR), NULL);
+            // For relevant carts, save the reset stats
+            #if defined(CART_31k_1kflash) || defined(CART_mbc5)
+                cartsave_save_data();
+            #endif
             break;
 
         case J_UP:
@@ -134,7 +144,7 @@ void gameplay_handle_guess(void) {
     else {
 
         // Validate hard mode
-        if ((opt_hard_mode_enabled) && (guess_num > 0) && (evaluate_guess_hard_mode(guess) == false)) {
+        if ((game_settings.opt_hard_mode_enabled) && (guess_num > 0) && (evaluate_guess_hard_mode(guess) == false)) {
             win_dialog_show_message(HARD_MODE_GUESS_NOT_VALID_WIN_Y, __MESSAGE_HARD_MODE_GUESS_NOT_VALID_STR, NULL);
         }
         else {
@@ -176,7 +186,7 @@ void gameplay_handle_guess(void) {
                 guess[c] = 0;
 
             // If requested, try to auto-fill next guess if game is not over
-            if ((opt_autofill_enabled) && (game_state != GAME_STATE_OVER))
+            if ((game_settings.opt_autofill_enabled) && (game_state != GAME_STATE_OVER))
                 board_autofill_matched_letters();
         }
     }
