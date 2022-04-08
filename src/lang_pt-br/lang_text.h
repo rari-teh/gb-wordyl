@@ -24,8 +24,8 @@
     "ABRIR MENU:\n" \
     "  3 x SELECT\n" \
     "\n" \
-    "SELECIONAR:\n" \
-    "  SELECT + BA\n" \
+    "MOVER CURSOR:\n" \
+    "  SELECT + B A\n" \
     "\n" \
     "PREENCHER:\n" \
     "  SELECT + START\n" \
