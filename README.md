@@ -19,6 +19,7 @@ Downloads and online playable version are at: https://bbbbbr.itch.io/gb-wordyl
 UI Language Translation credits:
   - German: Skite2001 - https://twitter.com/skite2001
   - Dutch: Ferrante Crafts - https://ferrantecrafts.com
+  - Brazilian Portuguese: Daniel Tolentino - https://github.com/DanielTolentino
 
 Additional code and contributions from:
   - [toxa](https://github.com/untoxa/) : Ferrante Crafts 31k ROM + 1k Flash cart support

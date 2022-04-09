@@ -6,8 +6,10 @@
 // == This has default strings
 #include "../lang_text_defaults.inc"
 
+
 // == #define overrides for language strings go here
-// Spanish translation (Adamantibus)
+
+// Spanish: Translation by Adamantibus
 
 #undef INTRO_DIALOG_WIN_Y
 #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(16)

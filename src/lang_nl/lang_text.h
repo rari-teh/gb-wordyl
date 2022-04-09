@@ -9,7 +9,7 @@
 
 // == #define overrides for language strings go here
 
-// Dutch (edit by FerrantePescara)
+// Dutch: Translation by Ferrante Crafts
 
 #undef INTRO_DIALOG_WIN_Y
 #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(16)

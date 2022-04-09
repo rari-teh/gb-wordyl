@@ -10,6 +10,8 @@
 
 // == #define overrides for language strings go here
 
+// Brazilian Portuguese: Translation by Daniel Tolentino
+
 #undef INTRO_DIALOG_WIN_Y
 #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(16)
 #undef __INTRO_MESSAGE_STR
@@ -167,6 +169,7 @@
         "TOXA\n" \
         "ARPRUSS\n" \
         "STACKSMASHING\n" \
+        "ZERAPHY\n" \
         "\n" \
         "GBDK2020\n" \
         "EMULICIOUS\n" \

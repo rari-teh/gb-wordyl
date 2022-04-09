@@ -9,7 +9,7 @@
 
 // == #define overrides for language strings go here
 
-// German (edit+fix by skite2001 ^_-)
+// German: Translation by skite2001 ^_-
 
 #undef INTRO_DIALOG_WIN_Y
 #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(16)
