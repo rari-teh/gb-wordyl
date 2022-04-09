@@ -62,7 +62,7 @@ LCCFLAGS += -debug # Uncomment to enable debug output
 
 
 # You can set the name of the ROM file here
-PROJECTNAME = GBWORDYL_$(VERSION)_$(CART_TYPE)_$(LANG_CODE)
+PROJECTNAME = gb-wordyl_$(VERSION)_$(CART_TYPE)_$(LANG_CODE)
 
 CFLAGS += -debug
 CFLAGS += -Wf-MMD
