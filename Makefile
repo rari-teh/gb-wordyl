@@ -190,7 +190,7 @@ langs-compress:
 
 romusage:
 # Ignores failure if romusage not in path
-	-romusage build/gb/GBWORDYL_$(VERSION)_$(CART_TYPE)_$(LANG_CODE).noi -e:STACK:DEFF:100 -e:SHADOW_OAM:C000:A0; romusage build/gb/GBWORDYL_$(VERSION)_$(CART_TYPE)_$(LANG_CODE).noi -e:STACK:DEFF:100 -e:SHADOW_OAM:C000:A0 > romusage.txt
+	-romusage build/gb/gb-wordyl_$(VERSION)_$(CART_TYPE)_$(LANG_CODE).noi -e:STACK:DEFF:100 -e:SHADOW_OAM:C000:A0; romusage build/gb/gb-wordyl_$(VERSION)_$(CART_TYPE)_$(LANG_CODE).noi -e:STACK:DEFF:100 -e:SHADOW_OAM:C000:A0 > romusage.txt
 
 clean:
 	@echo Cleaning
