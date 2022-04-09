@@ -33,6 +33,31 @@ def toBitmap(bits):
 
     return bytes(encodeByte(x) for x in range(0,len(bits),8))
 
+def dumpBlobNybbles(name, blob):
+    n = len(blob)
+    # Num bytes = (nybbles / 2) rounded up
+    outfile.write("const uint8_t %s[%u] = {\n" % (name, ((n + 1 )/ 2 )))
+    i = 0
+    cur_byte = 0
+    while i < n:
+        # Accumulate two nybbles into each byte, then write it out
+        if (i & 0x01):
+            # Merge in high nybble and write out byte
+            cur_byte = cur_byte | (blob[i] << 4 & 0xF0)
+            outfile.write("0x%02x," % cur_byte)
+            # Line break every 16 bytes
+            if (((i + 1) % 32) == 0):
+                outfile.write("\n")
+        else:
+            cur_byte = blob[i] & 0x0F
+        i+=1
+
+    # Flush trailing byte if needed
+    if ((i & 0x01) != 0x01):
+        outfile.write("0x%02x," % cur_byte)
+
+    outfile.write("};\n\n")
+
 def dumpBlob(name, blob):
     n = len(blob)
     outfile.write("const uint8_t %s[%u] = {\n" % (name, n))
@@ -45,33 +70,76 @@ def dumpBlob(name, blob):
         outfile.write("\n")
     outfile.write("};\n\n")
 
+
+# Letter encoding <- lower computational and complexity cost
+# Word numeric value encoding <- higher complexity and cost (unpacking bytes)
+
+# 5 bit letters + 3 bit encoding : 16,315
+# 5 bit letters + 7 bit encoding : 17,757
+# Base 26 letters + 3 bit        : 15,631
+
+# Reversing letters before encoding might save additional couple hundred bytes
+  # Have to reverse sort each word coming in (answers + dict)
+    # Then re-sort the lists first
+
 def tobinary(w):
     s = 0
+    # TEST: Base 26 encoding instead of 5 bit per letter packed encoding
+    # for i, c in enumerate(w.encode('ascii')[::-1]):
+    #     s += (c - ord('a'))*26**i
+
     for i in range(len(w)):
         s = (s << 5) + (ord(w[i])-ord('a'))
+    print(w + " = " + str(s))
     return s
 
-def encodeDelta(d):
-    d-=1
-    assert d<0x80*0x80*0x80
-    if d < 0x80:
-        return bytes((0x80|d,))
-    elif d < 0x80*0x80:
-        return bytes((d & 0x7F, 0x80|(d>>7)))
-    else:
-        return bytes((d & 0x7F, (d>>7) & 0x7F, (d>>14)))
+
+# TEST: variable length encoding with 3 bits instead of 7
+# TODO: needs packing of nybbles into bytes
+def encodeDelta(num):
+    assert num > 0
+    num -= 1
+    if num == 0:
+        return bytes([0])
+    res = []
+    while num > 0:
+        # # 7 bit + 1 encoding
+        # part = num & 0x7F
+        # num = num >> 7
+        # if num > 0:
+        #     part |= 0x80
+
+        # 3 bit + 1 encoding
+        part = num & 0x7
+        num = num >> 3
+        if num > 0:
+            part |= 0x8
+        res.append(part)
+    return bytes(res)
+    # assert d<0x80*0x80*0x80
+    # if d < 0x80:
+    #     return bytes((0x80|d,))
+    # elif d < 0x80*0x80:
+    #     return bytes((d & 0x7F, 0x80|(d>>7)))
+    # else:
+    #     return bytes((d & 0x7F, (d>>7) & 0x7F, (d>>14)))
 
 def encodeList(ww):
     bin = tuple( map(tobinary, ww) )
+    # bin = tuple( sorted(map(tobinary, ww)) )
+    print("--------------------------------------------------")
     prev = 0
 
     md = 0
 
     out = b''
+    bin = sorted(bin)
+#    for i in range(len(bin)):
+#        print(bin[i])
     for i in range(len(bin)):
         out += encodeDelta(bin[i]-prev)
         prev = bin[i]
-
+    print("#################################################")
     return out
 
 allWords = set()
@@ -114,7 +182,9 @@ wordBlob = b''.join(encoded)
 answerBits = tuple(1 if w in answerWords else 0 for w in allWords)
 answerBlob = toBitmap(answerBits)
 
-dumpBlob("wordBlob", wordBlob)
+# dumpBlob("wordBlob", wordBlob)
+dumpBlobNybbles("wordBlob", wordBlob)
+
 dumpBlob("answers", answerBlob)
 
 # outfile.write("""typedef struct {
@@ -172,7 +242,10 @@ with open(output_path + "sizes.h", "w") as sizes:
     sizes.write("#define NUM_ANSWER_BUCKETS %u\n" % NUM_ANSWER_BUCKETS)
     sizes.write("#define NUM_ANSWERS_ROUNDED_UP_POW2 %u" % mask(len(answerWords)))
 
-print(sum(map(len, encoded)))
+# print(sum(map(len, encoded)))
+print( ( sum(map(len, encoded) )  / 2) )
+
+
 #print(max(map(len, encoded)))
 
 
