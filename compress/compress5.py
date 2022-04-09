@@ -5,6 +5,48 @@ import sys
 lang = "en"
 NUM_ANSWER_BUCKETS = 15
 
+# * Letter encoding             <- lower computational and complexity cost
+# * Word numeric value encoding <- higher complexity and cost (unpacking bytes)
+# * Reverse letters             <- should be low cost to unpack
+# * Remapped alpha weighting    <- should be low cost to unpack/translate
+#      - Change a-z letter encoding to weight low and high frequencies strategically
+#       - could calc per dictionary, skipping first letters of words
+#       - english: https://en.wikipedia.org/wiki/Letter_frequency
+#         alpha_lookup = "esiarnmtodlcugpkhbyfvwjzxq"  # e = most frequent, q = least
+# TODO:
+#   * 7 bit -> allicate unused bits for most common 2 or 3 letter sequences
+#       -  (calc per dict)
+
+
+
+# Per-letter numeric encoding
+#  * 5-bit: 5 bits / letter
+#  * b-26:  Base 26 letters
+
+# Calculated word numeric value encoding
+# * 7-bit: 7 bit varliable encoding
+# * 7-bit: 3 bit varliable encoding
+
+# Word letter order
+#  * Norm: Normal letter order (bakes -> bakes)
+#  * Rev:  Reversed letter order (bakes -> sekab)
+
+# Alphabet weighting
+#  * Norm: Normal alphabet order (abcde..xyz)
+#  * Freq-1: Assign highest frequency letters the lowest value/first place in alphabet "esiarnmtodlcugpkhbyfvwjzxq"
+#  * Freq-2: Assign highest frequency letters the lowest value/first place in alphabet "aeioustryhkbcdfgjlmnpqvwxz"
+#            - hackernews
+
+
+# 5-bit  7-bit                :  17,757
+# 5-bit  3-bit                :  16,315
+# B-26   3-bit                :  15,631
+# B-26   7-bit  W-Rev         :  14,856.5     <- has bitmap 1 bucket overflow (TODO)
+# B-26   3-bit  W-Rev         :  14,304       <- has bitmap 1 bucket overflow (TODO)
+# B-26   3-bit  W-Rev  Freq-1 :  13,632.0     <- has bitmap 1 bucket overflow (TODO)
+# B-26   3-bit  W-Rev  Freq-2 :  13,253.0     <- has bitmap 1 bucket overflow (TODO)
+
+
 # Optional arg 1 is language type (defaults to "en" otherwise)
 # which sets input source text files and output folders under ../src/
 if (len(sys.argv)) > 1:
@@ -71,25 +113,38 @@ def dumpBlob(name, blob):
     outfile.write("};\n\n")
 
 
-# Letter encoding <- lower computational and complexity cost
-# Word numeric value encoding <- higher complexity and cost (unpacking bytes)
+def remapAlpha(source_word):
+    # TEST: reorganize letters to assign lowest values to highest frequency letters
+    # remaped_alpha = "esiarnmtodlcugpkhbyfvwjzxq"
+    remaped_alpha = "aeioustryhkbcdfgjlmnpqvwxz"
+    remapped_word = ""
 
-# 5 bit letters + 3 bit encoding : 16,315
-# 5 bit letters + 7 bit encoding : 17,757
-# Base 26 letters + 3 bit        : 15,631
+    for letter in range(len(source_word)):
+        for c in range(len(remaped_alpha)):
+            if (source_word[letter] == remaped_alpha[c]):
+                print(source_word[letter] + " -> " + remaped_alpha[c] + "(" + str(c) + ") == " + chr(ord('a') + c))
+                remapped_word += chr(ord('a') + c)
+                break
+
+    return remapped_word
+
 
 # Reversing letters before encoding might save additional couple hundred bytes
   # Have to reverse sort each word coming in (answers + dict)
     # Then re-sort the lists first
-
 def tobinary(w):
+
+    w = remapAlpha(w)
+
+    print(w + "...")
     s = 0
     # TEST: Base 26 encoding instead of 5 bit per letter packed encoding
-    # for i, c in enumerate(w.encode('ascii')[::-1]):
-    #     s += (c - ord('a'))*26**i
+    for i, c in enumerate(w.encode('ascii')[::-1]):
+        s += (c - ord('a'))*26**i
 
-    for i in range(len(w)):
-        s = (s << 5) + (ord(w[i])-ord('a'))
+    # 5 bit encoding per letter
+    #for i in range(len(w)):
+    #    s = (s << 5) + (ord(w[i])-ord('a'))
     print(w + " = " + str(s))
     return s
 
@@ -151,6 +206,8 @@ print("answers_" + lang + ".txt")
 with open("full_" + lang + ".txt") as f:
     for w in f:
         w = w.strip()
+        # reverse order of letters
+        w = w[::-1]
         if len(w) == 5:
             w = preprocessWord(w)
             allWords.add(w)
@@ -158,10 +215,13 @@ with open("full_" + lang + ".txt") as f:
 with open("answers_" + lang + ".txt") as f:
     for w in f:
         w = w.strip()
+        # reverse order of letters
+        w = w[::-1]
         if len(w) == 5:
             w = preprocessWord(w)
             allWords.add(w)
             answerWords.add(w)
+
 
 allWords = tuple(sorted(allWords))
 
@@ -224,7 +284,8 @@ for i in range(NUM_ANSWER_BUCKETS):
         pos += 1
     if (((count-prevCount) > 255) or ((startBucketDelta //8) > 255)):
         print("Error: bucket uint8 overload. Bucket:%u { %u, %u},\n" % (i, count-prevCount, startBucketDelta//8))
-        sys.exit()
+        # TODO: Fixme
+        # sys.exit()
 
     startBucketDelta = pos - lastBucket
     lastBucket = pos
