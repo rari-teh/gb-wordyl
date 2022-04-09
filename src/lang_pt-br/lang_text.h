@@ -24,7 +24,7 @@
     "ABRIR MENU:\n" \
     "  3 x SELECT\n" \
     "\n" \
-    "MOVER CURSOR:\n" \
+    "CURSOR DOS BLOCOS:\n" \
     "  SELECT + B A\n" \
     "\n" \
     "PREENCHER:\n" \
