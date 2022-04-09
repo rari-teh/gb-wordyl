@@ -19,7 +19,8 @@ endif
 # - mbc5
 # make CART_TYPE=<cart type>
 ifndef CART_TYPE
-	CART_TYPE=32k_nosave
+#	CART_TYPE=32k_nosave
+	CART_TYPE=31k_1kflash
 endif
 
 CFLAGS += -DLANG_CODE=$(LANG_CODE)
