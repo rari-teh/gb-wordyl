@@ -4,7 +4,6 @@ import sys
 
 lang = "en"
 NUM_ANSWER_BUCKETS = 15
-
 ### ENCODING SETTINGS ###
 
 PER_LETTER_ENCODING = "5-bit"
@@ -13,11 +12,11 @@ PER_LETTER_ENCODING = "5-bit"
 WORD_NUMERIC_ENCODING = "7-bit-variable"
 # WORD_NUMERIC_ENCODING = "3-bit-variable"
 
-# WORD_LETTER_ORDER = "normal"
-WORD_LETTER_ORDER = "reverse"
+WORD_LETTER_ORDER = "normal"
+# WORD_LETTER_ORDER = "reverse"
 
-# ALPHABET_REMAP = "normal"
-ALPHABET_REMAP = "freq_of_use"
+ALPHABET_REMAP = "normal"
+# ALPHABET_REMAP = "freq_of_use"
 
 
 
@@ -270,34 +269,59 @@ outfile.write("// {num Answer Words, byte offset delta in Dictionary} [\n")
 outfile.write("const AnswerBucket_t answerBuckets[] = {\n""")
 
 bucketAnswerSize = len(answerWords) // NUM_ANSWER_BUCKETS
+if (bucketAnswerSize > 254):
+    print("Error: answer bitmap bucket size exceeds max size. Use more buckets: words(%u) / buckets(%u) = bucketsize(%u)" % (len(answerWords), NUM_ANSWER_BUCKETS, bucketAnswerSize));
+    sys.exit()
 
-pos = 0
+dictPosPreOverflow = 255 - 8
+
+dictPos = 0
 answerCount = 0
 prevAnswerCount = 0
-startBucketDelta = 0
-lastBucket = 0
+dictByteOffsetDelta = 0
+dictPosLastBucketEnd = 0
 
-for i in range(NUM_ANSWER_BUCKETS):
+
+while (answerCount < len(answerWords)):
     bucketAnswerThreshold = answerCount + bucketAnswerSize
 
-    while (answerCount < bucketAnswerThreshold or pos%8 != 0) and pos < len(answerBits):
-        if answerBits[pos]:
+    # Break out and write a new bucket:
+    #  * If there are enough answers in the bucket
+    #    * Or there are close to overflowing the max (byte) bitmap offset size per bucket
+    #  * But only on even answer bitmap byte boundaries
+    #  * And as long as the dict count is within the bitmap size
+    while (((answerCount < bucketAnswerThreshold) and ((dictByteOffsetDelta//8) < dictPosPreOverflow))
+            or dictPos%8 != 0) and dictPos < len(answerBits):
+        if answerBits[dictPos]:
             answerCount += 1
-        pos += 1
+        dictPos += 1
+        dictByteOffsetDelta = dictPos - dictPosLastBucketEnd
 
-    # If the bucket overflowed (uncommon), create a new bucket
-    if (((answerCount-prevAnswerCount) > 255) or ((startBucketDelta //8) > 255)):
-        print("Error: bucket uint8 overload. Bucket:%u { %u, %u},\n" % (i, answerCount-prevAnswerCount, startBucketDelta//8))            
-
-# TODO: FIXME
-#        sys.exit()
-
-    startBucketDelta = pos - lastBucket
-    lastBucket = pos
-    outfile.write("  { %u, %u},\n" % (answerCount-prevAnswerCount, startBucketDelta//8))
-    # startBucket = pos
-    # Store start bucket as deltas instead
+    if ((dictByteOffsetDelta//8) >= dictPosPreOverflow):
+        print("Note: bucket close to overflow, adding another. Bucket: %u { numAnswers: %u, dictByteOffset: %u},\n" % (i, answerCount-prevAnswerCount, dictByteOffsetDelta//8))
+    dictPosLastBucketEnd = dictPos
+    outfile.write("  { %u, %u},\n" % (answerCount-prevAnswerCount, dictByteOffsetDelta//8))
+    dictByteOffsetDelta = 0
     prevAnswerCount = answerCount
+
+# for i in range(NUM_ANSWER_BUCKETS):
+#     bucketAnswerThreshold = answerCount + bucketAnswerSize
+#
+#     while (((answerCount < bucketAnswerThreshold) and ((dictByteOffsetDelta//8) < dictPosPreOverflow)) or dictPos%8 != 0) and dictPos < len(answerBits):
+#     # while ((answerCount < bucketAnswerThreshold) or dictPos%8 != 0) and dictPos < len(answerBits):
+#         if answerBits[dictPos]:
+#             answerCount += 1
+#         dictPos += 1
+#         dictByteOffsetDelta = dictPos - dictPosLastBucketEnd
+#
+#     # if ((dictByteOffsetDelta//8) >= dictPosPreOverflow):
+#     #     print("Note: bucket close to overflow, adding another. Bucket:%u { numAnswers:%u, dictByteOffset%u},\n" % (i, answerCount-prevAnswerCount, dictByteOffsetDelta//8))
+#     dictPosLastBucketEnd = dictPos
+#     outfile.write("  { %u, %u},\n" % (answerCount-prevAnswerCount, dictByteOffsetDelta//8))
+#     dictByteOffsetDelta = 0
+#     prevAnswerCount = answerCount
+#     # startBucket = dictPos
+#     # Store start bucket as deltas instead
 outfile.write("};\n")
 
 outfile.close()
