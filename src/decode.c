@@ -115,15 +115,34 @@ void updateWord(void) OLDCALL {
 
 #endif // _ASM_UPDATEWORD
 
+#define WORD_LETTERS_REVERSED
 
+
+// Converts a word from a dictionary bucket # and numeric value to a string
 void decodeWord(uint8_t start, uint32_t nextFour, char* buffer) {
-    *buffer = start + 'A';
-    buffer += 5;
-    *buffer-- = 0;
-    for(uint8_t i=1;i<5;i++) {
-        *buffer-- = (nextFour & 0x1F) + 'A';
-        nextFour >>= 5;
-    }
+
+    #ifdef WORD_LETTERS_REVERSED
+        // Words encoded with letters in reverse order
+        *(buffer+5) = 0;
+        // Set last letter from letter bucket index (a-z)
+        *(buffer+4) = start + 'A';
+        // Decode remaining 4 letters
+        for(uint8_t i=1;i<5;i++) {
+            *buffer++ = (nextFour & 0x1F) + 'A';
+            nextFour >>= 5;
+        }
+    #else
+        // Words encoded with normal letter order
+        *buffer = start + 'A';
+        buffer += 5;
+        *buffer-- = 0;
+        for(uint8_t i=1;i<5;i++) {
+            *buffer-- = (nextFour & 0x1F) + 'A';
+            nextFour >>= 5;
+        }
+    #endif
+
+    // #ifdef
 }
 
 void getWord(uint16_t n) {
@@ -144,17 +163,31 @@ void getWord(uint16_t n) {
     decodeWord(i, currentWord, str_return_buffer);
 }
 
+// Encodes guess word to 5-bits per letter, then seeks through
+// dictionary looking for the numeric match
 uint8_t filterWord(char* s) {
-    uint8_t i;
     /* because the input system uses an on-screen keyboard with A-Z only, no need to sanitize */
     /* for (i=0; i<5; i++)
         if (s[i] < 'A' || s[i] > 'Z')
             return 0; */
     uint32_t w = 0;
-    for (i=1;i<5;i++)
-        w = (w << 5) | (s[i]-'A');
 
-    i = s[0]-'A';
+    #ifdef WORD_LETTERS_REVERSED
+        int8_t i;
+        // Words encoded with letters in reverse order
+        for (i=3;i>=0;i--)
+            w = (w << 5) | (s[i]-'A');
+
+        i = s[4]-'A';
+    #else
+        uint8_t i;
+        // Words encoded with normal letter order
+        for (i=1;i<5;i++)
+            w = (w << 5) | (s[i]-'A');
+
+        i = s[0]-'A';
+    #endif
+
     currentWord = 0;
     blobPtr = wordBlob + buckets[i].blobOffset;
     for (uint16_t j=buckets[i+1].wordNumber - buckets[i].wordNumber; j; j--) {
