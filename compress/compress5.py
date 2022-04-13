@@ -3,7 +3,7 @@
 import sys
 
 lang = "en"
-NUM_ANSWER_BUCKETS = 15
+NUM_ANSWER_BUCKETS = 10
 ### ENCODING SETTINGS ###
 
 PER_LETTER_ENCODING = "5-bit"
@@ -12,11 +12,11 @@ PER_LETTER_ENCODING = "5-bit"
 WORD_NUMERIC_ENCODING = "7-bit-variable"
 # WORD_NUMERIC_ENCODING = "3-bit-variable"
 
-WORD_LETTER_ORDER = "normal"
-# WORD_LETTER_ORDER = "reverse"
+# WORD_LETTER_ORDER = "normal"
+WORD_LETTER_ORDER = "reverse"
 
-ALPHABET_REMAP = "normal"
-# ALPHABET_REMAP = "freq_of_use"
+# ALPHABET_REMAP = "normal"
+ALPHABET_REMAP = "freq_of_use"
 
 
 
@@ -110,6 +110,7 @@ def remapAlpha(source_word):
     # remaped_alpha = "aeorilstuncpmdbghkfwyvzjxq" # word reversed, frequency count of last 4 letters
     # remaped_alpha = "eairnoltusmdcgpkbfwvhyzxjq" # frequency count of letters 3-4 (1 based index)
     remaped_alpha = "aeioustryhkbcdfgjlmnpqvwxz" # (hackernews suggestion)
+       # inverse of the above map for reverse-mapping: "almnbopjcqkrstduvhfgewxyiz"
 
     remapped_word = ""
 
@@ -218,6 +219,7 @@ allWords = tuple(sorted(allWords))
 
 buckets = [[] for i in range(26)]
 for w in allWords:
+    # print("allwords: %u: %s" % (input_byte_length / 5, w))
     input_byte_length += 5 # 5 letters per word
     buckets[ord(w[0])-ord('a')].append(w[1:])
 
@@ -336,3 +338,8 @@ print ("Input size: " + str(input_byte_length) + ", Dict out size: " + str(dict_
 # print(sum(map(len, encoded)))
 #print(max(map(len, encoded)))
 
+
+#  Get un-map version of remap alphabet string
+# str_remap = "abcdefghijklmnopqrstuvwxyz"
+# str_remap = remapAlpha(str_remap)
+# print (str_remap)

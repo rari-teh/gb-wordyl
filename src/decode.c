@@ -115,7 +115,50 @@ void updateWord(void) OLDCALL {
 
 #endif // _ASM_UPDATEWORD
 
+#define ALPHABET_REMAP
 #define WORD_LETTERS_REVERSED
+
+#ifdef ALPHABET_REMAP
+    const char  alpha_unmap[] = "AEIOUSTRYHKBCDFGJLMNPQVWXZ";
+    //                             [ ^un-map dir ]
+    //                           ABCDEFGHIJKLMNOPQRSTUVWXYZ
+    //                             [ map dir \/ ]
+    const char alpha_newmap[] = "ALMNBOPJCQKRSTDUVHFGEWXYIZ";
+
+    // Optional full-word alphabet remapping
+
+    // // Applies alphabet remapping to a string
+    // void alpha_apply_remap(char * str_word) {
+    //     for (uint8_t c = 0; c < 5; c++)
+    //         str_word[c] = alpha_newmap[str_word[c] - 'A'];
+    // }
+
+    // // Reverse alphabet remapping that was previously applied to a string
+    // void alpha_remove_remap(char * str_word) {
+    //     for (uint8_t c = 0; c < 5; c++)
+    //         str_word[c] = alpha_unmap[str_word[c] - 'A'];
+    // }
+
+#endif
+
+
+// Applies alphabet remapping to a character
+inline char check_alpha_remap_char(char c) {
+    #ifdef ALPHABET_REMAP
+        return alpha_newmap[c - 'A'];
+    #else
+        return c;
+    #endif
+}
+
+// Reverse alphabet remapping that was previously applied to a character
+inline char check_alpha_unmap_char(char c) {
+    #ifdef ALPHABET_REMAP
+        return alpha_unmap[c - 'A'];
+    #else
+        return c;
+    #endif
+}
 
 
 // Converts a word from a dictionary bucket # and numeric value to a string
@@ -125,26 +168,27 @@ void decodeWord(uint8_t start, uint32_t nextFour, char* buffer) {
         // Words encoded with letters in reverse order
         *(buffer+5) = 0;
         // Set last letter from letter bucket index (a-z)
-        *(buffer+4) = start + 'A';
+        *(buffer+4) = check_alpha_unmap_char(start + 'A');
         // Decode remaining 4 letters
         for(uint8_t i=1;i<5;i++) {
-            *buffer++ = (nextFour & 0x1F) + 'A';
+            *buffer++ = check_alpha_unmap_char((nextFour & 0x1F) + 'A');
             nextFour >>= 5;
         }
     #else
         // Words encoded with normal letter order
-        *buffer = start + 'A';
+        *buffer = check_alpha_unmap_char(start + 'A');
         buffer += 5;
         *buffer-- = 0;
         for(uint8_t i=1;i<5;i++) {
-            *buffer-- = (nextFour & 0x1F) + 'A';
+            *buffer-- = check_alpha_unmap_char((nextFour & 0x1F) + 'A');
             nextFour >>= 5;
         }
     #endif
-
-    // #ifdef
 }
 
+
+// Gets an answer word (from the dictionary) by index number in
+// the answer list
 void getWord(uint16_t n) {
     uint16_t count = 0;
     uint8_t i;
@@ -163,6 +207,8 @@ void getWord(uint16_t n) {
     decodeWord(i, currentWord, str_return_buffer);
 }
 
+// Check to see if the guess word is in the dictionary.
+//
 // Encodes guess word to 5-bits per letter, then seeks through
 // dictionary looking for the numeric match
 uint8_t filterWord(char* s) {
@@ -176,16 +222,16 @@ uint8_t filterWord(char* s) {
         int8_t i;
         // Words encoded with letters in reverse order
         for (i=3;i>=0;i--)
-            w = (w << 5) | (s[i]-'A');
+            w = (w << 5) | (check_alpha_remap_char(s[i])-'A');
 
-        i = s[4]-'A';
+        i = check_alpha_remap_char(s[4])-'A';
     #else
         uint8_t i;
         // Words encoded with normal letter order
         for (i=1;i<5;i++)
-            w = (w << 5) | (s[i]-'A');
+            w = (w << 5) | (check_alpha_remap_char(s[i])-'A');
 
-        i = s[0]-'A';
+        i = check_alpha_remap_char(s[0])-'A';
     #endif
 
     currentWord = 0;
@@ -196,6 +242,7 @@ uint8_t filterWord(char* s) {
             return currentWord == w;
         }
     }
+
     return 0;
 }
 
