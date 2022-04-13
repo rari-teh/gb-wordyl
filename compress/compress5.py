@@ -9,8 +9,8 @@ NUM_ANSWER_BUCKETS = 10
 PER_LETTER_ENCODING = "5-bit"
 # PER_LETTER_ENCODING = "base-26"
 
-WORD_NUMERIC_ENCODING = "7-bit-variable"
-# WORD_NUMERIC_ENCODING = "3-bit-variable"
+# WORD_NUMERIC_ENCODING = "7-bit-variable"
+WORD_NUMERIC_ENCODING = "3-bit-variable"
 
 # WORD_LETTER_ORDER = "normal"
 WORD_LETTER_ORDER = "reverse"
@@ -18,6 +18,8 @@ WORD_LETTER_ORDER = "reverse"
 # ALPHABET_REMAP = "normal"
 ALPHABET_REMAP = "freq_of_use"
 
+
+# TODO: would be nice if these options dumped control #define flags into the rendered header file
 
 
 # Optional arg 1 is language type (defaults to "en" otherwise)
@@ -57,36 +59,31 @@ def toBitmap(bits):
 
     return bytes(encodeByte(x) for x in range(0,len(bits),8))
 
-# Compact 3-bit + 1-bit nybble format into bytes
-def dumpBlobNybbles(name, blob):
-    counter_var = 0
-    n = len(blob)
-    # Num bytes = (nybbles / 2) rounded up
-# TODO: FIXME, make accurate
-    outfile.write("const uint8_t %s[%u] = {\n" % (name, ((n + 1 )/ 2 )))
+
+# Compact nybbles into bytes, padding up to the nearest byte
+def compactNybblestoBytes(nybbleBytes):
+
+    # packedBytes = b''
+    packedBytes = []
+    n = len(nybbleBytes)
     i = 0
     cur_byte = 0
     while i < n:
         # Accumulate two nybbles into each byte, then write it out
         if (i & 0x01):
             # Merge in high nybble and write out byte
-            cur_byte = cur_byte | (blob[i] << 4 & 0xF0)
-            outfile.write("0x%02x," % cur_byte)
-            counter_var += 1
-            # Line break every 16 bytes
-            if (((i + 1) % 32) == 0):
-                outfile.write("\n")
+            cur_byte = cur_byte | (nybbleBytes[i] << 4 & 0xF0)
+            packedBytes.append(cur_byte)
         else:
-            cur_byte = blob[i] & 0x0F
+            cur_byte = nybbleBytes[i] & 0x0F
         i+=1
 
-    # Flush trailing byte if needed
-    if ((i & 0x01) != 0x01):
-        counter_var += 1
-        outfile.write("0x%02x," % cur_byte)
+    # Flush trailing (low) nybble/byte if needed
+    if ((i & 0x01) == 0x00):
+        packedBytes.append(cur_byte)
 
-    outfile.write("};\n\n")
-    return counter_var
+    return bytes(packedBytes)
+
 
 def dumpBlobBytes(name, blob):
     counter_var = 0
@@ -148,14 +145,34 @@ def encodeDelta_3Bit(num):
     if num == 0:
         return bytes([0])
     res = []
-    while num > 0:
-        # 3 bit + 1 control bit encoding
-        part = num & 0x7
-        num = num >> 3
-        if num > 0:
+
+    # First count number of required varints to pack the numeric value
+    down_shift_amt = -3 # offset for first non-downshift
+    temp_num = num
+    while temp_num > 0:
+        temp_num = temp_num >> 3
+        down_shift_amt += 3
+
+    # Pack high bits first for easier decoding
+    while down_shift_amt >= 0:
+        part = (num >> down_shift_amt) & 0x7
+        # If more bytes will follow, set bit 4
+        if down_shift_amt > 0:
             part |= 0x8
         res.append(part)
+        down_shift_amt -= 3
+
     return bytes(res)
+    # This encodes the lowest bits first, which is slower to unpack
+    # while num > 0:
+    #     # 3 bit + 1 control bit encoding
+    #     part = num & 0x7
+    #     num = num >> 3
+    #     # If more bytes will follow, set bit 4
+    #     if num > 0:
+    #         part |= 0x8
+    #     res.append(part)
+    # return bytes(res)
 
 # For each word encode the numeric delta from the previous with 7 bit variable length packing
 def encodeDelta_7Bit(d):
@@ -187,6 +204,12 @@ def encodeList(ww):
         else:
             out += encodeDelta_7Bit(bin[i]-prev)
         prev = bin[i]
+
+    # For 3-bit word encoding:
+    # Squish the nybbles into bytes and round up to nearest byte at end
+    # to ensure byte alignment for start of each letter bucket
+    if (WORD_NUMERIC_ENCODING == "3-bit-variable"):
+        out = compactNybblestoBytes(out)
 
     return out
 
@@ -230,6 +253,10 @@ offset = 0
 for e in encoded:
     offsets.append(offset)
     offset += len(e)
+    # Dump bucket array for viewing
+    # res = ''.join(format(x, '02x') for x in e)
+    # print (res)
+    # print("* at:%u = %x" % (offset, e[len(e)-1]))
 offsets.append(offset)
 
 wordBlob = b''.join(encoded)
@@ -237,10 +264,7 @@ wordBlob = b''.join(encoded)
 answerBits = tuple(1 if w in answerWords else 0 for w in allWords)
 answerBlob = toBitmap(answerBits)
 
-if (WORD_NUMERIC_ENCODING == "3-bit-variable"):
-    dict_byte_size = dumpBlobNybbles("wordBlob", wordBlob)
-else:
-    dict_byte_size = dumpBlobBytes("wordBlob", wordBlob)
+dict_byte_size = dumpBlobBytes("wordBlob", wordBlob)
 
 outfile.write("// Bitmap of answers within dictionary\n")
 answer_bitmap_size = dumpBlobBytes("answers", answerBlob)
@@ -306,24 +330,6 @@ while (answerCount < len(answerWords)):
     dictByteOffsetDelta = 0
     prevAnswerCount = answerCount
 
-# for i in range(NUM_ANSWER_BUCKETS):
-#     bucketAnswerThreshold = answerCount + bucketAnswerSize
-#
-#     while (((answerCount < bucketAnswerThreshold) and ((dictByteOffsetDelta//8) < dictPosPreOverflow)) or dictPos%8 != 0) and dictPos < len(answerBits):
-#     # while ((answerCount < bucketAnswerThreshold) or dictPos%8 != 0) and dictPos < len(answerBits):
-#         if answerBits[dictPos]:
-#             answerCount += 1
-#         dictPos += 1
-#         dictByteOffsetDelta = dictPos - dictPosLastBucketEnd
-#
-#     # if ((dictByteOffsetDelta//8) >= dictPosPreOverflow):
-#     #     print("Note: bucket close to overflow, adding another. Bucket:%u { numAnswers:%u, dictByteOffset%u},\n" % (i, answerCount-prevAnswerCount, dictByteOffsetDelta//8))
-#     dictPosLastBucketEnd = dictPos
-#     outfile.write("  { %u, %u},\n" % (answerCount-prevAnswerCount, dictByteOffsetDelta//8))
-#     dictByteOffsetDelta = 0
-#     prevAnswerCount = answerCount
-#     # startBucket = dictPos
-#     # Store start bucket as deltas instead
 outfile.write("};\n")
 
 outfile.close()

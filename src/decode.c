@@ -7,7 +7,13 @@
 
 
 #define _ASM_GETSPECIALWORD
-#define _ASM_UPDATEWORD
+
+// #define _ASM_UPDATEWORD
+#define _UPDATEWORD_3BIT_VARINT
+
+#define ALPHABET_REMAP
+#define WORD_LETTERS_REVERSED
+
 
 static uint32_t currentWord;
 static const uint8_t* blobPtr;
@@ -96,6 +102,71 @@ __asm
 __endasm ;
 }
 
+#elif defined (_UPDATEWORD_3BIT_VARINT)
+
+
+bool dict_nybble_queued;
+uint8_t dict_cur_byte;
+
+// union for more efficient ORing in of lowest byte
+typedef union _wordyl_u32 {
+    struct {
+        uint8_t b0;
+        uint8_t b1;
+        uint8_t b2;
+        uint8_t b3;
+    };
+    struct {
+        uint8_t b0;
+        uint8_t b1;
+        uint8_t b2;
+        uint8_t b3;
+    } b;
+    uint32_t ul;
+} _wordyl_u32;
+
+// uint32_t update_v;
+_wordyl_u32 update_v;
+
+
+// TODO: ASM version, it will probably go 2x - 4x faster at least
+
+
+// dict_nybble_queued and dict_cur_byte need to be
+// primed once at the start of the decode loop
+void updateWord_3bit_varint(void) OLDCALL {
+
+    //uint32_t v = 0;
+    // Add 1 since all words are encoded as (value - 1)
+    update_v.ul = 0; //1;
+    bool loop_done = false;
+
+    // Merge in 3 bit varints until the "more nybbles" flag is not set
+    do {
+    // while (1) {
+        update_v.ul <<= 3; // TODO: wasteful to do this for every one
+        update_v.b.b0 |= (uint32_t)(dict_cur_byte & 0x07);
+
+        // Exit loop (after loading next byte/nybble)
+        // if this is the last varint nybble for the word
+        if ((dict_cur_byte & 0x08) == 0)
+            loop_done = true;
+
+        // If a nybble is queued then move it into the lower 4 bits
+        // Otherwise read a new byte
+        if (dict_nybble_queued)
+            dict_cur_byte >>= 4;
+        else
+            dict_cur_byte = *blobPtr++;
+
+        dict_nybble_queued = !dict_nybble_queued;
+    // };
+    } while (!loop_done);
+
+    // Add 1 since all words are encoded as (value - 1)
+    currentWord += update_v.ul + 1;
+}
+
 #else
 
 void updateWord(void) OLDCALL {
@@ -115,8 +186,6 @@ void updateWord(void) OLDCALL {
 
 #endif // _ASM_UPDATEWORD
 
-#define ALPHABET_REMAP
-#define WORD_LETTERS_REVERSED
 
 #ifdef ALPHABET_REMAP
     const char  alpha_unmap[] = "AEIOUSTRYHKBCDFGJLMNPQVWXZ";
@@ -201,8 +270,20 @@ void getWord(uint16_t n) {
     }
     currentWord = 0;
     blobPtr = wordBlob + w->blobOffset;
+
+    #ifdef _UPDATEWORD_3BIT_VARINT
+        // For 3-bit encoding the first nybble in a given bucket
+        // is padded to always align in the low nybble of the first byte
+        dict_cur_byte = *blobPtr++;
+        dict_nybble_queued = true;
+    #endif
+
     for (uint16_t j = n - w->wordNumber + 1; j; j--) {
-        updateWord();
+        #ifdef _UPDATEWORD_3BIT_VARINT
+            updateWord_3bit_varint();
+        #else
+            updateWord();
+        #endif
     }
     decodeWord(i, currentWord, str_return_buffer);
 }
@@ -236,8 +317,21 @@ uint8_t filterWord(char* s) {
 
     currentWord = 0;
     blobPtr = wordBlob + buckets[i].blobOffset;
+
+    #ifdef _UPDATEWORD_3BIT_VARINT
+        // For 3-bit encoding the first nybble in a given bucket
+        // is padded to always align in the low nybble of the first byte
+        dict_cur_byte = *blobPtr++;
+        dict_nybble_queued = true;
+    #endif
+
     for (uint16_t j=buckets[i+1].wordNumber - buckets[i].wordNumber; j; j--) {
-        updateWord();
+        #ifdef _UPDATEWORD_3BIT_VARINT
+            updateWord_3bit_varint();
+        #else
+            updateWord();
+        #endif
+
         if (currentWord >= w) {
             return currentWord == w;
         }
