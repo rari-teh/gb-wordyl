@@ -14,10 +14,12 @@
 #define ALPHABET_REMAP
 #define WORD_LETTERS_REVERSED
 
+// #define ZERO_DELTA_SUBTRACT
+
 
 static uint32_t currentWord;
 static const uint8_t* blobPtr;
-static char     * str_return_buffer;
+static char  * str_return_buffer;
 
 
 #ifdef _ASM_UPDATEWORD
@@ -108,7 +110,7 @@ __endasm ;
 bool dict_nybble_queued;
 uint8_t dict_cur_byte;
 
-// union for more efficient ORing in of lowest byte
+/*// union for more efficient ORing in of lowest byte
 typedef union _wordyl_u32 {
     struct {
         uint8_t b0;
@@ -164,8 +166,154 @@ void updateWord_3bit_varint(void) OLDCALL {
     } while (!loop_done);
 
     // Add 1 since all words are encoded as (value - 1)
-    currentWord += update_v.ul + 1;
+    #ifdef ZERO_DELTA_SUBTRACT
+        currentWord += update_v.ul + 1;
+    #else
+        currentWord += update_v.ul;
+    #endif
 }
+*/
+
+/*
+// V2
+uint32_t update_v;
+
+// dict_nybble_queued and dict_cur_byte need to be
+// primed once at the start of the decode loop
+void updateWord_3bit_varint(void) OLDCALL {
+
+    update_v = 0;
+    uint8_t n_count = 0;
+    bool loop_done = false;
+
+    // Merge in 3 bit varints until the "more nybbles" flag is not set
+    do {
+
+        uint32_t merge_bits = (dict_cur_byte & 0x07);
+        for (uint8_t c = 0; c < n_count; c++)
+            merge_bits <<= 3;
+
+        update_v |= merge_bits;
+
+        // Exit loop (after loading next byte/nybble)
+        // if this is the last varint nybble for the word
+        if ((dict_cur_byte & 0x08) == 0)
+            loop_done = true;
+
+        n_count++;
+
+        // If a nybble is queued then move it into the lower 4 bits
+        // Otherwise read a new byte
+        if (dict_nybble_queued)
+            dict_cur_byte >>= 4;
+        else
+            dict_cur_byte = *blobPtr++;
+
+        dict_nybble_queued = !dict_nybble_queued;
+    // };
+    } while (!loop_done);
+
+    // Add 1 since all words are encoded as (value - 1)
+    #ifdef ZERO_DELTA_SUBTRACT
+        currentWord += update_v + 1;
+    #else
+        currentWord += update_v;
+    #endif
+}
+*/
+
+// V3
+uint32_t update_v;
+
+// dict_nybble_queued and dict_cur_byte need to be
+// primed once at the start of the decode loop
+void updateWord_3bit_varint(void) OLDCALL {
+
+    update_v = 0;
+    uint8_t * p_num = (uint8_t *)&update_v;
+
+    uint8_t n_count = 0;
+    bool loop_done = false;
+
+    // Merge in 3 bit varints until the "more nybbles" flag is not set
+    do {
+        switch (n_count) {
+                    // [0]2..0
+            case 0: *p_num |= (dict_cur_byte & 0x07);
+                    break;
+
+                    // [0]bits 5..3
+            case 1: *p_num |= ((dict_cur_byte & 0x07) << 3);
+                    break;
+
+                    // [0]7..6 , [1]..0
+            case 2: *p_num++ |= (dict_cur_byte << 6);
+                    *p_num |= ((dict_cur_byte & 0x07) >> 2);
+                    break;
+
+                    // [1]3..1
+            case 3: *p_num |= ((dict_cur_byte & 0x07) << 1);
+                    break;
+
+                    // [1]6..4
+            case 4: *p_num |= ((dict_cur_byte & 0x07) << 4);
+                    break;
+
+                    // [1]7 , [2]1..0
+            case 5: *p_num++ |= (dict_cur_byte << 7);
+                    *p_num |= ((dict_cur_byte & 0x07) >> 1);
+                    break;
+
+                    // [2]bits 4..2
+            case 6: *p_num |= ((dict_cur_byte & 0x07) << 2);
+                    break;
+
+                    // [2]bits 7..5
+            case 7: *p_num |= ((dict_cur_byte & 0x07) << 5);
+                    break;
+
+// Are these higher ones needed?
+                    // [3]bits 2..0
+            case 8: p_num++;
+                    *p_num |= (dict_cur_byte & 0x07);
+                    break;
+
+                    // [3]bits 5..3
+            case 9: *p_num |= ((dict_cur_byte & 0x07) << 3);
+                    break;
+
+                    // [3]7..6
+            case 10: *p_num |= (dict_cur_byte << 6);
+                    break;
+
+        }
+
+        // Exit loop (after loading next byte/nybble)
+        // if this is the last varint nybble for the word
+        if ((dict_cur_byte & 0x08) == 0)
+            loop_done = true;
+
+        n_count++;
+
+        // If a nybble is queued then move it into the lower 4 bits
+        // Otherwise read a new byte
+        if (dict_nybble_queued)
+            dict_cur_byte >>= 4;
+        else
+            dict_cur_byte = *blobPtr++;
+
+        dict_nybble_queued = !dict_nybble_queued;
+    // };
+    } while (!loop_done);
+
+    // Add 1 since all words are encoded as (value - 1)
+    #ifdef ZERO_DELTA_SUBTRACT
+        currentWord += update_v + 1;
+    #else
+        currentWord += update_v;
+    #endif
+}
+
 
 #else
 

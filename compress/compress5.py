@@ -19,6 +19,11 @@ WORD_LETTER_ORDER = "reverse"
 ALPHABET_REMAP = "freq_of_use"
 
 
+ZERO_DELTA = "no-substract-by-one"
+# ZERO_DELTA = "always-subtract-one"
+
+
+
 # TODO: would be nice if these options dumped control #define flags into the rendered header file
 
 
@@ -141,42 +146,47 @@ def tobinary_base26(w):
 # requires later packing of nybbles into bytes
 def encodeDelta_3Bit(num):
     assert num > 0
-    num -= 1
+    # The delta should never be zero, so 1 bit can be saved by always subtracting 1
+    if (ZERO_DELTA == "always-subtract-one"):
+        num -= 1
     if num == 0:
         return bytes([0])
     res = []
 
-    # First count number of required varints to pack the numeric value
-    down_shift_amt = -3 # offset for first non-downshift
-    temp_num = num
-    while temp_num > 0:
-        temp_num = temp_num >> 3
-        down_shift_amt += 3
+    # # First count number of required varints to pack the numeric value
+    # down_shift_amt = -3 # offset for first non-downshift
+    # temp_num = num
+    # while temp_num > 0:
+    #     temp_num = temp_num >> 3
+    #     down_shift_amt += 3
 
-    # Pack high bits first for easier decoding
-    while down_shift_amt >= 0:
-        part = (num >> down_shift_amt) & 0x7
-        # If more bytes will follow, set bit 4
-        if down_shift_amt > 0:
-            part |= 0x8
-        res.append(part)
-        down_shift_amt -= 3
-
-    return bytes(res)
-    # This encodes the lowest bits first, which is slower to unpack
-    # while num > 0:
-    #     # 3 bit + 1 control bit encoding
-    #     part = num & 0x7
-    #     num = num >> 3
+    # # Pack high bits first for easier decoding
+    # while down_shift_amt >= 0:
+    #     part = (num >> down_shift_amt) & 0x7
     #     # If more bytes will follow, set bit 4
-    #     if num > 0:
+    #     if down_shift_amt > 0:
     #         part |= 0x8
     #     res.append(part)
+    #     down_shift_amt -= 3
+    #
     # return bytes(res)
+
+    # This encodes the lowest bits first, which is slower to unpack if upshifting (but not for other methods)
+    while num > 0:
+        # 3 bit + 1 control bit encoding
+        part = num & 0x7
+        num = num >> 3
+        # If more bytes will follow, set bit 4
+        if num > 0:
+            part |= 0x8
+        res.append(part)
+    return bytes(res)
 
 # For each word encode the numeric delta from the previous with 7 bit variable length packing
 def encodeDelta_7Bit(d):
-    d-=1
+    # The delta should never be zero, so 1 bit can be saved by always subtracting 1
+    if (ZERO_DELTA == "always-subtract-one"):
+        d-=1
     assert d<0x80*0x80*0x80
     if d < 0x80:
         return bytes((0x80|d,))
