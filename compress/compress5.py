@@ -3,7 +3,7 @@
 import sys
 
 lang = "en"
-NUM_ANSWER_BUCKETS = 10
+NUM_ANSWER_BUCKETS = 14
 ### ENCODING SETTINGS ###
 
 PER_LETTER_ENCODING = "5-bit"
