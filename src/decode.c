@@ -224,6 +224,7 @@ void updateWord_3bit_varint(void) OLDCALL {
 
 // V3
 uint32_t update_v;
+bool updateword_loop_done;
 
 // dict_nybble_queued and dict_cur_byte need to be
 // primed once at the start of the decode loop
@@ -233,7 +234,8 @@ void updateWord_3bit_varint(void) OLDCALL {
     uint8_t * p_num = (uint8_t *)&update_v;
 
     uint8_t n_count = 0;
-    bool loop_done = false;
+    //bool loop_done = false;
+    updateword_loop_done = false;
 
     // Merge in 3 bit varints until the "more nybbles" flag is not set
     do {
@@ -291,7 +293,7 @@ void updateWord_3bit_varint(void) OLDCALL {
         // Exit loop (after loading next byte/nybble)
         // if this is the last varint nybble for the word
         if ((dict_cur_byte & 0x08) == 0)
-            loop_done = true;
+            updateword_loop_done = true;
 
         n_count++;
 
@@ -304,7 +306,7 @@ void updateWord_3bit_varint(void) OLDCALL {
 
         dict_nybble_queued = !dict_nybble_queued;
     // };
-    } while (!loop_done);
+    } while (!updateword_loop_done);
 
     // Add 1 since all words are encoded as (value - 1)
     #ifdef ZERO_DELTA_SUBTRACT
