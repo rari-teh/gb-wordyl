@@ -14,7 +14,8 @@
 #define ALPHABET_REMAP
 #define WORD_LETTERS_REVERSED
 
-// #define ZERO_DELTA_SUBTRACT
+#define YES_ZERO_DELTA_SUBTRACT
+// #define NO_ZERO_DELTA_SUBTRACT
 
 
 static uint32_t currentWord;
@@ -166,7 +167,7 @@ void updateWord_3bit_varint(void) OLDCALL {
     } while (!loop_done);
 
     // Add 1 since all words are encoded as (value - 1)
-    #ifdef ZERO_DELTA_SUBTRACT
+    #ifdef YES_ZERO_DELTA_SUBTRACT
         currentWord += update_v.ul + 1;
     #else
         currentWord += update_v.ul;
@@ -214,7 +215,7 @@ void updateWord_3bit_varint(void) OLDCALL {
     } while (!loop_done);
 
     // Add 1 since all words are encoded as (value - 1)
-    #ifdef ZERO_DELTA_SUBTRACT
+    #ifdef YES_ZERO_DELTA_SUBTRACT
         currentWord += update_v + 1;
     #else
         currentWord += update_v;
@@ -222,7 +223,7 @@ void updateWord_3bit_varint(void) OLDCALL {
 }
 */
 
-// V3
+// V3 - expects lowest bits (chunks) to be packed first, highest last
 uint32_t update_v;
 bool updateword_loop_done;
 
@@ -274,7 +275,9 @@ void updateWord_3bit_varint(void) OLDCALL {
             case 7: *p_num |= ((dict_cur_byte & 0x07) << 5);
                     break;
 
-// Are these higher ones needed?
+// Only need to support decode up to 20 bits
+// Yet somehow, commenting them out generates code ~150 bytes larger?
+
                     // [3]bits 2..0
             case 8: p_num++;
                     *p_num |= (dict_cur_byte & 0x07);
@@ -287,6 +290,7 @@ void updateWord_3bit_varint(void) OLDCALL {
                     // [3]7..6
             case 10: *p_num |= (dict_cur_byte << 6);
                     break;
+
 
         }
 
@@ -309,7 +313,7 @@ void updateWord_3bit_varint(void) OLDCALL {
     } while (!updateword_loop_done);
 
     // Add 1 since all words are encoded as (value - 1)
-    #ifdef ZERO_DELTA_SUBTRACT
+    #ifdef YES_ZERO_DELTA_SUBTRACT
         currentWord += update_v + 1;
     #else
         currentWord += update_v;

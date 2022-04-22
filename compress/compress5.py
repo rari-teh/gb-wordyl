@@ -2,25 +2,31 @@
 
 import sys
 
+# Default language, override with first console arg
 lang = "en"
-NUM_ANSWER_BUCKETS = 14
+
 ### ENCODING SETTINGS ###
 
+# --- DEFAULTS ---
+NUM_ANSWER_BUCKETS = 14
+
 PER_LETTER_ENCODING = "5-bit"
+WORD_NUMERIC_ENCODING = "7-bit-variable"
+WORD_LETTER_ORDER = "normal"
+ALPHABET_REMAP = "normal"
+ZERO_DELTA = "yes-always-subtract-one"
+
+# --- OVERRIDES ---
+
 # PER_LETTER_ENCODING = "base-26"
 
-# WORD_NUMERIC_ENCODING = "7-bit-variable"
 WORD_NUMERIC_ENCODING = "3-bit-variable"
+# WORD_NUMERIC_ENCODING = "4-bit-variable"
 
-# WORD_LETTER_ORDER = "normal"
+ALPHABET_REMAP = "freq_of_use"
 WORD_LETTER_ORDER = "reverse"
 
-# ALPHABET_REMAP = "normal"
-ALPHABET_REMAP = "freq_of_use"
-
-
-ZERO_DELTA = "no-substract-by-one"
-# ZERO_DELTA = "always-subtract-one"
+# ZERO_DELTA = "never-substract-by-one"
 
 
 
@@ -147,7 +153,7 @@ def tobinary_base26(w):
 def encodeDelta_3Bit(num):
     assert num > 0
     # The delta should never be zero, so 1 bit can be saved by always subtracting 1
-    if (ZERO_DELTA == "always-subtract-one"):
+    if (ZERO_DELTA == "yes-always-subtract-one"):
         num -= 1
     if num == 0:
         return bytes([0])
@@ -185,7 +191,7 @@ def encodeDelta_3Bit(num):
 # For each word encode the numeric delta from the previous with 7 bit variable length packing
 def encodeDelta_7Bit(d):
     # The delta should never be zero, so 1 bit can be saved by always subtracting 1
-    if (ZERO_DELTA == "always-subtract-one"):
+    if (ZERO_DELTA == "yes-always-subtract-one"):
         d-=1
     assert d<0x80*0x80*0x80
     if d < 0x80:
