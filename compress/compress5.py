@@ -322,6 +322,7 @@ answerCount = 0
 prevAnswerCount = 0
 dictByteOffsetDelta = 0
 dictPosLastBucketEnd = 0
+answerBucketCount = 0
 
 
 while (answerCount < len(answerWords)):
@@ -343,6 +344,7 @@ while (answerCount < len(answerWords)):
         print("Note: bucket close to overflow, adding another. Bucket: %u { numAnswers: %u, dictByteOffset: %u},\n" % (i, answerCount-prevAnswerCount, dictByteOffsetDelta//8))
     dictPosLastBucketEnd = dictPos
     outfile.write("  { %u, %u},\n" % (answerCount-prevAnswerCount, dictByteOffsetDelta//8))
+    answerBucketCount = answerBucketCount + 1
     dictByteOffsetDelta = 0
     prevAnswerCount = answerCount
 
@@ -353,7 +355,7 @@ outfile.close()
 with open(output_path + "sizes.h", "w") as sizes:
     sizes.write("#define NUM_WORDS %u\n" % len(allWords))
     sizes.write("#define NUM_ANSWERS %u\n" % len(answerWords))
-    sizes.write("#define NUM_ANSWER_BUCKETS %u\n" % NUM_ANSWER_BUCKETS)
+    sizes.write("#define NUM_ANSWER_BUCKETS %u\n" % answerBucketCount)
     sizes.write("#define NUM_ANSWERS_ROUNDED_UP_POW2 %u" % mask(len(answerWords)))
 
 print ("Input size: " + str(input_byte_length) + ", Dict out size: " + str(dict_byte_size) + ", Answer Bitmap size: " + str(answer_bitmap_size));
