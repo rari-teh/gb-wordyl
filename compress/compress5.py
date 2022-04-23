@@ -79,18 +79,21 @@ def compactNybblestoBytes(nybbleBytes):
     n = len(nybbleBytes)
     i = 0
     cur_byte = 0
+    needsFlush = False
     while i < n:
         # Accumulate two nybbles into each byte, then write it out
         if (i & 0x01):
             # Merge in high nybble and write out byte
             cur_byte = cur_byte | (nybbleBytes[i] << 4 & 0xF0)
             packedBytes.append(cur_byte)
+            needsFlush = False
         else:
             cur_byte = nybbleBytes[i] & 0x0F
+            needsFlush = True
         i+=1
 
     # Flush trailing (low) nybble/byte if needed
-    if ((i & 0x01) == 0x00):
+    if (needsFlush == True):
         packedBytes.append(cur_byte)
 
     return bytes(packedBytes)
@@ -203,11 +206,11 @@ def encodeDelta_7Bit(d):
     else:
         return bytes((d & 0x7F, (d>>7) & 0x7F, (d>>14)))
 
-def encodeList(ww):
+def encodeList(bucket_wordlist):
     if (PER_LETTER_ENCODING == "base-26"):
-        bin = tuple( map(tobinary_base26, ww) )
+        bin = tuple( map(tobinary_base26, bucket_wordlist) )
     else:
-        bin = tuple( map(tobinary_5bit, ww) )
+        bin = tuple( map(tobinary_5bit, bucket_wordlist) )
 
     # Re-sorting is needed here in case the encoding changes the word numerical value sort order
     bin = sorted(bin)
