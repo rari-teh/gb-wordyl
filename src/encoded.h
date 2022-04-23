@@ -13,6 +13,14 @@ typedef struct {
   uint16_t blobOffset;
 } LetterBucket_t;
 
+typedef struct {
+  uint16_t   wordCount;
+  uint16_t   blobOffset;
+  uint8_t    firstLetter;
+  uint32_t   wordVal;
+} RAMLetterBucket_t;
+
+
 extern const LetterBucket_t buckets[];
 
 typedef struct {

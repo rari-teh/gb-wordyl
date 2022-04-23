@@ -23,8 +23,8 @@ ZERO_DELTA = "yes-always-subtract-one"
 WORD_NUMERIC_ENCODING = "3-bit-variable"
 # WORD_NUMERIC_ENCODING = "4-bit-variable"
 
-ALPHABET_REMAP = "freq_of_use"
-WORD_LETTER_ORDER = "reverse"
+# ALPHABET_REMAP = "freq_of_use"
+# WORD_LETTER_ORDER = "reverse"
 
 # ZERO_DELTA = "never-substract-by-one"
 
@@ -132,11 +132,13 @@ def remapAlpha(source_word):
     return remapped_word
 
 
-# Encode each letter with 5 bits (bitpacked into 20 bytes, since first letter is dropped)
+# Encode each letter with 5 bits
+# (4 letters x 5 bits = bitpacked into 20 bytes, since first letter is dropped)
 def tobinary_5bit(w):
     s = 0
     for i in range(len(w)):
         s = (s << 5) + (ord(w[i])-ord('a'))
+    # print ("%s -> %x" % (w, s))
     return s
 
 
@@ -293,6 +295,8 @@ answer_bitmap_size = dumpBlobBytes("answers", answerBlob)
 #
 # const LetterList_t words[27] = {\n""")
 
+outfile.write("// Lookup Table to fast-forward through Dictionary Blob (and implies first letter)\n")
+outfile.write("// {uint16_t wordNumber, uint16_t blobOffset}\n")
 outfile.write("const LetterBucket_t buckets[27] = {\n""")
 
 for i in range(27):
@@ -307,7 +311,7 @@ outfile.write("};\n\n")
 
 
 outfile.write("// Lookup Table to fast-forward through Answers->in->Dictionary bitmap\n")
-outfile.write("// {num Answer Words, byte offset delta in Dictionary} [\n")
+outfile.write("// {uint8_t num Answer Words, uint8_t byte offset delta in Dictionary Bitmap} [\n")
 outfile.write("const AnswerBucket_t answerBuckets[] = {\n""")
 
 bucketAnswerSize = len(answerWords) // NUM_ANSWER_BUCKETS
