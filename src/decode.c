@@ -276,9 +276,9 @@ void updateWord_3bit_varint(void) OLDCALL {
             case 7: *p_num |= ((dict_cur_byte & 0x07) << 5);
                     break;
 
-// Only need to support decode up to 20 bits
-// Apparently commenting this out de-prioritizes using BC for delta_v
-// Which makes the code 200 bytes larger as well as slower
+            // Only need to support decode up to 20 bits
+            // Apparently commenting out below de-prioritizes using BC for delta_v
+            // Which makes the code 200 bytes larger as well as slower. So it stays :)
 
                     // [3]bits 2..0
             case 8: p_num++;
@@ -497,9 +497,8 @@ void buildRAMBuckets(void) {
     // Loop through each dictionary Letter Bucket
     for (start_letter = 0 ; start_letter < 26; start_letter++) {
 
-// TODO FIXME: BUT SHOULD IT?
         // For each letter bucket the cumulative wordvalue gets reset to 0
-        // Since the initial delta in an alpha bucket is the whole word value
+        // Since the initial delta in a first alpha bucket is the whole word value
         currentWord = 0;
 
         bucketWordCount = 0;
@@ -538,10 +537,21 @@ void buildRAMBuckets(void) {
     }
 
     // Add final terminating entry
+    bucketStart_currentWord = 0;
     addRAMBucket(DICT_BUCKETS_EOF);
-    dictLUT_RAM_count++;
-    p_dictLUT_RAM->wordCount = 0;
-    p_dictLUT_RAM->wordVal = currentWord;
+}
+
+
+
+void loadDictBucketInitVals(void) {
+    // For each letter bucket the delta gets reset to 0
+    currentWord = p_dictLUT_RAM->wordVal;
+    blobPtr = wordBlob + p_dictLUT_RAM->blobOffset;
+
+    // For 3-bit encoding the first nybble in a given bucket
+    // is padded to always align in the low nybble of the first byte
+    dict_cur_byte = *blobPtr; // ++;
+    dict_two_nybbles_queued = true;
 }
 
 // getWord RAM VERSION
@@ -550,12 +560,13 @@ void buildRAMBuckets(void) {
 // the answer list
 void getWord(uint16_t dictWordNum) {
 
-    if (dictWordNum > (NUM_WORDS - 1)) {
-        *str_return_buffer = 0;
-        return;
-    }
+    // Default to failed to find the requested word
+    *str_return_buffer = 0;
 
-    // dictWordNum = 252;
+    // Validate requested word is within range
+    if (dictWordNum > (NUM_WORDS - 1))
+        return; // failed: str_return_buffer will be NULLED
+
     dictWordNum++; // make the word number 1 based instead of zero based
 
     // Use RAM bucket index to fast-forward closer to desired answer word
@@ -564,25 +575,12 @@ void getWord(uint16_t dictWordNum) {
     while (dictWordNum > p_dictLUT_RAM->wordCount) {
         dictWordNum -= p_dictLUT_RAM->wordCount;
         p_dictLUT_RAM++;
-// TODO: better system for this - now it has a guard above instead
-        // // Fail if the wordnum exceeded the max value (stored in last record)
-        // if (p_dictLUT_RAM->firstLetter == (0xFF - 'A')) {
-        //     *str_return_buffer = 0;
-        //     return;
-        // }
+
+        if (p_dictLUT_RAM->firstLetter == (DICT_BUCKETS_EOF))
+            return; // failed: str_return_buffer will be NULLED
     }
 
-    // TODO: This could be a function to consolidate commonly used setup to one place
-// TODO FIXME: BUT SHOULD IT?
-        // For each letter bucket the cumulative wordvalue gets reset to 0
-        // Since the initial delta in an alpha bucket is the whole word value
-        currentWord = p_dictLUT_RAM->wordVal;
-        blobPtr = wordBlob + p_dictLUT_RAM->blobOffset;
-
-        // For 3-bit encoding the first nybble in a given bucket
-        // is padded to always align in the low nybble of the first byte
-        dict_cur_byte = *blobPtr; // ++;
-        dict_two_nybbles_queued = true;
+    loadDictBucketInitVals();
 
     for (uint16_t j = dictWordNum; j; j--) {
         updateWord_3bit_varint();
@@ -591,9 +589,10 @@ void getWord(uint16_t dictWordNum) {
 }
 
 
-//
+
 // Encodes guess word to 5-bits per letter, then seeks through
 // dictionary looking for the numeric match
+// Returns true if matched or false (0) if no match was found
 uint8_t filterWord(char* s) {
     // because the input system uses an on-screen keyboard with A-Z only, no need to sanitize
     // for (i=0; i<5; i++)
@@ -616,9 +615,6 @@ uint8_t filterWord(char* s) {
 
         uint8_t first_letter = check_alpha_remap_char(s[0])-'A';
     #endif
-// TODO: FIXME
-    // if (userWordVal > WORD_VAL_MAX)
-    //     return 0;
 
 
     // Use RAM bucket index to fast-forward closer to desired answer word
@@ -627,29 +623,25 @@ uint8_t filterWord(char* s) {
     // Scan for first bucket with matching initial letter
     while (first_letter != p_dictLUT_RAM->firstLetter) {
         p_dictLUT_RAM++;
+
         if (p_dictLUT_RAM->firstLetter == (DICT_BUCKETS_EOF))
             return 0;
     }
 
-    // Loop buckets until either the first letter doesn't match
+    // Loop through buckets until either the first letter doesn't match
     // or the user wordVal is less than the bucket start wordVal
-    // -> Can't scan more easily since buckets don't store a "maxWordValue" (lack of space)
+    // Note: For each initial alpha bucket the wordVal resets to 0
     while ((first_letter == p_dictLUT_RAM->firstLetter) &&
            (userWordVal >= p_dictLUT_RAM->wordVal)) {
+
         p_dictLUT_RAM++;
     }
     // Now back up one since the above loop is designed to overshoot by +1
+    // since it can't check if a wordVal is within a single bucket since
+    // buckets don't store a "maxWordValue"
     p_dictLUT_RAM--;
 
-    // TODO: This could be a function to consolidate commonly used setup to one place
-        // For each letter bucket the delta gets reset to 0
-        currentWord = p_dictLUT_RAM->wordVal;
-        blobPtr = wordBlob + p_dictLUT_RAM->blobOffset;
-
-        // For 3-bit encoding the first nybble in a given bucket
-        // is padded to always align in the low nybble of the first byte
-        dict_cur_byte = *blobPtr; // ++;
-        dict_two_nybbles_queued = true;
+    loadDictBucketInitVals();
 
     // Scan through entire bucket decoding words to see if there is a match
     for (uint16_t j = p_dictLUT_RAM->wordCount; j; j--) {
@@ -659,34 +651,7 @@ uint8_t filterWord(char* s) {
     }
 
     return 0;
-/*
-
-
-// currentWord = 0;
-// blobPtr = wordBlob + buckets[i].blobOffset;
-
-        // For 3-bit encoding the first nybble in a given bucket
-        // is padded to always align in the low nybble of the first byte
-        dict_cur_byte = *blobPtr; //++;
-        dict_two_nybbles_queued = true;
-
-    for (uint16_t j=buckets[i+1].wordNumber - buckets[i].wordNumber; j; j--) {
-        #ifdef _UPDATEWORD_3BIT_VARINT
-            updateWord_3bit_varint();
-        #else
-            updateWord();
-        #endif
-
-        if (currentWord >= w) {
-            return currentWord == w;
-        }
-    }
-    return 0;
-*/
 }
-
-
-
 
 
 
