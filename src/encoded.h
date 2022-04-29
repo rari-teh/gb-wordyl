@@ -22,8 +22,8 @@ typedef struct {
   uint8_t    firstLetter; // * [Absolute] Alphabet index of first letter (A = 0, B = 1, etc)
   uint32_t   wordVal;     // * [Absolute] Numeric word value (last 4 letters, 24 bits max)
                           //   of *preceding* word (last word for preceding bucket).
-                          //   Resets to 0 when bucket first letter changes, so the first encoded word
-                          //   after a first letter change will have it's full value as it's delta value
+                          //   Resets to (current wordval -1) when bucket first letter changes, so
+                          //   first encoded word after a first letter change will have a delta of "1"
 } dictIndexBucket_t;
 
 

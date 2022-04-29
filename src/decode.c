@@ -41,21 +41,37 @@ static char  *        str_return_buffer;
 static bool dict_two_nybbles_queued;
 static uint8_t dict_cur_byte;
 
-// #define TEST_DICT
+#define TEST_DICT
 
 #ifdef TEST_DICT
 #include <gbdk/emu_debug.h> // Use this include to add the Emu debug functions
 void dumpAnswersToEmuConsole(void) {
     char tempStr[10];
+    bool validated;
 
     // Decode all dictionary words and log them to emu debug console.
     // Validate each word against the dictionary and warn if it fails
     for (uint16_t c = 0; c < NUM_WORDS; c++) {
         str_return_buffer = tempStr;
+
         getWord(c);
         EMU_printf("%s", tempStr);
-        if (!filterWord(tempStr))
+
+        validated = filterWord(tempStr);
+        if (!validated)
             EMU_MESSAGE("Rejected by filterWord()");
+
+        // For benchmarking
+        // EMU_MESSAGE("%ZEROCLKS%");
+        // getWord(c);
+        // EMU_MESSAGE("%-8+LASTCLKS%");
+        // EMU_printf("%s", tempStr);
+
+        // EMU_MESSAGE("%ZEROCLKS%");
+        // validated = filterWord(tempStr);
+        // EMU_MESSAGE("%-8+LASTCLKS%");
+        // if (!validated)
+        //     EMU_MESSAGE("Rejected by filterWord()");
     }
 }
 #endif
@@ -359,7 +375,7 @@ void decodeWord(uint8_t start, uint32_t nextFour, char* buffer) {
 
 
 void loadDictBucketInitVals(void) {
-    // For each letter bucket the delta gets reset to 0
+    // Note: For each initial alpha letter bucket the delta gets reset to ~(first word val - 1)
     currentWord = p_dictIndex->wordVal;
     blobPtr = wordBlob + p_dictIndex->blobOffset;
 
@@ -524,6 +540,9 @@ void getSpecialWord(uint16_t _n, char* buffer) OLDCALL {
 
 // TODO: OLDCALL as precaution against upcoming SDCC calling convention change
 void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
+    #ifdef TEST_DICT
+        dumpAnswersToEmuConsole();
+    #endif
 
     __asm \
 

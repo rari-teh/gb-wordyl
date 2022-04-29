@@ -165,6 +165,7 @@ def encodeDelta_3Bit(num):
     # The delta should never be zero, so 1 bit can be saved by always subtracting 1
     if (ZERO_DELTA == "yes-always-subtract-one"):
         num -= 1
+
     if num == 0:
         return bytes([0])
     res = []
@@ -208,6 +209,7 @@ def encodeDelta_7Bit(d):
     # The delta should never be zero, so 1 bit can be saved by always subtracting 1
     if (ZERO_DELTA == "yes-always-subtract-one"):
         d-=1
+
     assert d<0x80*0x80*0x80
     if d < 0x80:
         return bytes((0x80|d,))
@@ -257,15 +259,21 @@ def encodeList3bitIndexed(bucketWordlist, alphaIdx):
     # Re-sorting is needed here in case the encoding changes the word numerical value sort order
     bin = sorted(bin)
 
+    # Return zero bytes if no words are present
+    if (len(bin) == 0):
+        return (b'')
+
     bucketWordCount = 0
     prevByteSize = 0
     bucketStartWordVal = 0
 
-    prevWordVal = 0
-
-    # This makes sure the first bucket added for a each starting letter (a-z) begins with
-    # a word value of zero, and so the delta val of first word in each a-z bucket is it's
-    # full value rather than a delta versus the previous word.
+    # Start each initial letter bucket with the "previous word value" set to the starting
+    # word value. That value gets stored in the dictionary index, so the first word's
+    # calculated delta can be zero, which saves a little space.
+    prevWordVal = bin[0]
+    # If needed, subtract by one to avoid a delta of zero when using that optimization
+    if (ZERO_DELTA == "yes-always-subtract-one"):
+        prevWordVal -= 1
     bucketStartWordVal = prevWordVal
 
     out = b''
