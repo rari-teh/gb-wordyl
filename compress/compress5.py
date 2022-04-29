@@ -9,6 +9,8 @@ lang = "en"
 
 # --- DEFAULTS ---
 NUM_ANSWER_BUCKETS = 14
+DICT_INDEX_CHUNK_SIZE = 500
+DICT_BUCKETS_EOF = 0xFF
 
 PER_LETTER_ENCODING = "5-bit"
 WORD_NUMERIC_ENCODING = "7-bit-variable"
@@ -23,8 +25,8 @@ ZERO_DELTA = "yes-always-subtract-one"
 WORD_NUMERIC_ENCODING = "3-bit-variable"
 # WORD_NUMERIC_ENCODING = "4-bit-variable"
 
-# ALPHABET_REMAP = "freq_of_use"
-# WORD_LETTER_ORDER = "reverse"
+ALPHABET_REMAP = "freq_of_use"
+WORD_LETTER_ORDER = "reverse"
 
 # ZERO_DELTA = "never-substract-by-one"
 
@@ -193,6 +195,7 @@ def encodeDelta_3Bit(num):
         res.append(part)
     return bytes(res)
 
+
 # For each word encode the numeric delta from the previous with 7 bit variable length packing
 def encodeDelta_7Bit(d):
     # The delta should never be zero, so 1 bit can be saved by always subtracting 1
@@ -205,6 +208,103 @@ def encodeDelta_7Bit(d):
         return bytes((d & 0x7F, 0x80|(d>>7)))
     else:
         return bytes((d & 0x7F, (d>>7) & 0x7F, (d>>14)))
+
+
+
+# uint16_t   wordCount;   // Relative Number of words in current bucket (delta)
+# uint16_t   blobOffset;  // Absolute index of bucket start in blob array
+# uint8_t    firstLetter; // Absolute Index number of first letter (A = 0, B = 1, etc)
+# uint32_t   prevWordVal;     // Absolute numeric word value (last 4 letters, 24 bits max)
+#                         // of *previous* word.
+#                         // Resets to 0 when first letter changes, so first word after
+#                         // a first letter change will have it's full value as it's delta
+
+blobPtr = 0
+blobIndexes = []
+
+def addBlobIndex(bucketWordCount, bucketSizeBytes, alphaIdx, bucketStartWordVal):
+    global blobPtr
+    global blobIndexes
+    blobIndexes.append([bucketWordCount, blobPtr, alphaIdx,  bucketStartWordVal])
+
+    # Increment blobPtr after adding ssince it needs to point to the START of the current bucket index
+    blobPtr = blobPtr + bucketSizeBytes
+
+
+# Encode a list of words and output a sequence of bytes or nybbles (depending on encoding)
+# This gets called for each a-z bucket, after which they get merged together
+def encodeList3bitIndexed(bucketWordlist, alphaIdx):
+
+    if (WORD_NUMERIC_ENCODING != "3-bit-variable"):
+        print("Incompatible encoding type")
+        sys.exit()
+
+    if (PER_LETTER_ENCODING == "base-26"):
+        bin = tuple( map(tobinary_base26, bucketWordlist) )
+    else:
+        bin = tuple( map(tobinary_5bit, bucketWordlist) )
+
+    # Re-sorting is needed here in case the encoding changes the word numerical value sort order
+    bin = sorted(bin)
+
+    bucketWordCount = 0
+    prevByteSize = 0
+    bucketStartWordVal = 0
+
+    prevWordVal = 0
+
+    # This makes sure the first bucket added for a each starting letter (a-z) begins with
+    # a word value of zero, and so the delta val of first word in each a-z bucket is it's
+    # full value rather than a delta versus the previous word.
+    bucketStartWordVal = prevWordVal
+
+    out = b''
+    for i in range(len(bin)):
+        curWordVal = bin[i]
+        out += encodeDelta_3Bit(curWordVal - prevWordVal)
+        bucketWordCount = bucketWordCount + 1
+
+        # If needed, create a bucket (at saved START position, of length AFTER word that was just encoded)
+        # Greater than here allows it to keep trying until an even byte encoding occurs
+        if (bucketWordCount >= DICT_INDEX_CHUNK_SIZE):
+            # Ensure start of next bucket would be byte aligned (not on a half-nybble)
+            if ((len(out) & 0x01) == 0):
+                bucketByteSize = int(len(out) / 2) - prevByteSize
+                # print("len:%u, bSize:%u, bWCount:%u, Let:%u, bwStartVal:%u" % (len(out), bucketByteSize, bucketWordCount, alphaIdx, bucketStartWordVal))
+
+                addBlobIndex(bucketWordCount, bucketByteSize, alphaIdx, bucketStartWordVal)
+                # Advance pointer to start of a new bucket and reset word count
+                bucketStartWordVal = curWordVal
+                prevByteSize = int(len(out) / 2)
+                bucketWordCount = 0
+
+        # Save word value to calcualte delta on next pass
+        prevWordVal = curWordVal
+
+
+    # print("Unpacked:%u, 1/2:%u" % (len(out), len(out)/2))
+
+    # For 3-bit word encoding:
+    # Squish the nybbles into bytes and round up to nearest byte at end
+    # to ensure byte alignment for start of each letter bucket
+    if (WORD_NUMERIC_ENCODING == "3-bit-variable"):
+        out = compactNybblestoBytes(out)
+
+    # print("Packed:%u" % len(out))
+
+
+
+#--- TODO: bug here? next letter start seems to be off by +1/+2 etc sometimes
+    # Save any trailing words if needed
+    # Note that "out" is now byte packed (1/2 prev size) and guaranteed to be byte padded/aligned at the end
+    if (bucketWordCount > 0):
+        bucketByteSize = len(out) - prevByteSize
+        # print("len:%u, bSize:%u, bWCount:%u, Let:%u, bwStartVal:%u" % (len(out), bucketByteSize, bucketWordCount, alphaIdx, bucketStartWordVal))
+        addBlobIndex(bucketWordCount, bucketByteSize, alphaIdx, bucketStartWordVal)
+
+    return out
+
+
 
 def encodeList(bucket_wordlist):
     if (PER_LETTER_ENCODING == "base-26"):
@@ -233,6 +333,7 @@ def encodeList(bucket_wordlist):
         out = compactNybblestoBytes(out)
 
     return out
+
 
 input_byte_length = 0
 dict_byte_size = 0
@@ -267,8 +368,14 @@ for w in allWords:
     input_byte_length += 5 # 5 letters per word
     buckets[ord(w[0])-ord('a')].append(w[1:])
 
-# encoded = tuple(map(encodeList, buckets))
-encoded = tuple(map(encodeList, buckets))
+
+# encoded = tuple(map(encodeList, buckets, ))
+encoded = tuple(map(encodeList3bitIndexed, buckets, range(len(buckets))))
+
+# Add final terminating index entry
+addBlobIndex(0,0,DICT_BUCKETS_EOF,0)
+
+# TODO- DELETE ME??? ----------------
 offsets = []
 offset = 0
 for e in encoded:
@@ -298,14 +405,32 @@ answer_bitmap_size = dumpBlobBytes("answers", answerBlob)
 #
 # const LetterList_t words[27] = {\n""")
 
-outfile.write("// Lookup Table to fast-forward through Dictionary Blob (and implies first letter)\n")
-outfile.write("// {uint16_t wordNumber, uint16_t blobOffset}\n")
-outfile.write("const LetterBucket_t buckets[27] = {\n""")
+# TODO: split output into 3 x 8 bit for 24 bit instead of a full u32
+# TEMP NEW INDEX OUTPUT ---------------------------------
 
-for i in range(27):
-    outfile.write("  /* %s */ { %u, %u },\n" % (str(chr(ord('a')+i)) if i < 26 else "end", sum(map(len,buckets[:i])), offsets[i]) )
+outfile.write("// Lookup Table to fast-forward through Answers->in->Dictionary bitmap\n")
+outfile.write("// {wordCount:u16, blobOffset:u16, firstLetter:u8, wordVal:u32} \n");
+outfile.write("const dictIndexBucket_t dictIndexes[%u] = {\n" % (len(blobIndexes)))
 
+for i in range(len(blobIndexes)):
+    outfile.write("  { 0x%04X, 0x%04X, 0x%02X, 0x%06X }, // %s: %4u words\n" % (blobIndexes[i][0], blobIndexes[i][1], blobIndexes[i][2], blobIndexes[i][3],
+                                                                      str(chr(ord('a')+ blobIndexes[i][2])) if blobIndexes[i][2] < 26 else "end",
+                                                                      blobIndexes[i][0]))
+    # print("  /* %s */ { 0x%04X, 0x%04X, 0x%02X, 0x%06X }," % (str(chr(ord('a')+ blobIndexes[i][2])) if blobIndexes[i][2] < 26 else "end",
+    #                    blobIndexes[i][0], blobIndexes[i][1], blobIndexes[i][2], blobIndexes[i][3]))
 outfile.write("};\n\n")
+
+
+# outfile.write("const LetterBucket_t buckets[] = { 0x00, 0x00};\n""")
+
+# outfile.write("// Lookup Table to fast-forward through Dictionary Blob (and implies first letter)\n")
+# outfile.write("// {uint16_t wordNumber, uint16_t blobOffset}\n")
+# outfile.write("const LetterBucket_t buckets[27] = {\n""")
+
+# for i in range(27):
+#     outfile.write("  /* %s */ { %u, %u },\n" % (str(chr(ord('a')+i)) if i < 26 else "end", sum(map(len,buckets[:i])), offsets[i]) )
+
+# outfile.write("};\n\n")
 
 # outfile.write("""typedef struct {
 #  uint16_t numWords;
@@ -348,7 +473,7 @@ while (answerCount < len(answerWords)):
         dictByteOffsetDelta = dictPos - dictPosLastBucketEnd
 
     if ((dictByteOffsetDelta//8) >= dictPosPreOverflow):
-        print("Note: bucket close to overflow, adding another. Bucket: %u { numAnswers: %u, dictByteOffset: %u},\n" % (i, answerCount-prevAnswerCount, dictByteOffsetDelta//8))
+        print("Note: Answer bitmap bucket close to overflow, adding another. Bucket: %u { numAnswers: %u, dictByteOffset: %u},\n" % (i, answerCount-prevAnswerCount, dictByteOffsetDelta//8))
     dictPosLastBucketEnd = dictPos
     outfile.write("  { %u, %u},\n" % (answerCount-prevAnswerCount, dictByteOffsetDelta//8))
     answerBucketCount = answerBucketCount + 1

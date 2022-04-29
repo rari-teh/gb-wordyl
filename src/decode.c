@@ -5,6 +5,7 @@
 #include <asm/types.h>
 #include "encoded.h"
 #include "sizes.h"
+#include "decode.h"
 
 
 #define _ASM_GETSPECIALWORD
@@ -12,8 +13,8 @@
 // #define _ASM_UPDATEWORD
 #define _UPDATEWORD_3BIT_VARINT
 
-// #define ALPHABET_REMAP
-// #define WORD_LETTERS_REVERSED
+#define ALPHABET_REMAP
+#define WORD_LETTERS_REVERSED
 
 // #define NO_ZERO_DELTA_SUBTRACT
 #define YES_ZERO_DELTA_SUBTRACT
@@ -22,6 +23,26 @@
 static uint32_t currentWord;
 static const uint8_t* blobPtr;
 static char  * str_return_buffer;
+
+// #define TEST_DICT
+
+#ifdef TEST_DICT
+#include <gbdk/emu_debug.h> // Use this include to add the Emu debug functions
+void dumpAnswersToEmuConsole(void) {
+    char tempStr[10];
+
+    // Decode all dictionary words and log them to emu debug console.
+    // Validate each word against the dictionary and warn if it fails
+    for (uint16_t c = 0; c < NUM_WORDS; c++) {
+        str_return_buffer = tempStr;
+        getWord(c);
+        EMU_printf("%s", tempStr);
+        if (!filterWord(tempStr))
+            EMU_MESSAGE("Rejected by filterWord()");
+    }
+}
+#endif
+
 
 
 #ifdef _ASM_UPDATEWORD
@@ -448,16 +469,16 @@ void getWord(uint16_t n) {
 
 #ifdef _UPDATEWORD_3BIT_VARINT
 
-#define DICT_LUT_RAM_CHUNK_SIZE    500u // 250u = 67,000 cycles, 500 = 67,000, 1000 = 508,000
-#define DICT_LUT_RAM_ALPHA_BUCKETS (26 + 1)
+#define DICT_INDEX_CHUNK_SIZE    500u // 250u = 67,000 cycles, 500 = 67,000, 1000 = 508,000
+// #define DICT_LUT_RAM_ALPHA_BUCKETS (26 + 1)
 // Sets a conservative maximum number of RAM buckets
-#define DICT_LUT_RAM_BUCKETS_MAX ((NUM_WORDS / DICT_LUT_RAM_CHUNK_SIZE) + (DICT_LUT_RAM_ALPHA_BUCKETS))
+// #define DICT_LUT_RAM_BUCKETS_MAX ((NUM_WORDS / DICT_LUT_RAM_CHUNK_SIZE) + (DICT_LUT_RAM_ALPHA_BUCKETS))
 
 #define DICT_BUCKETS_EOF  0xFFu
 
 
-RAMLetterBucket_t dictLUT_RAM[DICT_LUT_RAM_BUCKETS_MAX];
-RAMLetterBucket_t * p_dictLUT_RAM;
+// dictIndexBucket_t dictLUT_RAM[DICT_LUT_RAM_BUCKETS_MAX];
+dictIndexBucket_t * p_dictIndex;
 uint8_t dictLUT_RAM_count;
 uint16_t bucketWordCount;
 uint16_t bucketStart_BlobOffset;
@@ -465,15 +486,15 @@ uint32_t bucketStart_currentWord;
 
 
 void addRAMBucket(char first_letter) {
-    p_dictLUT_RAM->firstLetter = first_letter;
-    p_dictLUT_RAM->blobOffset = bucketStart_BlobOffset;
-    p_dictLUT_RAM->wordCount = bucketWordCount;
-    p_dictLUT_RAM->wordVal = bucketStart_currentWord;
+    p_dictIndex->firstLetter = first_letter;
+    p_dictIndex->blobOffset = bucketStart_BlobOffset;
+    p_dictIndex->wordCount = bucketWordCount;
+    p_dictIndex->wordVal = bucketStart_currentWord;
 
     // Move to next bucket and reset word count
     bucketWordCount = 0;
     dictLUT_RAM_count++;
-    p_dictLUT_RAM++;
+    p_dictIndex++;
 
     bucketStart_BlobOffset = (uint16_t)(blobPtr - wordBlob);
     bucketStart_currentWord = currentWord;
@@ -485,13 +506,13 @@ void addRAMBucket(char first_letter) {
 
 // Builds a RAM lookup table to make 3-bit encoding speed viable
 void buildRAMBuckets(void) {
-
+/*
     uint8_t start_letter;
 
     const LetterBucket_t* p_dictLUT_ROM = buckets; // Dictionary first-letter buckets
 
     dictLUT_RAM_count = 0;
-    p_dictLUT_RAM = dictLUT_RAM;
+    p_dictIndex = dictLUT_RAM;
 
 
     // Loop through each dictionary Letter Bucket
@@ -503,7 +524,9 @@ void buildRAMBuckets(void) {
 
         bucketWordCount = 0;
         blobPtr = wordBlob + p_dictLUT_ROM->blobOffset;
-        // Save starting offset for current bucker, since pointer gets incremented
+        // Save starting offset for current bucket, since pointer gets incremented
+        // This makes sure a first-zero-bucket is created for each a-z primary bucket
+        // when the bucket count threshold is crossed, or if the loop is closed out
         bucketStart_BlobOffset = (uint16_t)(blobPtr - wordBlob);
         bucketStart_currentWord = currentWord;
 
@@ -539,14 +562,15 @@ void buildRAMBuckets(void) {
     // Add final terminating entry
     bucketStart_currentWord = 0;
     addRAMBucket(DICT_BUCKETS_EOF);
+*/    
 }
 
 
 
 void loadDictBucketInitVals(void) {
     // For each letter bucket the delta gets reset to 0
-    currentWord = p_dictLUT_RAM->wordVal;
-    blobPtr = wordBlob + p_dictLUT_RAM->blobOffset;
+    currentWord = p_dictIndex->wordVal;
+    blobPtr = wordBlob + p_dictIndex->blobOffset;
 
     // For 3-bit encoding the first nybble in a given bucket
     // is padded to always align in the low nybble of the first byte
@@ -554,10 +578,12 @@ void loadDictBucketInitVals(void) {
     dict_two_nybbles_queued = true;
 }
 
-// getWord RAM VERSION
+// getWord new Indexed Version
+
 
 // Gets an answer word (from the dictionary) by index number in
 // the answer list
+// Needs to look up words by: Word index in full answer list
 void getWord(uint16_t dictWordNum) {
 
     // Default to failed to find the requested word
@@ -570,13 +596,13 @@ void getWord(uint16_t dictWordNum) {
     dictWordNum++; // make the word number 1 based instead of zero based
 
     // Use RAM bucket index to fast-forward closer to desired answer word
-    p_dictLUT_RAM = dictLUT_RAM;
+    p_dictIndex = dictIndexes;
 
-    while (dictWordNum > p_dictLUT_RAM->wordCount) {
-        dictWordNum -= p_dictLUT_RAM->wordCount;
-        p_dictLUT_RAM++;
+    while (dictWordNum > p_dictIndex->wordCount) {
+        dictWordNum -= p_dictIndex->wordCount;
+        p_dictIndex++;
 
-        if (p_dictLUT_RAM->firstLetter == (DICT_BUCKETS_EOF))
+        if (p_dictIndex->firstLetter == (DICT_BUCKETS_EOF))
             return; // failed: str_return_buffer will be NULLED
     }
 
@@ -585,14 +611,14 @@ void getWord(uint16_t dictWordNum) {
     for (uint16_t j = dictWordNum; j; j--) {
         updateWord_3bit_varint();
     }
-    decodeWord(p_dictLUT_RAM->firstLetter, currentWord, str_return_buffer);
+    decodeWord(p_dictIndex->firstLetter, currentWord, str_return_buffer);
 }
-
 
 
 // Encodes guess word to 5-bits per letter, then seeks through
 // dictionary looking for the numeric match
 // Returns true if matched or false (0) if no match was found
+// Needs to look up words by: Calculated word value
 uint8_t filterWord(char* s) {
     // because the input system uses an on-screen keyboard with A-Z only, no need to sanitize
     // for (i=0; i<5; i++)
@@ -618,33 +644,33 @@ uint8_t filterWord(char* s) {
 
 
     // Use RAM bucket index to fast-forward closer to desired answer word
-    p_dictLUT_RAM = dictLUT_RAM;
+    p_dictIndex = dictIndexes;
 
     // Scan for first bucket with matching initial letter
-    while (first_letter != p_dictLUT_RAM->firstLetter) {
-        p_dictLUT_RAM++;
+    while (first_letter != p_dictIndex->firstLetter) {
+        p_dictIndex++;
 
-        if (p_dictLUT_RAM->firstLetter == (DICT_BUCKETS_EOF))
+        if (p_dictIndex->firstLetter == (DICT_BUCKETS_EOF))
             return 0;
     }
 
     // Loop through buckets until either the first letter doesn't match
     // or the user wordVal is less than the bucket start wordVal
     // Note: For each initial alpha bucket the wordVal resets to 0
-    while ((first_letter == p_dictLUT_RAM->firstLetter) &&
-           (userWordVal >= p_dictLUT_RAM->wordVal)) {
+    while ((first_letter == p_dictIndex->firstLetter) &&
+           (userWordVal > p_dictIndex->wordVal)) {
 
-        p_dictLUT_RAM++;
+        p_dictIndex++;
     }
     // Now back up one since the above loop is designed to overshoot by +1
     // since it can't check if a wordVal is within a single bucket since
     // buckets don't store a "maxWordValue"
-    p_dictLUT_RAM--;
+    p_dictIndex--;
 
     loadDictBucketInitVals();
 
     // Scan through entire bucket decoding words to see if there is a match
-    for (uint16_t j = p_dictLUT_RAM->wordCount; j; j--) {
+    for (uint16_t j = p_dictIndex->wordCount; j; j--) {
         updateWord_3bit_varint();
         if (currentWord >= userWordVal)
             return currentWord == userWordVal;
