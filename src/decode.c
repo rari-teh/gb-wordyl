@@ -8,6 +8,8 @@
 #include "decode.h"
 
 
+//  ====== ENCODE / DECODE Settings ======
+
 #define _ASM_GETSPECIALWORD
 
 // #define _ASM_UPDATEWORD
@@ -19,10 +21,25 @@
 // #define NO_ZERO_DELTA_SUBTRACT
 #define YES_ZERO_DELTA_SUBTRACT
 
+// #define _3BIT_VARINT_LSBITS_FIRST
+#define _3BIT_VARINT_MSBITS_FIRST
 
-static uint32_t currentWord;
+//  ======================================
+
+
+#define DICT_BUCKET_EOF  0xFFu
+
+static dictIndexBucket_t * p_dictIndex;
+static uint16_t bucketWordCount;
+static uint16_t bucketStart_BlobOffset;
+static uint32_t bucketStart_currentWord;
+
+static uint32_t       currentWord;
 static const uint8_t* blobPtr;
-static char  * str_return_buffer;
+static char  *        str_return_buffer;
+
+static bool dict_two_nybbles_queued;
+static uint8_t dict_cur_byte;
 
 // #define TEST_DICT
 
@@ -130,75 +147,9 @@ __endasm ;
 #elif defined (_UPDATEWORD_3BIT_VARINT)
 
 
-bool dict_two_nybbles_queued;
-uint8_t dict_cur_byte;
+#ifdef _3BIT_VARINT_MSBITS_FIRST
 
-/*// union for more efficient ORing in of lowest byte
-typedef union _wordyl_u32 {
-    struct {
-        uint8_t b0;
-        uint8_t b1;
-        uint8_t b2;
-        uint8_t b3;
-    };
-    struct {
-        uint8_t b0;
-        uint8_t b1;
-        uint8_t b2;
-        uint8_t b3;
-    } b;
-    uint32_t ul;
-} _wordyl_u32;
-
-// uint32_t update_v;
-_wordyl_u32 update_v;
-
-
-// TODO: ASM version, it will probably go 2x - 4x faster at least
-
-
-// dict_two_nybbles_queued and dict_cur_byte need to be
-// primed once at the start of the decode loop
-void updateWord_3bit_varint(void) OLDCALL {
-
-    //uint32_t v = 0;
-    // Add 1 since all words are encoded as (value - 1)
-    update_v.ul = 0; //1;
-    bool loop_done = false;
-
-    // Merge in 3 bit varints until the "more nybbles" flag is not set
-    do {
-    // while (1) {
-        update_v.ul <<= 3; // TODO: wasteful to do this for every one
-        update_v.b.b0 |= (uint32_t)(dict_cur_byte & 0x07);
-
-        // Exit loop (after loading next byte/nybble)
-        // if this is the last varint nybble for the word
-        if ((dict_cur_byte & 0x08) == 0)
-            loop_done = true;
-
-        // If a nybble is queued then move it into the lower 4 bits
-        // Otherwise read a new byte
-        if (dict_two_nybbles_queued)
-            dict_cur_byte >>= 4;
-        else
-            dict_cur_byte = *blobPtr++;
-
-        dict_two_nybbles_queued = !dict_two_nybbles_queued;
-    // };
-    } while (!loop_done);
-
-    // Add 1 since all words are encoded as (value - 1)
-    #ifdef YES_ZERO_DELTA_SUBTRACT
-        currentWord += update_v.ul + 1;
-    #else
-        currentWord += update_v.ul;
-    #endif
-}
-*/
-
-/*
-// V2
+// V4 - Expects HIGHEST bits (chunks) to be packed first, highest last
 uint32_t update_v;
 
 // dict_two_nybbles_queued and dict_cur_byte need to be
@@ -206,31 +157,30 @@ uint32_t update_v;
 void updateWord_3bit_varint(void) OLDCALL {
 
     update_v = 0;
-    uint8_t n_count = 0;
+    bool first_pass = true;
     bool loop_done = false;
 
     // Merge in 3 bit varints until the "more nybbles" flag is not set
     do {
+        if (!first_pass)
+            update_v <<= 3;
+        else
+            first_pass = false;
 
-        uint32_t merge_bits = (dict_cur_byte & 0x07);
-        for (uint8_t c = 0; c < n_count; c++)
-            merge_bits <<= 3;
-
-        update_v |= merge_bits;
+        // Merge in new bits to lowest byte of u32 only
+        *(((uint8_t *)(&update_v)) + 0) |= (dict_cur_byte & 0x07);
 
         // Exit loop (after loading next byte/nybble)
         // if this is the last varint nybble for the word
         if ((dict_cur_byte & 0x08) == 0)
             loop_done = true;
 
-        n_count++;
-
         // If a nybble is queued then move it into the lower 4 bits
         // Otherwise read a new byte
         if (dict_two_nybbles_queued)
             dict_cur_byte >>= 4;
         else
-            dict_cur_byte = *blobPtr++;
+            dict_cur_byte = *++blobPtr;
 
         dict_two_nybbles_queued = !dict_two_nybbles_queued;
     // };
@@ -243,9 +193,13 @@ void updateWord_3bit_varint(void) OLDCALL {
         currentWord += update_v;
     #endif
 }
-*/
 
-// V3 - expects lowest bits (chunks) to be packed first, highest last
+#else
+
+
+// TODO: DELETE ME. SLOWER AND LARGER (though ASM ver could be better on both)
+
+// V3 - Expects LOWEST bits (chunks) to be packed first, highest last
 uint32_t update_v;
 bool updateword_loop_done;
 
@@ -254,7 +208,7 @@ bool updateword_loop_done;
 void updateWord_3bit_varint(void) OLDCALL {
 
     update_v = 0;
-    uint8_t * p_num = (uint8_t *)&update_v;
+    // uint8_t * p_num = (uint8_t *)&update_v;
 
     uint8_t n_count = 0;
     //bool loop_done = false;
@@ -264,57 +218,39 @@ void updateWord_3bit_varint(void) OLDCALL {
     do {
         switch (n_count) {
                     // [0]2..0
-            case 0: *p_num |= (dict_cur_byte & 0x07);
+            case 0: *(((uint8_t *)(&update_v)) + 0) |= (dict_cur_byte & 0x07);
                     break;
 
                     // [0]bits 5..3
-            case 1: *p_num |= ((dict_cur_byte & 0x07) << 3);
+            case 1: *(((uint8_t *)(&update_v)) + 0) |= ((dict_cur_byte & 0x07) << 3);
                     break;
 
                     // [0]7..6 , [1]..0
-            case 2: *p_num++ |= (dict_cur_byte << 6);
-                    *p_num |= ((dict_cur_byte & 0x07) >> 2);
+            case 2: *(((uint8_t *)(&update_v)) + 0) |= (dict_cur_byte << 6);
+                    *(((uint8_t *)(&update_v)) + 1) |= ((dict_cur_byte & 0x07) >> 2);
                     break;
 
                     // [1]3..1
-            case 3: *p_num |= ((dict_cur_byte & 0x07) << 1);
+            case 3: *(((uint8_t *)(&update_v)) + 1) |= ((dict_cur_byte & 0x07) << 1);
                     break;
 
                     // [1]6..4
-            case 4: *p_num |= ((dict_cur_byte & 0x07) << 4);
+            case 4: *(((uint8_t *)(&update_v)) + 1) |= ((dict_cur_byte & 0x07) << 4);
                     break;
 
                     // [1]7 , [2]1..0
-            case 5: *p_num++ |= (dict_cur_byte << 7);
-                    *p_num |= ((dict_cur_byte & 0x07) >> 1);
+            case 5: *(((uint8_t *)(&update_v)) + 1) |= (dict_cur_byte << 7);
+                    *(((uint8_t *)(&update_v)) + 2) |= ((dict_cur_byte & 0x07) >> 1);
                     break;
 
                     // [2]bits 4..2
-            case 6: *p_num |= ((dict_cur_byte & 0x07) << 2);
+            case 6: *(((uint8_t *)(&update_v)) + 2) |= ((dict_cur_byte & 0x07) << 2);
                     break;
 
                     // [2]bits 7..5
-            case 7: *p_num |= ((dict_cur_byte & 0x07) << 5);
+            case 7: *(((uint8_t *)(&update_v)) + 2) |= ((dict_cur_byte & 0x07) << 5);
                     break;
-
-            // Only need to support decode up to 20 bits
-            // Apparently commenting out below de-prioritizes using BC for delta_v
-            // Which makes the code 200 bytes larger as well as slower. So it stays :)
-
-                    // [3]bits 2..0
-            case 8: p_num++;
-                    *p_num |= (dict_cur_byte & 0x07);
-                    break;
-
-                    // [3]bits 5..3
-            case 9: *p_num |= ((dict_cur_byte & 0x07) << 3);
-                    break;
-
-                    // [3]7..6
-            case 10: *p_num |= (dict_cur_byte << 6);
-                    break;
-
-
+            // Only need to support up to 24 bits (3 bytes) due to max word value
         }
 
         // Exit loop (after loading next byte/nybble)
@@ -342,7 +278,7 @@ void updateWord_3bit_varint(void) OLDCALL {
         currentWord += update_v;
     #endif
 }
-
+#endif // #else -> #ifdef _3BIT_VARINT_MSBITS_FIRST
 
 #else
 
@@ -370,21 +306,6 @@ void updateWord(void) OLDCALL {
     //                           ABCDEFGHIJKLMNOPQRSTUVWXYZ
     //                             [ map dir \/ ]
     const char alpha_newmap[] = "ALMNBOPJCQKRSTDUVHFGEWXYIZ";
-
-    // Optional full-word alphabet remapping
-
-    // // Applies alphabet remapping to a string
-    // void alpha_apply_remap(char * str_word) {
-    //     for (uint8_t c = 0; c < 5; c++)
-    //         str_word[c] = alpha_newmap[str_word[c] - 'A'];
-    // }
-
-    // // Reverse alphabet remapping that was previously applied to a string
-    // void alpha_remove_remap(char * str_word) {
-    //     for (uint8_t c = 0; c < 5; c++)
-    //         str_word[c] = alpha_unmap[str_word[c] - 'A'];
-    // }
-
 #endif
 
 
@@ -432,138 +353,8 @@ void decodeWord(uint8_t start, uint32_t nextFour, char* buffer) {
     #endif
 }
 
-/*
-// Gets an answer word (from the dictionary) by index number in
-// the answer list
-void getWord(uint16_t n) {
-    uint16_t count = 0;
-    uint8_t i;
-    const LetterBucket_t* w;
-    w = buckets;
-    for (i = 0 ; i < 26 && n >= w[1].wordNumber ; i++, w++) ;
-    if (i == 26) {
-        *str_return_buffer = 0;
-        return;
-    }
-    currentWord = 0;
-    blobPtr = wordBlob + w->blobOffset;
-
-    #ifdef _UPDATEWORD_3BIT_VARINT
-        // For 3-bit encoding the first nybble in a given bucket
-        // is padded to always align in the low nybble of the first byte
-        dict_cur_byte = *blobPtr; //++;
-        dict_two_nybbles_queued = true;
-    #endif
-
-    for (uint16_t j = n - w->wordNumber + 1; j; j--) {
-        #ifdef _UPDATEWORD_3BIT_VARINT
-            updateWord_3bit_varint();
-        #else
-            updateWord();
-        #endif
-    }
-    decodeWord(i, currentWord, str_return_buffer);
-}
-*/
-
 
 #ifdef _UPDATEWORD_3BIT_VARINT
-
-#define DICT_INDEX_CHUNK_SIZE    500u // 250u = 67,000 cycles, 500 = 67,000, 1000 = 508,000
-// #define DICT_LUT_RAM_ALPHA_BUCKETS (26 + 1)
-// Sets a conservative maximum number of RAM buckets
-// #define DICT_LUT_RAM_BUCKETS_MAX ((NUM_WORDS / DICT_LUT_RAM_CHUNK_SIZE) + (DICT_LUT_RAM_ALPHA_BUCKETS))
-
-#define DICT_BUCKETS_EOF  0xFFu
-
-
-// dictIndexBucket_t dictLUT_RAM[DICT_LUT_RAM_BUCKETS_MAX];
-dictIndexBucket_t * p_dictIndex;
-uint8_t dictLUT_RAM_count;
-uint16_t bucketWordCount;
-uint16_t bucketStart_BlobOffset;
-uint32_t bucketStart_currentWord;
-
-
-void addRAMBucket(char first_letter) {
-    p_dictIndex->firstLetter = first_letter;
-    p_dictIndex->blobOffset = bucketStart_BlobOffset;
-    p_dictIndex->wordCount = bucketWordCount;
-    p_dictIndex->wordVal = bucketStart_currentWord;
-
-    // Move to next bucket and reset word count
-    bucketWordCount = 0;
-    dictLUT_RAM_count++;
-    p_dictIndex++;
-
-    bucketStart_BlobOffset = (uint16_t)(blobPtr - wordBlob);
-    bucketStart_currentWord = currentWord;
-}
-
-
-// Current version takes about 3 seconds
-
-
-// Builds a RAM lookup table to make 3-bit encoding speed viable
-void buildRAMBuckets(void) {
-/*
-    uint8_t start_letter;
-
-    const LetterBucket_t* p_dictLUT_ROM = buckets; // Dictionary first-letter buckets
-
-    dictLUT_RAM_count = 0;
-    p_dictIndex = dictLUT_RAM;
-
-
-    // Loop through each dictionary Letter Bucket
-    for (start_letter = 0 ; start_letter < 26; start_letter++) {
-
-        // For each letter bucket the cumulative wordvalue gets reset to 0
-        // Since the initial delta in a first alpha bucket is the whole word value
-        currentWord = 0;
-
-        bucketWordCount = 0;
-        blobPtr = wordBlob + p_dictLUT_ROM->blobOffset;
-        // Save starting offset for current bucket, since pointer gets incremented
-        // This makes sure a first-zero-bucket is created for each a-z primary bucket
-        // when the bucket count threshold is crossed, or if the loop is closed out
-        bucketStart_BlobOffset = (uint16_t)(blobPtr - wordBlob);
-        bucketStart_currentWord = currentWord;
-
-            // For 3-bit encoding the first nybble in a given bucket
-            // is padded to always align in the low nybble of the first byte
-            dict_cur_byte = *blobPtr; // ++;
-            dict_two_nybbles_queued = true;
-
-        uint16_t curSizeRAMBucket = 0;
-        // Number of words is in next bucket
-        for (uint16_t curBucketCount = ((p_dictLUT_ROM + 1)->wordNumber - p_dictLUT_ROM->wordNumber); curBucketCount > 0; curBucketCount--) {
-            updateWord_3bit_varint();
-            bucketWordCount++;
-            curSizeRAMBucket++;
-
-            // Add a new RAM bucket every N words
-            if (curSizeRAMBucket >= DICT_LUT_RAM_CHUNK_SIZE)
-
-                // Only create new RAM bucket if it's first word can be evenly aligned on a byte boundary
-                // i.e. it's first nybble is in the LSbits
-                if (dict_two_nybbles_queued) {
-                    addRAMBucket(start_letter);
-                    curSizeRAMBucket = 0;
-                }
-        }
-        // Save any trailing words if needed
-        addRAMBucket(start_letter);
-
-        // Move to next letter bucket
-        p_dictLUT_ROM++;
-    }
-
-    // Add final terminating entry
-    bucketStart_currentWord = 0;
-    addRAMBucket(DICT_BUCKETS_EOF);
-*/    
-}
 
 
 
@@ -577,8 +368,6 @@ void loadDictBucketInitVals(void) {
     dict_cur_byte = *blobPtr; // ++;
     dict_two_nybbles_queued = true;
 }
-
-// getWord new Indexed Version
 
 
 // Gets an answer word (from the dictionary) by index number in
@@ -602,7 +391,7 @@ void getWord(uint16_t dictWordNum) {
         dictWordNum -= p_dictIndex->wordCount;
         p_dictIndex++;
 
-        if (p_dictIndex->firstLetter == (DICT_BUCKETS_EOF))
+        if (p_dictIndex->firstLetter == (DICT_BUCKET_EOF))
             return; // failed: str_return_buffer will be NULLED
     }
 
@@ -650,7 +439,7 @@ uint8_t filterWord(char* s) {
     while (first_letter != p_dictIndex->firstLetter) {
         p_dictIndex++;
 
-        if (p_dictIndex->firstLetter == (DICT_BUCKETS_EOF))
+        if (p_dictIndex->firstLetter == (DICT_BUCKET_EOF))
             return 0;
     }
 
@@ -680,63 +469,9 @@ uint8_t filterWord(char* s) {
 }
 
 
-
-
 #endif // _UPDATEWORD_3BIT_VARINT
 
 
-/*// Check to see if the guess word is in the dictionary.
-//
-// Encodes guess word to 5-bits per letter, then seeks through
-// dictionary looking for the numeric match
-uint8_t filterWord(char* s) {
-    // because the input system uses an on-screen keyboard with A-Z only, no need to sanitize
-    // for (i=0; i<5; i++)
-    //    if (s[i] < 'A' || s[i] > 'Z')
-    //        return 0;
-    uint32_t w = 0;
-
-    #ifdef WORD_LETTERS_REVERSED
-        int8_t i;
-        // Words encoded with letters in reverse order
-        for (i=3;i>=0;i--)
-            w = (w << 5) | (check_alpha_remap_char(s[i])-'A');
-
-        i = check_alpha_remap_char(s[4])-'A';
-    #else
-        uint8_t i;
-        // Words encoded with normal letter order
-        for (i=1;i<5;i++)
-            w = (w << 5) | (check_alpha_remap_char(s[i])-'A');
-
-        i = check_alpha_remap_char(s[0])-'A';
-    #endif
-
-    currentWord = 0;
-    blobPtr = wordBlob + buckets[i].blobOffset;
-
-    #ifdef _UPDATEWORD_3BIT_VARINT
-        // For 3-bit encoding the first nybble in a given bucket
-        // is padded to always align in the low nybble of the first byte
-        dict_cur_byte = *blobPtr; //++;
-        dict_two_nybbles_queued = true;
-    #endif
-
-    for (uint16_t j=buckets[i+1].wordNumber - buckets[i].wordNumber; j; j--) {
-        #ifdef _UPDATEWORD_3BIT_VARINT
-            updateWord_3bit_varint();
-        #else
-            updateWord();
-        #endif
-
-        if (currentWord >= w) {
-            return currentWord == w;
-        }
-    }
-
-    return 0;
-}
-*/
 
 #ifndef _ASM_GETSPECIALWORD
 

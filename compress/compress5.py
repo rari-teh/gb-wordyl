@@ -17,6 +17,7 @@ WORD_NUMERIC_ENCODING = "7-bit-variable"
 WORD_LETTER_ORDER = "normal"
 ALPHABET_REMAP = "normal"
 ZERO_DELTA = "yes-always-subtract-one"
+ENCODING_ORDER_3BIT_LSBITS = "high-bits-first"
 
 # --- OVERRIDES ---
 
@@ -29,6 +30,8 @@ ALPHABET_REMAP = "freq_of_use"
 WORD_LETTER_ORDER = "reverse"
 
 # ZERO_DELTA = "never-substract-by-one"
+
+# ENCODING_ORDER_3BIT_LSBITS = "low-bits-first"
 
 
 
@@ -166,33 +169,37 @@ def encodeDelta_3Bit(num):
         return bytes([0])
     res = []
 
-    # # First count number of required varints to pack the numeric value
-    # down_shift_amt = -3 # offset for first non-downshift
-    # temp_num = num
-    # while temp_num > 0:
-    #     temp_num = temp_num >> 3
-    #     down_shift_amt += 3
+    if (ENCODING_ORDER_3BIT_LSBITS == "high-bits-first"):
+        # This option encodes the HIGHEST bits first
+        #
+        # First count number of required varints to pack the numeric value
+        chunks_to_encode = 0
+        temp_num = num
+        while temp_num > 0:
+            temp_num = temp_num >> 3
+            chunks_to_encode += 1
 
-    # # Pack high bits first for easier decoding
-    # while down_shift_amt >= 0:
-    #     part = (num >> down_shift_amt) & 0x7
-    #     # If more bytes will follow, set bit 4
-    #     if down_shift_amt > 0:
-    #         part |= 0x8
-    #     res.append(part)
-    #     down_shift_amt -= 3
-    #
-    # return bytes(res)
+        # Pack high bits first for easier decoding
+        while chunks_to_encode > 0:
+            part = (num >> (3 * (chunks_to_encode - 1))) & 0x7
+            # If more bytes will follow, set bit 4
+            if chunks_to_encode > 1:
+                part |= 0x8
+            res.append(part)
+            chunks_to_encode -= 1
 
-    # This encodes the lowest bits first, which is slower to unpack if upshifting (but not for other methods)
-    while num > 0:
-        # 3 bit + 1 control bit encoding
-        part = num & 0x7
-        num = num >> 3
-        # If more bytes will follow, set bit 4
-        if num > 0:
-            part |= 0x8
-        res.append(part)
+    else: # ENCODING_ORDER_3BIT_LSBITS = "low-bits-first"
+
+        # This option encodes the LOWEST bits first,
+        while num > 0:
+            # 3 bit + 1 control bit encoding
+            part = num & 0x7
+            num = num >> 3
+            # If more bytes will follow, set bit 4
+            if num > 0:
+                part |= 0x8
+            res.append(part)
+
     return bytes(res)
 
 
@@ -211,13 +218,16 @@ def encodeDelta_7Bit(d):
 
 
 
-# uint16_t   wordCount;   // Relative Number of words in current bucket (delta)
-# uint16_t   blobOffset;  // Absolute index of bucket start in blob array
-# uint8_t    firstLetter; // Absolute Index number of first letter (A = 0, B = 1, etc)
-# uint32_t   prevWordVal;     // Absolute numeric word value (last 4 letters, 24 bits max)
-#                         // of *previous* word.
-#                         // Resets to 0 when first letter changes, so first word after
-#                         // a first letter change will have it's full value as it's delta
+# typedef struct {
+#   uint16_t   wordCount;   // * [Relative] Number of words in current bucket (delta)
+#   uint16_t   blobOffset;  // * [Absolute] Byte Index of bucket start into blob array
+#   uint8_t    firstLetter; // * [Absolute] Alphabet index of first letter (A = 0, B = 1, etc)
+#   uint32_t   wordVal;     // * [Absolute] Numeric word value (last 4 letters, 24 bits max)
+#                           //   of *preceding* word (last word for preceding bucket).
+#                           //   Resets to 0 when bucket first letter changes, so the first encoded word
+#                           //   after a first letter change will have it's full value as it's delta value
+# } dictIndexBucket_t;
+
 
 blobPtr = 0
 blobIndexes = []
@@ -281,20 +291,12 @@ def encodeList3bitIndexed(bucketWordlist, alphaIdx):
         # Save word value to calcualte delta on next pass
         prevWordVal = curWordVal
 
-
-    # print("Unpacked:%u, 1/2:%u" % (len(out), len(out)/2))
-
     # For 3-bit word encoding:
     # Squish the nybbles into bytes and round up to nearest byte at end
     # to ensure byte alignment for start of each letter bucket
     if (WORD_NUMERIC_ENCODING == "3-bit-variable"):
         out = compactNybblestoBytes(out)
 
-    # print("Packed:%u" % len(out))
-
-
-
-#--- TODO: bug here? next letter start seems to be off by +1/+2 etc sometimes
     # Save any trailing words if needed
     # Note that "out" is now byte packed (1/2 prev size) and guaranteed to be byte padded/aligned at the end
     if (bucketWordCount > 0):
@@ -304,35 +306,6 @@ def encodeList3bitIndexed(bucketWordlist, alphaIdx):
 
     return out
 
-
-
-def encodeList(bucket_wordlist):
-    if (PER_LETTER_ENCODING == "base-26"):
-        bin = tuple( map(tobinary_base26, bucket_wordlist) )
-    else:
-        bin = tuple( map(tobinary_5bit, bucket_wordlist) )
-
-    # Re-sorting is needed here in case the encoding changes the word numerical value sort order
-    bin = sorted(bin)
-
-    prev = 0
-    md = 0
-
-    out = b''
-    for i in range(len(bin)):
-        if (WORD_NUMERIC_ENCODING == "3-bit-variable"):
-            out += encodeDelta_3Bit(bin[i]-prev)
-        else:
-            out += encodeDelta_7Bit(bin[i]-prev)
-        prev = bin[i]
-
-    # For 3-bit word encoding:
-    # Squish the nybbles into bytes and round up to nearest byte at end
-    # to ensure byte alignment for start of each letter bucket
-    if (WORD_NUMERIC_ENCODING == "3-bit-variable"):
-        out = compactNybblestoBytes(out)
-
-    return out
 
 
 input_byte_length = 0
@@ -360,8 +333,8 @@ with open("answers_" + lang + ".txt") as f:
             allWords.add(w)
             answerWords.add(w)
 
+# Sort Dictionary Word List and split it into first-letter buckets
 allWords = tuple(sorted(allWords))
-
 buckets = [[] for i in range(26)]
 for w in allWords:
     # print("allwords: %u: %s" % (input_byte_length / 5, w))
@@ -369,26 +342,15 @@ for w in allWords:
     buckets[ord(w[0])-ord('a')].append(w[1:])
 
 
-# encoded = tuple(map(encodeList, buckets, ))
 encoded = tuple(map(encodeList3bitIndexed, buckets, range(len(buckets))))
-
 # Add final terminating index entry
 addBlobIndex(0,0,DICT_BUCKETS_EOF,0)
 
-# TODO- DELETE ME??? ----------------
-offsets = []
-offset = 0
-for e in encoded:
-    offsets.append(offset)
-    offset += len(e)
-    # Dump bucket array for viewing
-    # res = ''.join(format(x, '02x') for x in e)
-    # print (res)
-    # print("* at:%u = %x" % (offset, e[len(e)-1]))
-offsets.append(offset)
 
+# Join the separate first-letter split encoded blobs
 wordBlob = b''.join(encoded)
 
+# == Create a bitmap for looking up Answer Words in the Dictionary ==
 answerBits = tuple(1 if w in answerWords else 0 for w in allWords)
 answerBlob = toBitmap(answerBits)
 
@@ -398,15 +360,10 @@ outfile.write("// Bitmap of answers within dictionary\n")
 answer_bitmap_size = dumpBlobBytes("answers", answerBlob)
 
 
-# outfile.write("""typedef struct {
-#   uint16_t wordNumber;
-#   uint16_t blobOffset;
-# } LetterList_t;
-#
-# const LetterList_t words[27] = {\n""")
-
 # TODO: split output into 3 x 8 bit for 24 bit instead of a full u32
 # TEMP NEW INDEX OUTPUT ---------------------------------
+
+# == Write out Dictionary Index Buckets ==
 
 outfile.write("// Lookup Table to fast-forward through Answers->in->Dictionary bitmap\n")
 outfile.write("// {wordCount:u16, blobOffset:u16, firstLetter:u8, wordVal:u32} \n");
@@ -421,22 +378,7 @@ for i in range(len(blobIndexes)):
 outfile.write("};\n\n")
 
 
-# outfile.write("const LetterBucket_t buckets[] = { 0x00, 0x00};\n""")
-
-# outfile.write("// Lookup Table to fast-forward through Dictionary Blob (and implies first letter)\n")
-# outfile.write("// {uint16_t wordNumber, uint16_t blobOffset}\n")
-# outfile.write("const LetterBucket_t buckets[27] = {\n""")
-
-# for i in range(27):
-#     outfile.write("  /* %s */ { %u, %u },\n" % (str(chr(ord('a')+i)) if i < 26 else "end", sum(map(len,buckets[:i])), offsets[i]) )
-
-# outfile.write("};\n\n")
-
-# outfile.write("""typedef struct {
-#  uint16_t numWords;
-#  uint16_t byteOffset;
-#} AnswerBucket_t;
-
+# == Write out Answer Word List Lookup Bitmap Bitmap ==
 
 outfile.write("// Lookup Table to fast-forward through Answers->in->Dictionary bitmap\n")
 outfile.write("// {uint8_t num Answer Words, uint8_t byte offset delta in Dictionary Bitmap} [\n")
@@ -484,6 +426,8 @@ outfile.write("};\n")
 
 outfile.close()
 
+# == Write out data sizes and ranges ==
+
 with open(output_path + "sizes.h", "w") as sizes:
     sizes.write("#define NUM_WORDS %u\n" % len(allWords))
     sizes.write("#define NUM_ANSWERS %u\n" % len(answerWords))
@@ -491,11 +435,8 @@ with open(output_path + "sizes.h", "w") as sizes:
     sizes.write("#define NUM_ANSWERS_ROUNDED_UP_POW2 %u" % mask(len(answerWords)))
 
 print ("Input size: " + str(input_byte_length) + ", Dict out size: " + str(dict_byte_size) + ", Answer Bitmap size: " + str(answer_bitmap_size));
-# print(sum(map(len, encoded)))
-#print(max(map(len, encoded)))
 
-
-#  Get un-map version of remap alphabet string
+# Get un-map version of remap alphabet string
 # str_remap = "abcdefghijklmnopqrstuvwxyz"
 # str_remap = remapAlpha(str_remap)
 # print (str_remap)
