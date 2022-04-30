@@ -41,7 +41,8 @@ static char  *        str_return_buffer;
 static bool dict_two_nybbles_queued;
 static uint8_t dict_cur_byte;
 
-#define TEST_DICT
+
+// #define TEST_DICT
 
 #ifdef TEST_DICT
 #include <gbdk/emu_debug.h> // Use this include to add the Emu debug functions

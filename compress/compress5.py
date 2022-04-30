@@ -21,6 +21,13 @@ ENCODING_ORDER_3BIT_LSBITS = "high-bits-first"
 
 # --- OVERRIDES ---
 
+# Base26:
+# - Compression with max options is ~700 bytes smaller with Base 26
+# - But decompression support code is about 900 bytes larger
+#   due to 32 bit multiplication and division to extract the numbers
+#   (even while avoiding 32 bit modulo import)
+# See: 44f42f7e2e2b2817c817b726d3b0b91c8baef46e
+#
 # PER_LETTER_ENCODING = "base-26"
 
 WORD_NUMERIC_ENCODING = "3-bit-variable"
@@ -36,6 +43,8 @@ WORD_LETTER_ORDER = "reverse"
 
 
 # TODO: would be nice if these options dumped control #define flags into the rendered header file
+
+
 
 
 # Optional arg 1 is language type (defaults to "en" otherwise)
@@ -362,19 +371,28 @@ wordBlob = b''.join(encoded)
 answerBits = tuple(1 if w in answerWords else 0 for w in allWords)
 answerBlob = toBitmap(answerBits)
 
+# == Write out packed Dictionary  ==
+
 dict_byte_size = dumpBlobBytes("wordBlob", wordBlob)
+
+
+# == Write out Bitmap of Answers in Dictionary  ==
 
 outfile.write("// Bitmap of answers within dictionary\n")
 answer_bitmap_size = dumpBlobBytes("answers", answerBlob)
 
 
-# TODO: split output into 3 x 8 bit for 24 bit instead of a full u32
-# TEMP NEW INDEX OUTPUT ---------------------------------
-
 # == Write out Dictionary Index Buckets ==
 
-outfile.write("// Lookup Table to fast-forward through Answers->in->Dictionary bitmap\n")
-outfile.write("// {wordCount:u16, blobOffset:u16, firstLetter:u8, wordVal:u32} \n");
+outfile.write("// Lookup Table to fast-forward through Dictionary blob\n")
+outfile.write("// Adds a couple hundred extra bytes, but makes 3-bit decoding fast enough\n")
+outfile.write("// and gives a net gain of several thousand bytes.\n")
+outfile.write("//\n")
+outfile.write("// The wasted top u32 byte was difficult to efficiently discard with C u32 handling\n")
+outfile.write("// (net savings were about 40 bytes) and would need an asm version instead.\n")
+outfile.write("// See: 8438d820e1af9cb9061b4e669ceee7c77fe96dd3\n")
+outfile.write("//\n")
+outfile.write("// {wordCount:u16, blobOffset:u16, firstLetter:u8, wordVal:u32}\n");
 outfile.write("const dictIndexBucket_t dictIndexes[%u] = {\n" % (len(blobIndexes)))
 
 for i in range(len(blobIndexes)):
