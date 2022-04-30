@@ -12,7 +12,7 @@
 
 #define _ASM_GETSPECIALWORD
 
-// #define _ASM_UPDATEWORD
+// #define _ASM_UPDATEWORD_7BIT_VARINT
 #define _UPDATEWORD_3BIT_VARINT
 
 #define ALPHABET_REMAP
@@ -79,10 +79,10 @@ void dumpAnswersToEmuConsole(void) {
 
 
 
-#ifdef _ASM_UPDATEWORD
+#ifdef _ASM_UPDATEWORD_7BIT_VARINT
 
 // high byte of currentWord is always zero
-void updateWord(void) OLDCALL {
+void updateWord_7bit_varint(void) OLDCALL {
 __asm
     ld a,(#_blobPtr)
     ld l,a
@@ -164,8 +164,6 @@ __endasm ;
 #elif defined (_UPDATEWORD_3BIT_VARINT)
 
 
-#ifdef _3BIT_VARINT_MSBITS_FIRST
-
 // V4 - Expects HIGHEST bits (chunks) to be packed first, highest last
 uint32_t update_v;
 
@@ -211,95 +209,10 @@ void updateWord_3bit_varint(void) OLDCALL {
     #endif
 }
 
-#else
 
+#else // end #elif defined (_UPDATEWORD_3BIT_VARINT)
 
-// TODO: DELETE ME. SLOWER AND LARGER (though ASM ver could be better on both)
-
-// V3 - Expects LOWEST bits (chunks) to be packed first, highest last
-uint32_t update_v;
-bool updateword_loop_done;
-
-// dict_two_nybbles_queued and dict_cur_byte need to be
-// primed once at the start of the decode loop
-void updateWord_3bit_varint(void) OLDCALL {
-
-    update_v = 0;
-    // uint8_t * p_num = (uint8_t *)&update_v;
-
-    uint8_t n_count = 0;
-    //bool loop_done = false;
-    updateword_loop_done = false;
-
-    // Merge in 3 bit varints until the "more nybbles" flag is not set
-    do {
-        switch (n_count) {
-                    // [0]2..0
-            case 0: *(((uint8_t *)(&update_v)) + 0) |= (dict_cur_byte & 0x07);
-                    break;
-
-                    // [0]bits 5..3
-            case 1: *(((uint8_t *)(&update_v)) + 0) |= ((dict_cur_byte & 0x07) << 3);
-                    break;
-
-                    // [0]7..6 , [1]..0
-            case 2: *(((uint8_t *)(&update_v)) + 0) |= (dict_cur_byte << 6);
-                    *(((uint8_t *)(&update_v)) + 1) |= ((dict_cur_byte & 0x07) >> 2);
-                    break;
-
-                    // [1]3..1
-            case 3: *(((uint8_t *)(&update_v)) + 1) |= ((dict_cur_byte & 0x07) << 1);
-                    break;
-
-                    // [1]6..4
-            case 4: *(((uint8_t *)(&update_v)) + 1) |= ((dict_cur_byte & 0x07) << 4);
-                    break;
-
-                    // [1]7 , [2]1..0
-            case 5: *(((uint8_t *)(&update_v)) + 1) |= (dict_cur_byte << 7);
-                    *(((uint8_t *)(&update_v)) + 2) |= ((dict_cur_byte & 0x07) >> 1);
-                    break;
-
-                    // [2]bits 4..2
-            case 6: *(((uint8_t *)(&update_v)) + 2) |= ((dict_cur_byte & 0x07) << 2);
-                    break;
-
-                    // [2]bits 7..5
-            case 7: *(((uint8_t *)(&update_v)) + 2) |= ((dict_cur_byte & 0x07) << 5);
-                    break;
-            // Only need to support up to 24 bits (3 bytes) due to max word value
-        }
-
-        // Exit loop (after loading next byte/nybble)
-        // if this is the last varint nybble for the word
-        if ((dict_cur_byte & 0x08) == 0)
-            updateword_loop_done = true;
-
-        n_count++;
-
-        // If a nybble is queued then move it into the lower 4 bits
-        // Otherwise read a new byte
-        if (dict_two_nybbles_queued)
-            dict_cur_byte >>= 4;
-        else
-            dict_cur_byte = *++blobPtr;
-
-        dict_two_nybbles_queued = !dict_two_nybbles_queued;
-    // };
-    } while (!updateword_loop_done);
-
-    // Add 1 since all words are encoded as (value - 1)
-    #ifdef YES_ZERO_DELTA_SUBTRACT
-        currentWord += update_v + 1;
-    #else
-        currentWord += update_v;
-    #endif
-}
-#endif // #else -> #ifdef _3BIT_VARINT_MSBITS_FIRST
-
-#else
-
-void updateWord(void) OLDCALL {
+void updateWord_7bit_varint(void) OLDCALL {
     uint8_t b = *blobPtr++;
     uint32_t v;
     v = b & 0x7F;
@@ -314,7 +227,7 @@ void updateWord(void) OLDCALL {
     currentWord += v+1;
 }
 
-#endif // _ASM_UPDATEWORD
+#endif // if _ASM_UPDATEWORD_7BIT_VARINT -> elif ->  else
 
 
 #ifdef ALPHABET_REMAP
