@@ -30,7 +30,7 @@
 
 #define DICT_BUCKET_EOF  0xFFu
 
-static dictIndexBucket_t * p_dictIndex;
+static const dictIndexBucket_t * p_dictIndex;
 static uint16_t bucketWordCount;
 static uint16_t bucketStart_BlobOffset;
 static uint32_t bucketStart_currentWord;
