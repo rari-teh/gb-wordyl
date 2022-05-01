@@ -26,6 +26,11 @@
 #include "gameplay.h"
 #include "stats.h"
 
+#ifdef TEST_DICT_ENABLED
+    #include "decode.h"
+#endif
+
+
 bool is_first_run = true;
 
 fixed rand_seed = {.w = 0x0000u};
@@ -69,6 +74,9 @@ void main() {
 
                     // Load or reset stats depending on cart type
                     settings_load();
+                    #ifdef TEST_DICT_ENABLED
+                        dumpTestToEmuConsole();
+                    #endif
                 }
                 gameplay_init_answer_word();
                 game_state = GAME_STATE_RUNNING;

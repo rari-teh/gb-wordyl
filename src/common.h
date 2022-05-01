@@ -5,6 +5,20 @@
 
 #include <stdbool.h>
 
+// Controls whether debug test code is compiled
+// It dumps dictionary testing output into the emu debug console
+// Takes up about 1300-1400K, so keep it turned off unless needed
+//
+// #define TEST_DICT_ENABLED
+
+// Selects debug test mode if enabled
+// These are gated by TEST_DICT_ENABLED
+//
+#define TEST_ALLWORDS
+// #define TEST_BENCHMARK
+// #define TEST_ANSWERWORDS
+
+
 // #define _DO_EXPAND(VAL)  VAL ## 1
 // #define EXPAND(VAL)     _DO_EXPAND(VAL)
 

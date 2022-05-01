@@ -9,7 +9,7 @@ void getWord(uint16_t dictWordNum);
 void getSpecialWord(uint16_t n, char* buffer) OLDCALL;
 
 void buildRAMBuckets(void);
-void dumpAnswersToEmuConsole(void);
+void dumpTestToEmuConsole(void);
 #include <sizes.h>
 
 #endif

@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include <asm/types.h>
+#include "common.h"
 #include "encoded.h"
 #include "sizes.h"
 #include "decode.h"
@@ -42,39 +43,62 @@ static bool dict_two_nybbles_queued;
 static uint8_t dict_cur_byte;
 
 
-// #define TEST_DICT
+#ifdef TEST_DICT_ENABLED
 
-#ifdef TEST_DICT
 #include <gbdk/emu_debug.h> // Use this include to add the Emu debug functions
-void dumpAnswersToEmuConsole(void) {
-    char tempStr[10];
-    bool validated;
 
-    // Decode all dictionary words and log them to emu debug console.
-    // Validate each word against the dictionary and warn if it fails
-    for (uint16_t c = 0; c < NUM_WORDS; c++) {
-        str_return_buffer = tempStr;
+    void dumpTestToEmuConsole(void) {
+        static char tempStr[10];
+        bool validated;
 
-        getWord(c);
-        EMU_printf("%s", tempStr);
+        #if defined(TEST_ANSWERWORDS)
 
-        validated = filterWord(tempStr);
-        if (!validated)
-            EMU_MESSAGE("Rejected by filterWord()");
+            // Decode all answer words words and log them to emu debug console.
+            // Validate each word against the dictionary and warn if it fails
+            for (uint16_t c = 0; c < NUM_ANSWERS; c++) {
+                //str_return_buffer = tempStr;
 
-        // For benchmarking
-        // EMU_MESSAGE("%ZEROCLKS%");
-        // getWord(c);
-        // EMU_MESSAGE("%-8+LASTCLKS%");
-        // EMU_printf("%s", tempStr);
+                getSpecialWord(c, tempStr);
+                EMU_printf("%s", tempStr);
 
-        // EMU_MESSAGE("%ZEROCLKS%");
-        // validated = filterWord(tempStr);
-        // EMU_MESSAGE("%-8+LASTCLKS%");
-        // if (!validated)
-        //     EMU_MESSAGE("Rejected by filterWord()");
+                validated = filterWord(tempStr);
+                if (!validated)
+                    EMU_MESSAGE("Rejected by filterWord()");
+            }
+
+        #elif defined (TEST_ALLWORDS)
+            // Decode all dictionary words and log them to emu debug console.
+            // Validate each word against the dictionary and warn if it fails
+            for (uint16_t c = 0; c < NUM_WORDS; c++) {
+                str_return_buffer = tempStr;
+
+                getWord(c);
+                EMU_printf("%s", tempStr);
+
+                validated = filterWord(tempStr);
+                if (!validated)
+                    EMU_MESSAGE("Rejected by filterWord()");
+            }
+
+        #elif defined (TEST_BENCHMARK)
+            // Benchmark retreival and validation for each word in the dictionary
+            for (uint16_t c = 0; c < NUM_WORDS; c++) {
+                str_return_buffer = tempStr;
+
+                EMU_MESSAGE("%ZEROCLKS%");
+                getWord(c);
+                EMU_MESSAGE("%-8+LASTCLKS%");
+                EMU_printf("%s", tempStr);
+
+                EMU_MESSAGE("%ZEROCLKS%");
+                validated = filterWord(tempStr);
+                EMU_MESSAGE("%-8+LASTCLKS%");
+                if (!validated)
+                    EMU_MESSAGE("Rejected by filterWord()");
+            }
+        #endif
+
     }
-}
 #endif
 
 
@@ -454,10 +478,6 @@ void getSpecialWord(uint16_t _n, char* buffer) OLDCALL {
 
 // TODO: OLDCALL as precaution against upcoming SDCC calling convention change
 void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
-    #ifdef TEST_DICT
-        dumpAnswersToEmuConsole();
-    #endif
-
     __asm \
 
     push AF
