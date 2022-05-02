@@ -18,9 +18,13 @@
 // #define TEST_BENCHMARK
 // #define TEST_ANSWERWORDS
 
-
-// #define _DO_EXPAND(VAL)  VAL ## 1
-// #define EXPAND(VAL)     _DO_EXPAND(VAL)
+// Cheats for testing
+// #define DEBUG_REVEAL_WHILE_TYPE
+// #define DEBUG_FORCE_WORD "AMPLE"
+// #define DEBUG_FORCE_WORD "HUMAN"
+// #define DEBUG_REVEAL_WORD
+// #define DEBUG_FORCE_WORD_BY_NUM  2294u //2200u // 2200u // 2295u // 2200u // 0u // 100u // 1351u
+// TODO: show answer word number
 
 #define _STR(s) #s
 #define STR(s) _STR(s)
@@ -43,13 +47,6 @@
 #define LETTER_CURSOR_START 0
 #define LETTER_CURSOR_MAX   (WORD_LENGTH - 1)
 
-// Cheats for testing
-// #define DEBUG_REVEAL_WHILE_TYPE
-// #define DEBUG_FORCE_WORD "AMPLE"
-// #define DEBUG_FORCE_WORD "HUMAN"
-// #define DEBUG_REVEAL_WORD
-// #define DEBUG_FORCE_WORD_BY_NUM  2200u // 2200u // 2295u // 2200u // 0u // 100u // 1351u
-// TODO: show answer word number
 
 #define BOARD_HIGHLIGHT_NO  false
 #define BOARD_HIGHLIGHT_YES true

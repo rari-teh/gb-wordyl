@@ -4,10 +4,13 @@
 
 #include <asm/types.h>
 #include "common.h"
-#include "encoded.h"
-#include "sizes.h"
+
 #include "decode.h"
 
+#include <gbdk/gbdecompress.h>
+#include "answerbitmap_rle.h"
+#include "encoded.h"
+#include "sizes.h"
 
 //  ====== ENCODE / DECODE Settings ======
 
@@ -26,6 +29,12 @@
 #define _3BIT_VARINT_MSBITS_FIRST
 
 //  ======================================
+
+uint8_t answerBitmap[rle_answerBitmapIndex_sz_decomp];
+
+void initDict(void) {
+    gb_decompress(rle_answerBitmapIndex, answerBitmap);
+}
 
 
 #define DICT_BUCKET_EOF  0xFFu
@@ -440,7 +449,7 @@ void getSpecialWord(uint16_t _n, char* buffer) OLDCALL {
     n = _n;
 
     const AnswerBucket_t* bucket = answerBuckets;
-    const uint8_t* b = answers;
+    const uint8_t* b = answersBitmap;
 
     // Use bucket index to fast-forward closer to desired answer word
     while (bucket->numWords <= n) {
@@ -458,7 +467,7 @@ void getSpecialWord(uint16_t _n, char* buffer) OLDCALL {
                 if (c & mask) {
                     if (n == 0) {
                         // Calculate word number "w" using pointer vs base address
-                        w = (uint16_t)(b - answers) << 3;
+                        w = (uint16_t)(b - answerBitmap) << 3;
                         // Then Subtract out unused bits for this byte (rewind mask 1 step) to get final value
                         mask >>= 1;
                         while (mask <<= 1)
@@ -506,7 +515,7 @@ void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
 
 
     // const AnswerBucket_t* bucket = answerBuckets;
-    ld    de, #_answers
+    ld    de, #_answerBitmap
     ld    hl, #_answerBuckets
     .preload_loop$:
 
@@ -596,13 +605,13 @@ void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
 
     .lookup_done$:
     // Calculate bit index counter address from current pointer and base address
-    // w = (uint16_t)(b - answers) << 3;
+    // w = (uint16_t)(b - answerBitmap) << 3;
     ld  a, l
-    sub a, #<(_answers)
+    sub a, #<(_answerBitmap)
     ld  l, a
 
     ld  a, h
-    sbc a, #>(_answers)
+    sbc a, #>(_answerBitmap)
     ld  h, a
 
     add hl, hl

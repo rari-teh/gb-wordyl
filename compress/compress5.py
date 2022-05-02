@@ -113,19 +113,19 @@ def compactNybblestoBytes(nybbleBytes):
     return bytes(packedBytes)
 
 
-def dumpBlobBytes(name, blob):
+def dumpBlobBytes(outputfile, name, blob):
     counter_var = 0
     n = len(blob)
-    outfile.write("const uint8_t %s[%u] = {\n" % (name, n))
+    outputfile.write("const uint8_t %s[%u] = {\n" % (name, n))
     i = 0
     while i < n:
-        outfile.write("  ")
-        for j in range(min(n-i,20)):
+        outputfile.write("  ")
+        for j in range(min(n-i,16)):
             counter_var += 1
-            outfile.write("0x%02x," % blob[i])
+            outputfile.write("0x%02x," % blob[i])
             i+=1
-        outfile.write("\n")
-    outfile.write("};\n\n")
+        outputfile.write("\n")
+    outputfile.write("};\n\n")
     return counter_var
 
 
@@ -368,18 +368,13 @@ addBlobIndex(0,0,DICT_BUCKETS_EOF,0)
 wordBlob = b''.join(encoded)
 
 # == Create a bitmap for looking up Answer Words in the Dictionary ==
+# This still works after all the pre-processing and sorting since it applies to both
 answerBits = tuple(1 if w in answerWords else 0 for w in allWords)
 answerBlob = toBitmap(answerBits)
 
 # == Write out packed Dictionary  ==
 
-dict_byte_size = dumpBlobBytes("wordBlob", wordBlob)
-
-
-# == Write out Bitmap of Answers in Dictionary  ==
-
-outfile.write("// Bitmap of answers within dictionary\n")
-answer_bitmap_size = dumpBlobBytes("answers", answerBlob)
+dict_byte_size = dumpBlobBytes(outfile, "wordBlob", wordBlob)
 
 
 # == Write out Dictionary Index Buckets ==
@@ -452,6 +447,20 @@ outfile.write("};\n")
 
 outfile.close()
 
+
+# == Write out Bitmap of Answers in Dictionary  ==
+
+# Note: the Answer Bitmap Index gets much worse compression when
+#       WORD_LETTERS_REVERSED is not enabled. When word letters
+#       are not reversed the distribution of the answers is much
+#       more even and so harder to get good RLE results
+#
+# Write to a different c source file so it can get gbcompressed
+with open(output_path + "answerbitmap.c.nocomp", "w") as answerfile:
+    answerfile.write("// Bitmap of answers within dictionary (non-compressed)\n")
+    answer_bitmap_size = dumpBlobBytes(answerfile, "answerBitmapIndex", answerBlob)
+answerfile.close()
+
 # == Write out data sizes and ranges ==
 
 with open(output_path + "sizes.h", "w") as sizes:
@@ -466,3 +475,5 @@ print ("Input size: " + str(input_byte_length) + ", Dict out size: " + str(dict_
 # str_remap = "abcdefghijklmnopqrstuvwxyz"
 # str_remap = remapAlpha(str_remap)
 # print (str_remap)
+
+

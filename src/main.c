@@ -21,6 +21,8 @@
 #include "gameboy_color.h"
 #include "fade.h"
 
+#include "decode.h"
+
 #include "intro_splash.h"
 #include "board.h"
 #include "gameplay.h"
@@ -44,6 +46,8 @@ void main() {
 
     cgb_check_and_init();
     gfx_load();
+
+    initDict();
     game_state = GAME_STATE_INTRO;
 
     while(1) {
