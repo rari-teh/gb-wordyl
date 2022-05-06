@@ -1,8 +1,6 @@
 	.include "global.s"
-
+		
         .module tiny_flasher
-
-        .globl _memcpy
 
 _flash_sector_address = 0x7C00                  ; last kilobyte
 .globl _flash_sector_address
@@ -52,7 +50,7 @@ _flash_data_routine:
 
         pop     bc
 
-        ld      e, #0                           ; fail
+        ld      e, #0                           ; fail                  
         jr      5$
 3$:
         pop     bc
@@ -62,7 +60,7 @@ _flash_data_routine:
 
         dec     bc
         ld      a, b
-        or      c
+        or      c 
         jr      nz, 1$
 
         ld      e, #1                           ; success
@@ -71,7 +69,7 @@ _flash_data_routine:
 
         xor     a
         ldh     (.IF), a                        ; cancel pending interrupts
-        ei
+        ei 
 
         ret
 
@@ -94,19 +92,16 @@ _write_flash::
         ld      hl, #(_flash_data_routine - _end_flash_data_routine)
         add     hl, sp
         ld      sp, hl                          ; allocate ram on stack for the routine
-
+        
         push    bc
         push    de
 
-        ld      de, #(_end_flash_data_routine - _flash_data_routine)
-        push    de
-        ld      de, #_flash_data_routine
-        push    de
         push    hl
-        call    _memcpy                         ; copy routine onto stack
-        pop     hl                              ; address of the routine on stack
-        add     sp, #4                          ; remove src and len
+        ld      c, #(_end_flash_data_routine - _flash_data_routine)
+        ld      de, #_flash_data_routine
+        rst     0x30                            ; copy up to 256 bytes in C from DE to HL
 
+        pop     hl
         rst     0x20                            ; call routine, callee cleanups stack
 
         ld      hl, #(_end_flash_data_routine - _flash_data_routine)
@@ -160,26 +155,29 @@ _erase_flash_sector_routine:
         ret
 _end_erase_flash_sector_routine:
 
-; copies the flash sector erasing routine onto CPU stack and calls it
+; copies the flash sector erasing routine onto CPU stack and calls it 
 ; uint8_t erase_flash() OLDCALL;
 _erase_flash::
+        lda     hl, 0(sp)
+        ld      d, h
+        ld      e, l                            ; de = sp
+
         ld      hl, #(_erase_flash_sector_routine - _end_erase_flash_sector_routine)
         add     hl, sp
         ld      sp, hl                          ; allocate ram on stack for the routine
 
-        ld      de, #(_end_erase_flash_sector_routine - _erase_flash_sector_routine)
-        push    de
-        ld      de, #_erase_flash_sector_routine
         push    de
         push    hl
-        call    _memcpy                         ; copy routine onto stack
-        pop     hl                              ; address of the routine on stack
-        add     sp, #4                          ; remove src, len
 
-        rst     0x20                            ; call routine
+        ld      c, #(_end_erase_flash_sector_routine - _erase_flash_sector_routine)
+        ld      de, #_erase_flash_sector_routine
+        rst     0x30                            ; copy up to 256 bytes in C from DE to HL
 
-        ld      hl, #(_end_erase_flash_sector_routine - _erase_flash_sector_routine)
-        add     hl, sp
+        pop     hl
+        rst     0x20                            ; call routine on stack using call hl
+
+        pop     hl
         ld      sp, hl
 
         ret
+
