@@ -142,7 +142,7 @@
 #undef __STATS_TEMPLATE_STR
 #define __STATS_TEMPLATE_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    " GWARIOW .. \n" \
+    " GWARIOW\n" \
     "   YN SOMM  ____^\n" \
     " KADON      ____^\n" \
     " GWAYNYOW   ____^\n" \
