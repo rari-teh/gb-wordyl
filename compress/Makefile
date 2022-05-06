@@ -10,10 +10,10 @@ MKDIRS += ../src/lang_it/
 MKDIRS += ../src/lang_nl/
 MKDIRS += ../src/lang_la/
 MKDIRS += ../src/lang_pt-br/
+MKDIRS += ../src/lang_kw/
 # MKDIRS += ../src/lang_pt/
 
 GBCOMPRESS_RLE = ../tools/gbcompress --cin --cout -v --varname=rle_answerBitmapIndex
-# GBCOMPRESS_RLE = ../tools/gbcompress --cin --cout -v --alg=rle --varname=rle_answerBitmapIndex
 
 compress-all-langs:
 	python3 compress5.py de
@@ -40,7 +40,11 @@ compress-all-langs:
 	python3 compress5.py pt-br
 	$(GBCOMPRESS_RLE) ../src/lang_pt-br/answerbitmap.c.nocomp ../src/lang_pt-br/answerbitmap_rle.c
 
+	python3 compress5.py kw
+	$(GBCOMPRESS_RLE) ../src/lang_kw/answerbitmap.c.nocomp ../src/lang_kw/answerbitmap_rle.c
+
 #	python3 compress5.py pt
+#	$(GBCOMPRESS_RLE) ../src/lang_pt/answerbitmap.c.nocomp ../src/lang_pt/answerbitmap_rle.c
 
 # create necessary directories after Makefile is parsed but before build
 # info prevents the command from being pasted into the makefile
