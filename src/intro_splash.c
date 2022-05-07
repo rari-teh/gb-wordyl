@@ -10,6 +10,7 @@
 #include "common.h"
 #include "input.h"
 #include "gfx_common.h"
+#include "sfx_common.h"
 #include "gameboy_color.h"
 #include "fade.h"
 
@@ -45,6 +46,7 @@ void splash_run(void) {
 
     splash_animate_title();
     waitpadticked_lowcpu(J_START);
+    PLAY_SFX(SFX_EXIT_SPLASH);
 
     fade_out();
     // Revert to normal palette

@@ -6,8 +6,8 @@
 
 
 extern void flash_sector_address;
-extern uint8_t erase_flash() OLDCALL;                                 // erase FLASH sector
-extern uint8_t write_flash(uint8_t * source, uint16_t size) OLDCALL;  // write data to FLASH
+uint8_t erase_flash() OLDCALL;                                 // erase FLASH sector
+uint8_t write_flash(uint8_t * source, uint16_t size) OLDCALL;  // write data to FLASH
 
 
 void cartsave_restore_data(void) {

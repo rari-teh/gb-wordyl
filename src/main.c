@@ -18,6 +18,7 @@
 #include "settings.h"
 #include "input.h"
 #include "gfx_common.h"
+#include "sfx_common.h"
 #include "gameboy_color.h"
 #include "fade.h"
 
@@ -49,6 +50,19 @@ void main() {
 
     initDict();
     game_state = GAME_STATE_INTRO;
+
+    // Enable audio output
+    NR52_REG = 0x80;
+    NR51_REG = 0xFF;
+    NR50_REG = 0x77;
+
+    __critical {
+        #ifdef CPTFX_UPDATE_ASM
+                add_VBL(CBTFX_update_isr);
+        #else
+               add_VBL(CBTFX_update);
+        #endif
+    }
 
     while(1) {
         switch (game_state) {

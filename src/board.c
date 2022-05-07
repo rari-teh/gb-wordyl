@@ -10,6 +10,7 @@
 
 #include "common.h"
 #include "gfx_common.h"
+#include "sfx_common.h"
 #include "gameboy_color.h"
 
 #include "keyboard.h"
@@ -131,6 +132,8 @@ void board_autofill_matched_letters(void) {
         for (int8_t c = WORD_LENGTH - 1; c >= 0; c--) {
 
             if (exact_matches[c]) {
+                PLAY_SFX(SFX_TILE_REVEAL_RESULT);
+                
                 // Copy letter into current guess
                 guess[c] = exact_matches[c];
                 // Make sure autofill coloring will draw corerctly
@@ -379,7 +382,9 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
 
     // col maps to the individual letters in the word/guess
     for (uint8_t col = 0; col < BOARD_GRID_W; col ++) {
-
+        if (do_highlight) {
+            PLAY_SFX(SFX_TILE_REVEAL_RESULT);
+        }
         board_draw_letter(row, col, p_guess[col], do_highlight);
     }
 }

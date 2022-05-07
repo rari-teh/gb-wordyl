@@ -33,7 +33,7 @@ CFLAGS += -DCART_$(CART_TYPE)
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
 # They can also be built/cleaned individually: "make gg" and "make gg-clean"
 # Possible are: gb gbc pocket megaduck sms gg
-TARGETS=gb pocket
+TARGETS=gb # pocket
 
 # Configure platform specific LCC flags here:
 LCCFLAGS_gb      = -Wm-yc # ColorNo MBC  Wl-yt0x1B # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
@@ -78,6 +78,7 @@ CFLAGS += -Wf-I"$(LANGDIR)/"
 
 # EXT?=gb # Only sets extension to default (game boy .gb) if not populated
 SRCDIR         = src
+SFXDIR         = $(SRCDIR)/sfx
 LANGDIR        = $(SRCDIR)/lang_$(LANG_CODE)
 CART_TYPE_DIR  = $(SRCDIR)/cart_$(CART_TYPE)
 
@@ -90,6 +91,7 @@ MKDIRS      = $(OBJDIR) $(BINDIR) # See bottom of Makefile for directory auto-cr
 BINS	      = $(OBJDIR)/$(PROJECTNAME).$(EXT)
 CSOURCES      = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c)))
 CSOURCES      += $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.c)))
+CSOURCES      += $(foreach dir,$(SFXDIR),$(notdir $(wildcard $(dir)/*.c)))
 CSOURCES_LANG = $(foreach dir,$(LANGDIR),$(notdir $(wildcard $(dir)/*.c)))
 CSOURCES_CART = $(foreach dir,$(CART_TYPE_DIR),$(notdir $(wildcard $(dir)/*.c)))
 
@@ -117,6 +119,10 @@ $(OBJDIR)/%.o:	$(SRCDIR)/%.c
 
 # Compile .c files in "res/" to .o object files
 $(OBJDIR)/%.o:	$(RESDIR)/%.c
+	$(LCC) $(CFLAGS) -c -o $@ $<
+
+# Compile .c files in "sfx/" to .o object files
+$(OBJDIR)/%.o:	$(SFXDIR)/%.c
 	$(LCC) $(CFLAGS) -c -o $@ $<
 
 # Compile .c files in "src/<LANG_CODE>/" to .o object files
