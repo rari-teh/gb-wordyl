@@ -162,6 +162,7 @@ langs:
 	${MAKE} LANG_CODE=nl    CART_TYPE=$(CART_TYPE)
 	${MAKE} LANG_CODE=la    CART_TYPE=$(CART_TYPE)
 	${MAKE} LANG_CODE=pt-br CART_TYPE=$(CART_TYPE)
+	${MAKE} LANG_CODE=kw    CART_TYPE=$(CART_TYPE)
 #   PT full answer file is too big
 #	${MAKE} LANG_CODE=pt
 
@@ -174,6 +175,7 @@ langs-clean:
 	${MAKE} clean LANG_CODE=nl     CART_TYPE=$(CART_TYPE)
 	${MAKE} clean LANG_CODE=la     CART_TYPE=$(CART_TYPE)
 	${MAKE} clean LANG_CODE=pt-br  CART_TYPE=$(CART_TYPE)
+	${MAKE} clean LANG_CODE=kw     CART_TYPE=$(CART_TYPE)
 #   PT full answer file is too big
 #	${MAKE} LANG_CODE=pt
 
