@@ -138,7 +138,7 @@ void gfx_load(void);
 
     #define BG_TILES_LAST     (BG_TILES_FONT_BUTTON_R)
 
-#define BG_TILES_FONT_LEN     ((BG_TILES_LAST - BG_TILES_FONT_START) + 1)
+#define BG_TILES_FONT_LEN     ((BG_TILES_LAST - BG_TILES_FONT_START) + 1u)
 
 #define FONT_LETTERS_COUNT           (BG_TILES_FONT_LEN)
 #define FONT_LETTERS_BYTES_PER_TILE   8u // 1bpp tiles = 8 bytes per 8x8 tile
