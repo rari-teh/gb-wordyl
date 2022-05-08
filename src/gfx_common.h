@@ -89,9 +89,6 @@ void gfx_load(void);
 #define BOARD_LETTERS_FLIP_4     (BOARD_LETTERS_FLIP_3 + 1)
 
 
-#define FONT_LETTERS_COUNT           (26u + 4u) // 26 letters + 3 special chars: ".", "!", ":", "+"
-#define FONT_LETTERS_BYTES_PER_TILE   8u // 1bpp tiles = 8 bytes per 8x8 tile
-
 #define BOARD_GRID_X  4u // Start x,y in Tiles
 #define BOARD_GRID_Y  1u
 #define BOARD_GRID_W  (WORD_LENGTH) // from common.h // 5u // Size in Tiles
@@ -121,22 +118,30 @@ void gfx_load(void);
 #define BG_TILES_INTRO_DIALOG_START (BG_TILES_BOARD_LETTERS_START + BG_TILES_BOARD_LETTERS_LEN)
 #define BG_TILES_INTRO_DIALOG_LEN   8u
 
+// ==== FONT TILES ====
 
 #define BG_TILES_FONT_START   (BG_TILES_INTRO_DIALOG_START + BG_TILES_INTRO_DIALOG_LEN)
-#define BG_TILES_FONT_LEN     (26u + 5u + 4u) // 26 letters + 5 special chars: ".!?:+" + 4 button chars
-#define BG_TILES_FONT_PERIOD  (BG_TILES_FONT_START + 26u)
-#define BG_TILES_FONT_EXCLAIM (BG_TILES_FONT_START + 27u)
-#define BG_TILES_FONT_QMARK   (BG_TILES_FONT_START + 28u)
-#define BG_TILES_FONT_COLON   (BG_TILES_FONT_START + 29u)
-#define BG_TILES_FONT_PLUS    (BG_TILES_FONT_START + 30u)
 
-// Gamepad Buttons
-// #define BG_TILES_FONT_BUTTON_A (BG_TILES_FONT_START + 29u)
-// #define BG_TILES_FONT_BUTTON_B (BG_TILES_FONT_START + 30u)
-#define BG_TILES_FONT_BUTTON_U (BG_TILES_FONT_START + 31u) // '^' char
-#define BG_TILES_FONT_BUTTON_D (BG_TILES_FONT_START + 32u) // '/' char
-#define BG_TILES_FONT_BUTTON_L (BG_TILES_FONT_START + 33u) // '<' char
-#define BG_TILES_FONT_BUTTON_R (BG_TILES_FONT_START + 34u) // '>' char
+        #define BG_TILES_FONT_PERIOD  (BG_TILES_FONT_START + 26u)
+        #define BG_TILES_FONT_EXCLAIM (BG_TILES_FONT_START + 27u)
+        #define BG_TILES_FONT_QMARK   (BG_TILES_FONT_START + 28u)
+        #define BG_TILES_FONT_COLON   (BG_TILES_FONT_START + 29u)
+        #define BG_TILES_FONT_PLUS    (BG_TILES_FONT_START + 30u)
+
+        // Gamepad Buttons
+        // #define BG_TILES_FONT_BUTTON_A (BG_TILES_FONT_START + 29u)
+        // #define BG_TILES_FONT_BUTTON_B (BG_TILES_FONT_START + 30u)
+        #define BG_TILES_FONT_BUTTON_U (BG_TILES_FONT_START + 31u) // '^' char
+        #define BG_TILES_FONT_BUTTON_D (BG_TILES_FONT_START + 32u) // '/' char
+        #define BG_TILES_FONT_BUTTON_L (BG_TILES_FONT_START + 33u) // '<' char
+        #define BG_TILES_FONT_BUTTON_R (BG_TILES_FONT_START + 34u) // '>' char
+
+    #define BG_TILES_LAST     (BG_TILES_FONT_BUTTON_R)
+
+#define BG_TILES_FONT_LEN     ((BG_TILES_LAST - BG_TILES_FONT_START) + 1)
+
+#define FONT_LETTERS_COUNT           (BG_TILES_FONT_LEN)
+#define FONT_LETTERS_BYTES_PER_TILE   8u // 1bpp tiles = 8 bytes per 8x8 tile
 
 
 #define BG_TILES_FONT_NUM_START   (BG_TILES_FONT_START + BG_TILES_FONT_LEN)
