@@ -46,7 +46,14 @@ void splash_run(void) {
 
     splash_animate_title();
     waitpadticked_lowcpu(J_START);
-    PLAY_SFX(SFX_EXIT_SPLASH);
+
+    // Don't use play_sfx() since that checks if sound is enabled
+    // 1) Don't want to gate by that, 2) options haven't yet been loaded from Flash ROM / SRAM
+    CBTFX_init(SFX_list[(SFX_EXIT_SPLASH)]);
+    // A little delay for the sfx to play before fade-out
+    if (IS_CGB) delay(1000);
+    else        delay(500);
+
 
     fade_out();
     // Revert to normal palette

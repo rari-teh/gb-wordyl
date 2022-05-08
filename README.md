@@ -20,9 +20,16 @@ Language / UI Translation credits:
   - German: Skite2001 - https://twitter.com/skite2001
   - Dutch: Ferrante Crafts - https://ferrantecrafts.com
   - Brazilian Portuguese: Daniel Tolentino - https://github.com/DanielTolentino
-  - Cornish:  sjd_sjd_ (((TODO: LINK)))
+  - Cornish:
+    - Niwlen Ster
+    - Kamm Cam
+    - Dyski Kernowek Discord Group
+    - Steve Harris (https://kerdle.vercel.app and https://an-wiasva.herokuapp.com)
+    - Gerlyver Kernewek (https://cornishdictionary.org.uk)
+
 
 Additional code and contributions from:
+  - [Coffee "Valen" Bat](https://twitter.com/cofebbat) : Game Sound FX and [CBTFX Driver](https://github.com/datguywitha3ds/CBT-FX)
   - [toxa](https://github.com/untoxa/) : Ferrante Crafts 31k ROM + 1k Flash cart support
   - [arpruss](https://github.com/arpruss/gb-fiver) : Highlighting fixes, Improved Dictionary compression and lookup speed
   - [zeta_two](https://github.com/ZetaTwo/gb-wordle) : Previous dictionary compression

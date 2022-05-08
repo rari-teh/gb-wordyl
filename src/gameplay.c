@@ -43,7 +43,7 @@ uint8_t game_won_str[] = __MESSAGE_GAME_WON_STR;
 // Show a popup message: You Won
 void show_win_message(uint8_t guess_count) {
 
-    PLAY_SFX(SFX_GAME_WON);
+    play_sfx(SFX_GAME_WON);
 
     // Patch the number of guesses into the string at char '^'
     uint8_t * p_str = game_won_str;
@@ -60,7 +60,7 @@ void show_win_message(uint8_t guess_count) {
 // Show a popup message: You Lost
 void show_lose_message(char *correct_word) {
 
-    PLAY_SFX(SFX_GAME_LOST);
+    play_sfx(SFX_GAME_LOST);
     win_dialog_show_message(LOSE_MESSAGE_DIALOG_WIN_Y, __MESSAGE_LOSE_STR, correct_word);
 }
 
@@ -88,7 +88,7 @@ void show_options_message(void) {
             if (guess_num > 0)
                 win_dialog_show_message(HARD_MODE_CANT_CHANGE_WIN_Y, __MESSAGE_HARD_MODE_CANT_CHANGE_STR, NULL);
             else {
-                PLAY_SFX(SFX_MENU_ACTION_ACKNOWLEDGE);
+                play_sfx(SFX_MENU_ACTION_ACKNOWLEDGE);
 
                 if (game_settings.opt_hard_mode_enabled == true)
                     game_settings.opt_hard_mode_enabled = false;
@@ -104,7 +104,7 @@ void show_options_message(void) {
 
         case J_DOWN:
             // Auto-fill toggle
-            PLAY_SFX(SFX_MENU_ACTION_ACKNOWLEDGE);
+            play_sfx(SFX_MENU_ACTION_ACKNOWLEDGE);
 
             if (game_settings.opt_autofill_enabled == true)
                 game_settings.opt_autofill_enabled = false;
@@ -366,12 +366,12 @@ void gameplay_run(void)
                     if (keys & J_SELECT) {
                         if (guess_letter_cursor < LETTER_CURSOR_MAX) {
                             guess_letter_cursor++;
-                            PLAY_SFX(SFX_CURSOR_MOVE);
+                            play_sfx(SFX_CURSOR_MOVE);
                         }
 
                         keys_select_consumed = true;
                     } else {
-                        PLAY_SFX(SFX_TILE_ADD);
+                        play_sfx(SFX_TILE_ADD);
                         board_add_guess_letter();
                     }
 
@@ -382,12 +382,12 @@ void gameplay_run(void)
                     if (keys & J_SELECT) {
                         if (guess_letter_cursor > LETTER_CURSOR_START) {
                             guess_letter_cursor--;
-                            PLAY_SFX(SFX_CURSOR_MOVE);
+                            play_sfx(SFX_CURSOR_MOVE);
                         }
 
                         keys_select_consumed = true;
                     } else {
-                        PLAY_SFX(SFX_TILE_REMOVE);
+                        play_sfx(SFX_TILE_REMOVE);
                         board_remove_guess_letter();
                     }
 

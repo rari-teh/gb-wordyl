@@ -168,14 +168,14 @@
 
 
 // X, Y controls upper-left corner coordinates
-#define __INTRO_CREDITS_X  2u
+#define __INTRO_CREDITS_X  0u
 #define __INTRO_CREDITS_Y  (DEVICE_SCREEN_HEIGHT - 9u) / 2u
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
         "THX TO:\n" \
         "TOXA\n" \
         "ARPRUSS\n" \
-        "COFFEE BAT\n" \
+        "COFFEE 'VALEN' BAT\n" \
         "STACKSMASHING\n" \
         "\n" \
         "GBDK2020\n" \
