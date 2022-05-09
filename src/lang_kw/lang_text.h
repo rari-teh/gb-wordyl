@@ -24,7 +24,7 @@
     "  A..Z  HEPKEN\n" \
     "ROL Y'N GWARI:\n" \
     "  3 x SELECT\n" \
-    "RESELL:\n" \
+    "RESELL BORDH:\n" \
     "  SELECT + B A\n" \
     "OMLENWEL:\n" \
     "  SELECT + START\n" \
@@ -142,15 +142,15 @@
 #undef __STATS_TEMPLATE_STR
 #define __STATS_TEMPLATE_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    " GWARIOW\n" \
-    "   YN SOMM  ____^\n" \
-    " KADON      ____^\n" \
-    " GWAYNYOW   ____^\n" \
-    " FALLOW     ____^\n" \
+    "GWARIOW\n" \
+    "  YN SOMM... ____^\n" \
+    " KADON   ... ____^\n" \
+    " GWAYNYOW... ____^\n" \
+    " FALLOW  ... ____^\n" \
     "LESRANNANS DISMYK\n" \
-    " LYHA       ____^\n" \
-    " MOYHA      ____^\n" \
-    " KRESEK     ____^\n"   // <-- All "____^" get replaced by numbers
+    " LYHA    ... ____^\n" \
+    " MOYHA   ... ____^\n" \
+    " KRESEK  ... ____^\n"   // <-- All "____^" get replaced by numbers
 
 // Should be no more than 18 chars
 #undef __INTRO_PRESS_START_STR
@@ -164,8 +164,9 @@
         "MEUR RAS DHE a:\n" \
         "TOXA\n" \
         "ARPRUSS\n" \
+        "COFFEE 'VALEN' BAT\n" \
         "STACKSMASHING\n" \
-        "SJD_SJD_ \n" \
+        "SJD\n" \
         "\n" \
         "GBDK2020\n" \
         "EMULICIOUS\n" \
