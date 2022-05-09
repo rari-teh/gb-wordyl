@@ -89,6 +89,8 @@ void print_str(const char * txt) {
             letter = BG_TILES_FONT_NUM_START + (unsigned char)(src_chr - '0');
         } else {
             switch (src_chr) {
+                case '\"': // Fall Through to single quote char
+                case '\'': letter = BG_TILES_FONT_QUOTE; break;
                 case '.': letter = BG_TILES_FONT_PERIOD; break;
                 case '!': letter = BG_TILES_FONT_EXCLAIM; break;
                 case '?': letter = BG_TILES_FONT_QMARK; break;
