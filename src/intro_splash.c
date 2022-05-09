@@ -38,6 +38,9 @@ void splash_run(void) {
 
     // Scroll up one tile row to move the board down a little
     move_bkg(0, (uint8_t)-8); // TODO: macro?
+
+    // Change board rendering layout to splash screen style
+    // See: board_row_ranges_splash[] in board.c
     BOARD_SET_LAYOUT_SPLASH;
     splash_init_maps();
 
@@ -100,48 +103,103 @@ void splash_init_maps(void) {
 
 #define CHR_NUM(c) (c - 'A')
 
-// "GAMEBOY WORDYL";
-const uint8_t splash_text[] = {
-        CHR_NUM('G'),
-        CHR_NUM('A'),
-        CHR_NUM('M'),
-        CHR_NUM('E'),
-        CHR_NUM('B'),
-        CHR_NUM('O'),
-        CHR_NUM('Y'),
-        BOARD_LETTERS_SPACE_CHAR,
-        CHR_NUM('W'),
-        CHR_NUM('O'),
-        CHR_NUM('R'),
-        CHR_NUM('D'),
-        BOARD_LETTERS_SPACE_CHAR,
-        BOARD_LETTERS_SPACE_CHAR,
-        BOARD_LETTERS_SPACE_CHAR,
-        CHR_NUM('Y'),
-        CHR_NUM('L'),};
+// 31k + 1k cart release gets separate naming
+#if defined(CART_31k_1kflash)
+    // "  GBBOY WORDYL";
+    const uint8_t splash_text[] = {
+            BOARD_LETTERS_SPACE_CHAR,
+            CHR_NUM('G'),
+            CHR_NUM('B'),
+            BOARD_LETTERS_SPACE_CHAR,
 
-const uint8_t splash_text_color[] = {
-    CGB_PAL_GREEN, // GAME
-    CGB_PAL_GREEN,
-    CGB_PAL_GREEN,
-    CGB_PAL_GREEN,
-    CGB_PAL_GREEN, // BOY
-    CGB_PAL_GREEN,
-    CGB_PAL_GREEN,
+            BOARD_LETTERS_SPACE_CHAR,
+            BOARD_LETTERS_SPACE_CHAR,
+            BOARD_LETTERS_SPACE_CHAR,
+            // CHR_NUM('B'),
+            // CHR_NUM('O'),
+            // CHR_NUM('Y'),
+            BOARD_LETTERS_SPACE_CHAR,
+            CHR_NUM('W'),
+            CHR_NUM('O'),
+            CHR_NUM('R'),
+            CHR_NUM('D'),
+            BOARD_LETTERS_SPACE_CHAR,
+            BOARD_LETTERS_SPACE_CHAR,
+            BOARD_LETTERS_SPACE_CHAR,
+            CHR_NUM('Y'),
+            CHR_NUM('L'),};
 
-    CGB_PAL_WHITE, // SPACE
+    const uint8_t splash_text_color[] = {
+        CGB_PAL_WHITE, // SPACE
+        CGB_PAL_GREEN, // GB
+        CGB_PAL_GREEN,
+        CGB_PAL_WHITE, // SPACE
 
-    CGB_PAL_BLUE, // WORD
-    CGB_PAL_BLUE,
-    CGB_PAL_BLUE,
-    CGB_PAL_BLUE,
+        CGB_PAL_WHITE, // SPACE
+        CGB_PAL_WHITE, // SPACE
+        CGB_PAL_WHITE, // SPACE
+        // CGB_PAL_GREEN, // BOY
+        // CGB_PAL_GREEN,
+        // CGB_PAL_GREEN,
+        CGB_PAL_WHITE, // SPACE
 
-    CGB_PAL_WHITE, // SPACE
-    CGB_PAL_WHITE, // SPACE
-    CGB_PAL_WHITE, // SPACE
+        CGB_PAL_BLUE, // WORD
+        CGB_PAL_BLUE,
+        CGB_PAL_BLUE,
+        CGB_PAL_BLUE,
 
-    CGB_PAL_BLUE,  // YL
-    CGB_PAL_BLUE};
+        CGB_PAL_WHITE, // SPACE
+        CGB_PAL_WHITE, // SPACE
+        CGB_PAL_WHITE, // SPACE
+
+        CGB_PAL_BLUE,  // YL
+        CGB_PAL_BLUE};
+
+#else
+    // "GAMEBOY WORDYL";
+    const uint8_t splash_text[] = {
+            CHR_NUM('G'),
+            CHR_NUM('A'),
+            CHR_NUM('M'),
+            CHR_NUM('E'),
+            CHR_NUM('B'),
+            CHR_NUM('O'),
+            CHR_NUM('Y'),
+            BOARD_LETTERS_SPACE_CHAR,
+            CHR_NUM('W'),
+            CHR_NUM('O'),
+            CHR_NUM('R'),
+            CHR_NUM('D'),
+            BOARD_LETTERS_SPACE_CHAR,
+            BOARD_LETTERS_SPACE_CHAR,
+            BOARD_LETTERS_SPACE_CHAR,
+            CHR_NUM('Y'),
+            CHR_NUM('L'),};
+
+    const uint8_t splash_text_color[] = {
+        CGB_PAL_GREEN, // GAME
+        CGB_PAL_GREEN,
+        CGB_PAL_GREEN,
+        CGB_PAL_GREEN,
+        CGB_PAL_GREEN, // BOY
+        CGB_PAL_GREEN,
+        CGB_PAL_GREEN,
+
+        CGB_PAL_WHITE, // SPACE
+
+        CGB_PAL_BLUE, // WORD
+        CGB_PAL_BLUE,
+        CGB_PAL_BLUE,
+        CGB_PAL_BLUE,
+
+        CGB_PAL_WHITE, // SPACE
+        CGB_PAL_WHITE, // SPACE
+        CGB_PAL_WHITE, // SPACE
+
+        CGB_PAL_BLUE,  // YL
+        CGB_PAL_BLUE};
+
+#endif
 
 
 void splash_animate_title(void) {
