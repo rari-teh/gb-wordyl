@@ -165,15 +165,17 @@
 #undef __INTRO_CREDITS_STR
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
-        "Obrigado a:\n" \
-        "TOXA\n" \
-        "ARPRUSS\n" \
-        "STACKSMASHING\n" \
-        "ZERAPHY\n" \
-        "\n" \
-        "GBDK2020\n" \
-        "EMULICIOUS\n" \
-        "FERRANTE CRAFTS"
+    "OBRIGADO a:\n" \
+    "TOXA\n" \
+    "DAEO\n" \
+    "ARPRUSS\n" \
+    "COFFEE 'VALEN' BAT\n" \
+    "STACKSMASHING\n" \
+    "ZERAPHY\n" \
+    "\n" \
+    "GBDK2020\n" \
+    "EMULICIOUS\n" \
+    "FERRANTE CRAFTS"
 
 
 #endif

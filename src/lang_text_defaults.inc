@@ -172,12 +172,13 @@
 #define __INTRO_CREDITS_Y  (DEVICE_SCREEN_HEIGHT - 9u) / 2u
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
-        "THX TO:\n" \
-        "TOXA\n" \
-        "ARPRUSS\n" \
-        "COFFEE 'VALEN' BAT\n" \
-        "STACKSMASHING\n" \
-        "\n" \
-        "GBDK2020\n" \
-        "EMULICIOUS\n" \
-        "FERRANTE CRAFTS"
+    "THX TO:\n" \
+    "TOXA\n" \
+    "DAEO\n" \
+    "ARPRUSS\n" \
+    "COFFEE 'VALEN' BAT\n" \
+    "STACKSMASHING\n" \
+    "\n" \
+    "GBDK2020\n" \
+    "EMULICIOUS\n" \
+    "FERRANTE CRAFTS"

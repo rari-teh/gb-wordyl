@@ -158,19 +158,19 @@
 
 
 // X, Y controls upper-left corner coordinates
-#undef __INTRO_CREDITS_X
-#define __INTRO_CREDITS_X  2u
 #undef __INTRO_CREDITS_STR
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
-        "THX TO:\n" \
-        "TOXA\n" \
-        "ARPRUSS\n" \
-        "STACKSMASHING\n" \
-        "FERRANTE CRAFTS\n" \
-        "\n" \
-        "GBDK2020\n" \
-        "EMULICIOUS"
+    "THX TO:\n" \
+    "TOXA\n" \
+    "DAEO\n" \
+    "ARPRUSS\n" \
+    "COFFEE 'VALEN' BAT\n" \
+    "STACKSMASHING\n" \
+    "FERRANTE CRAFTS\n" \
+    "\n" \
+    "GBDK2020\n" \
+    "EMULICIOUS"
 
 
 #endif

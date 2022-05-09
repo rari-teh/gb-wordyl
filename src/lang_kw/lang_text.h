@@ -163,6 +163,7 @@
 /*  |--------------------| */\
         "MEUR RAS DHE a:\n" \
         "TOXA\n" \
+        "DAEO\n" \
         "ARPRUSS\n" \
         "COFFEE 'VALEN' BAT\n" \
         "STACKSMASHING\n" \
