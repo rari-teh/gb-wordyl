@@ -161,7 +161,7 @@
 #undef __INTRO_CREDITS_STR
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
-        "MEUR RAS DHE a:\n" \
+        "MEUR RAS DHE :\n" \
         "TOXA\n" \
         "DAEO\n" \
         "ARPRUSS\n" \
