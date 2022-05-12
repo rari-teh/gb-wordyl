@@ -21,6 +21,7 @@ Language / UI Translation credits:
   - Dutch: Ferrante Crafts - https://ferrantecrafts.com
   - Brazilian Portuguese: Daniel Tolentino - https://github.com/DanielTolentino
   - Cornish:
+    - SJD (https://sjd-sjd.itch.io/)
     - Niwlen Ster
     - Kamm Cam
     - Dyski Kernowek Discord Group
