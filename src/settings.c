@@ -16,13 +16,18 @@
 
 
 // Defaults for power-on or save not present
-inline void options_reset() {
+void options_reset() {
     game_settings.opt_hard_mode_enabled = false;
     game_settings.opt_autofill_enabled = false;
         // Not implemented
         game_settings.opt_sound_fx_enabled = true;
         game_settings.opt_music_type = 1;
         game_settings.opt_tile_flip_enabled = true;
+
+    // For relevant carts, save the reset stats
+    #if defined(CART_31k_1kflash) || defined(CART_mbc5)
+        cartsave_save_data();
+    #endif
 }
 
 
