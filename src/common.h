@@ -106,8 +106,8 @@ typedef struct settings_rec {
     // Options
     bool opt_hard_mode_enabled;
     bool opt_autofill_enabled;
+    bool opt_sound_fx_enabled;
         // Not implemented
-        bool opt_sound_fx_enabled;
         uint8_t opt_music_type;
         bool opt_tile_flip_enabled;
         bool opt_lock_matched;
