@@ -90,7 +90,6 @@ extern char word[WORD_LENGTH+1];
 typedef struct settings_rec {
 
     // Don't change order, it will scramble cart saves
-    // For additions, just add to the bottom
 
     // Stats
     uint16_t save_check0;
@@ -111,6 +110,7 @@ typedef struct settings_rec {
         bool opt_sound_fx_enabled;
         uint8_t opt_music_type;
         bool opt_tile_flip_enabled;
+        bool opt_lock_matched;
 } settings_rec;
 
 extern settings_rec game_settings;
@@ -118,7 +118,9 @@ extern settings_rec game_settings;
 
 void settings_load(void);
 
-uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num);
+void str_bool_checkbox_at_X(uint8_t *, bool);
+void str_u16_left_at_X(uint8_t * p_str, uint16_t num);
+// uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num);
 
 void copy_or_reset_prev_guess(char* guess);
 

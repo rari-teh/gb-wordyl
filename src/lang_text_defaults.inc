@@ -50,19 +50,44 @@
 #endif
 
 
-#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(10)
+// Leading space on each line is room for Cursor
+// MAX Height is 16
+#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(11)
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "OPTIONS\n" \
+    " ... OPTIONS ...\n" \
     "\n" \
-    "SHOW STATS ....  A\n" \
-    "HARD MODE .....  >\n" \
-    "AUTO FILL .....  /\n" \
+    " EXIT MENU\n" \
     "\n" \
-    "FORFEIT ROUND .  ^\n" \
-    "RESET STATS ...  <\n" \
+    " HARD MODE  .... ^\n" \
+    " AUTO FILL  .... ^\n" \
+    " SOUND FX  ..... ^\n" \
     "\n" \
-    "EXIT MENU .... ANY"
+    " SHOW STATS\n" \
+    " FORFEIT ROUND\n" \
+    " RESET STATS\n"
+/*
+    "RESET STATS\n" \
+    "\n" \
+    "TILE FLIP  ..... ^\n"
+    "LOCK MATCHED  .. ^"
+*/
+
+// These need to exactly match the menu order & formating above
+// Line 0 is the first line of text
+// menu header               0
+// space                     1
+#define MENU_Y_EXIT          2
+// space                     3
+#define MENU_Y_HARD_MODE     4
+#define MENU_Y_AUTO_FILL     5
+#define MENU_Y_SOUND_FX      6
+// space                     7
+#define MENU_Y_SHOW_STATS    8
+#define MENU_Y_FORFEIT_ROUND 9
+#define MENU_Y_RESET_STATS   10
+
+
 
 
 #define CONFIRM_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(6)

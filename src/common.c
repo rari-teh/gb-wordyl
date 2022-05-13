@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #include "common.h"
+#include "gfx_common.h"
 
 uint8_t game_state;
 
@@ -27,12 +28,29 @@ char guess[WORD_LENGTH+1]; // Current guess
 char word[WORD_LENGTH+1];  // TODO: rename this to "answer_word"
 
 
+// Patch a bool checkbox indicator into the string at char '^'
+// * Warning: Safetys are turned off, lots can go wrong here
+void str_bool_checkbox_at_X(uint8_t * p_str, bool is_enabled) {
+
+    // Search for start position
+    while ((*p_str != '^') && (*p_str)) p_str++;
+
+    if (is_enabled)
+        *p_str = '{'; // Checkbox ON swap char
+    else
+        *p_str = '}'; // Checkbox ON swap char
+}
+
+
 #define PRINT_MAX_DIGITS  5
 
 // Patch a number into the string at char '^'
 // * uitoa() puts in leading zeros and a tailing str terminator, so it's not suitable
 // * Warning: Safetys are turned off, lots can go wrong here
-uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num) {
+//
+// TODO: remove old declaration if not used anymore
+// uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num) {
+void str_u16_left_at_X(uint8_t * p_str, uint16_t num) {
 
     uint8_t index = PRINT_MAX_DIGITS;
 
@@ -57,8 +75,8 @@ uint8_t * str_u16_left_at_X(uint8_t * p_str, uint16_t num) {
         *p_str-- = ' ';
     }
 
-    // Move pointer past end of print area
-    return (p_str + PRINT_MAX_DIGITS + 1);
+    // // Move pointer past end of print area
+    // return (p_str + PRINT_MAX_DIGITS + 1);
 }
 
 

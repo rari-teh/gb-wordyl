@@ -29,6 +29,8 @@ extern uint8_t font_letters_decomp_buf[];
 
 extern const uint8_t tile_blank[];
 
+void sprites_hide_all_offscreen(void);
+
 void print_gotoxy(uint8_t x, uint8_t y, uint8_t target);
 void print_str(char * txt);
 
@@ -56,7 +58,12 @@ void gfx_load(void);
     // Cursor that makes a border around the current letter tile
     #define SP_TILES_CURSOR_LETTER_START    (SP_TILES_CURSOR_BOARD_START + SP_TILES_CURSOR_BOARD_LEN)
     #define SP_TILES_CURSOR_LETTER_LEN      2u
-#define SP_TILES_CURSOR_COUNT_TOTAL         (SP_TILES_CURSOR_KBD_LEN + SP_TILES_CURSOR_BOARD_LEN + SP_TILES_CURSOR_LETTER_LEN)
+
+    // Cursor that makes a border around the current letter tile
+    #define SP_TILES_CURSOR_MENU_START      (SP_TILES_CURSOR_LETTER_START + SP_TILES_CURSOR_LETTER_LEN)
+    #define SP_TILES_CURSOR_MENU_LEN        1u
+
+#define SP_TILES_CURSOR_COUNT_TOTAL         ((SP_TILES_CURSOR_MENU_START + SP_TILES_CURSOR_MENU_LEN) - SP_TILES_CURSOR_START)
 
 
 #define SP_ID_CURSORS_START            0u
@@ -66,7 +73,12 @@ void gfx_load(void);
     #define SP_ID_CURSOR_BOARD_LEN     4u
     #define SP_ID_CURSOR_LETTER_START  (SP_ID_CURSOR_BOARD_START + SP_ID_CURSOR_BOARD_LEN)
     #define SP_ID_CURSOR_LETTER_LEN    4u
-#define SP_ID_CURSORS_COUNT_TOTAL      (SP_ID_CURSOR_KBD_LEN + SP_ID_CURSOR_BOARD_LEN + SP_ID_CURSOR_LETTER_LEN)
+    #define SP_ID_CURSOR_MENU_START    (SP_ID_CURSOR_LETTER_START + SP_ID_CURSOR_LETTER_LEN)
+    #define SP_ID_CURSOR_MENU_LEN      2u
+#define SP_ID_CURSORS_COUNT_TOTAL      ((SP_ID_CURSOR_MENU_START + SP_ID_CURSOR_MENU_LEN) - SP_ID_CURSORS_START)
+
+// Used for hiding all sprites
+#define SP_ID_COUNT_TOTAL        (SP_ID_CURSORS_COUNT_TOTAL)
 
 
 // TODO: could move to keybaord.h
@@ -135,9 +147,11 @@ void gfx_load(void);
         #define BG_TILES_FONT_BUTTON_U (BG_TILES_FONT_START + 32u) // '^' char
         #define BG_TILES_FONT_BUTTON_D (BG_TILES_FONT_START + 33u) // '/' char
         #define BG_TILES_FONT_BUTTON_L (BG_TILES_FONT_START + 34u) // '<' char
-
         #define BG_TILES_FONT_BUTTON_R (BG_TILES_FONT_START + 35u) // '>' char
-    #define BG_TILES_LAST     (BG_TILES_FONT_BUTTON_R)
+
+        #define BG_TILES_FONT_CHECKBOX_OFF (BG_TILES_FONT_START + 36u) // not str printable
+        #define BG_TILES_FONT_CHECKBOX_ON  (BG_TILES_FONT_START + 37u) // not str printable
+    #define BG_TILES_LAST     (BG_TILES_FONT_CHECKBOX_ON)
 
 #define BG_TILES_FONT_LEN     ((BG_TILES_LAST - BG_TILES_FONT_START) + 1u)
 

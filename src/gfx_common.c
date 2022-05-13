@@ -30,6 +30,12 @@ uint8_t font_letters_decomp_buf[FONT_LETTERS_COUNT * FONT_LETTERS_BYTES_PER_TILE
 // const uint8_t sp_cursor_offset_y[] = { 0, 0, 8, 8 };
 
 
+void sprites_hide_all_offscreen(void) {
+    for (uint8_t c = 0u; c < SP_ID_COUNT_TOTAL; c++)
+        hide_sprite(c);
+}
+
+
 // Blank tile, could be optimized
 const uint8_t tile_blank[] = {0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00};
 
@@ -42,23 +48,6 @@ void print_gotoxy(uint8_t x, uint8_t y, uint8_t target) {
     else
         print_vram_addr = get_win_xy_addr(x,y);
 }
-
-
-/*
-// TODO: DELETE IF NOT IN USE ANYMORE - switch to on-demand printinf to vram or, re-add the font tiles if there is space
-// TODO: OPTIMIZE?
-// Draws a character (only handles A - Z)
-// Advances to next VRAM location
-void print_char(char letter) {
-
-    if (letter == ' ') {
-        set_vram_byte( print_vram_addr, BG_TILES_BLANK_START );
-    }
-    else if ((letter >= 'A') && (letter <= 'Z')) {
-        set_vram_byte( print_vram_addr, (letter - 'A') + BG_TILES_FONT_START);
-    }
-    print_vram_addr++;
-}*/
 
 
 // Print a string on background or window at location set by print_gotoxy()
@@ -100,6 +89,10 @@ void print_str(const char * txt) {
                 case '>': letter = BG_TILES_FONT_BUTTON_R; break;
                 case '^': letter = BG_TILES_FONT_BUTTON_U; break;
                 case '/': letter = BG_TILES_FONT_BUTTON_D; break;
+
+                case '{': letter = BG_TILES_FONT_CHECKBOX_ON; break;
+                case '}': letter = BG_TILES_FONT_CHECKBOX_OFF; break;
+
                 // Default is blank tile for Space or any other unknown chars
                 default:  letter = BG_TILES_BLANK_START; break;
             }
@@ -180,7 +173,8 @@ void gfx_load(void) {
 
 
 
-    // == Cursors ==
+    // ==== Cursors ====
+
     // Shared Cursor Sprite Tile Data
     // Load 4bpp gbcompressed sprite cursor data
     gb_decompress_sprite_data((SP_TILES_CURSOR_START), cursor_tiles);
@@ -216,6 +210,14 @@ void gfx_load(void) {
     set_sprite_prop(SP_ID_CURSOR_LETTER_START + 1u, OAMF_PAL1 | CGB_PAL_WHITE_2); // | S_FLIPX);
     set_sprite_prop(SP_ID_CURSOR_LETTER_START + 2u, OAMF_PAL1 | CGB_PAL_WHITE_2 | S_FLIPX | S_FLIPY); //| S_FLIPY);
     set_sprite_prop(SP_ID_CURSOR_LETTER_START + 3u, OAMF_PAL1 | CGB_PAL_WHITE_2 | S_FLIPX | S_FLIPY);
+
+
+    // Menu Cursor
+    set_sprite_tile(SP_ID_CURSOR_MENU_START + 0u, SP_TILES_CURSOR_MENU_START);
+    set_sprite_tile(SP_ID_CURSOR_MENU_START + 1u, SP_TILES_CURSOR_MENU_START);
+
+    set_sprite_prop(SP_ID_CURSOR_MENU_START + 0u, 0x00u);
+    set_sprite_prop(SP_ID_CURSOR_MENU_START + 1u, S_FLIPY);
 
 
     // Clear window and move it offscreen at the bottom

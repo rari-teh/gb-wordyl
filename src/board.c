@@ -191,6 +191,8 @@ void board_hide_letter_cursor(void) {
 
 
 
+/*
+TODO: delete if no longer used
 // Move the cursor to highlight the current row
 void board_hide_row_cursor(void) {
 
@@ -198,7 +200,7 @@ void board_hide_row_cursor(void) {
         hide_sprite(SP_ID_CURSOR_BOARD_START + i);
     }
 }
-
+*/
 
 #define CURSOR_BOARD_X_POS (((BOARD_TILE_X_START * 8)- 16u) + DEVICE_SPRITE_PX_OFFSET_X)
 

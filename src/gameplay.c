@@ -22,6 +22,8 @@
 #include "window.h"
 #include "stats.h"
 
+#include "settings_menu.h"
+
 #include "gameplay.h"
 
 #include <lang_text.h>
@@ -65,74 +67,28 @@ void show_lose_message(char *correct_word) {
 }
 
 
-void show_options_message(void) {
+void ask_forfeit_round(void) {
+    // Forfeit Round
+    // sets: GAMEPLAY_SET_GAMEOVER
+    if (win_confirm_dialog(__CONFIRM_FORFEIT_STR))
+        gameplay_handle_lose();
+}
 
-    uint8_t  ret_keys_ticked;
 
-    ret_keys_ticked = win_dialog_show_message(OPTIONS_MENU_DIALOG_WIN_Y, __OPTIONS_MENU_STR, NULL);
-    switch (ret_keys_ticked) {
-        case J_LEFT:
-            // Reset Stats
-            if (win_confirm_dialog(__CONFIRM_STATS_RESET_STR)) {
-                stats_reset();
-                win_dialog_show_message(STATS_RESET_DIALOG_WIN_Y, __MESSAGE_STATS_RESET_STR ,NULL);
-            }
-            break;
-
-        case J_A:
-            stats_show();
-            break;
-
-        case J_RIGHT:
-            // Hard mode toggle
-            if (guess_num > 0)
-                win_dialog_show_message(HARD_MODE_CANT_CHANGE_WIN_Y, __MESSAGE_HARD_MODE_CANT_CHANGE_STR, NULL);
-            else {
-                play_sfx(SFX_MENU_ACTION_ACKNOWLEDGE);
-
-                if (game_settings.opt_hard_mode_enabled == true)
-                    game_settings.opt_hard_mode_enabled = false;
-                else game_settings.opt_hard_mode_enabled = true;
-
-                opt_hardmode_display();
-                // For relevant carts, save the reset stats
-                #if defined(CART_31k_1kflash) || defined(CART_mbc5)
-                    cartsave_save_data();
-                #endif
-            }
-            break;
-
-        case J_DOWN:
-            // Auto-fill toggle
-            play_sfx(SFX_MENU_ACTION_ACKNOWLEDGE);
-
-            if (game_settings.opt_autofill_enabled == true)
-                game_settings.opt_autofill_enabled = false;
-            else game_settings.opt_autofill_enabled = true;
-
-            // Going to try and get away with not using this notice for now
-            win_dialog_show_message(AUTOFILL_INFO_WIN_Y,
-                                    (game_settings.opt_autofill_enabled ? __AUTOFILL_ON__STR : __AUTOFILL_OFF__STR), NULL);
-            // For relevant carts, save the reset stats
-            #if defined(CART_31k_1kflash) || defined(CART_mbc5)
-                cartsave_save_data();
-            #endif
-            break;
-
-        case J_UP:
-            // Forfeit Round
-            // sets: GAMEPLAY_SET_GAMEOVER
-            if (win_confirm_dialog(__CONFIRM_FORFEIT_STR))
-                gameplay_handle_lose();
-            break;
+void ask_stats_reset(void) {
+    // Reset Stats
+    if (win_confirm_dialog(__CONFIRM_STATS_RESET_STR)) {
+        stats_reset();
+        win_dialog_show_message(STATS_RESET_DIALOG_WIN_Y, __MESSAGE_STATS_RESET_STR ,NULL);
     }
 }
 
 
 void gameplay_handle_lose(void) {
     // Hide cursor so it doesn't flash between popups
-    board_hide_row_cursor();
-    board_hide_letter_cursor();
+    sprites_hide_all_offscreen();
+        // board_hide_row_cursor();
+        // board_hide_letter_cursor();
     show_lose_message(word);
     stats_update(GAME_NOT_WON, guess_num);
     GAMEPLAY_SET_GAMEOVER;
@@ -177,8 +133,9 @@ void gameplay_handle_guess(void) {
 
             if (game_was_won) {
                 // Hide cursor so it doesn't flash between popups
-                board_hide_row_cursor();
-                board_hide_letter_cursor();
+                sprites_hide_all_offscreen();
+                    // board_hide_row_cursor();
+                    // board_hide_letter_cursor();
                 show_win_message(guess_num);
                 stats_update(GAME_WAS_WON, guess_num);
                 GAMEPLAY_SET_GAMEOVER;
@@ -262,6 +219,17 @@ void gameplay_init_maps(void) {
 }
 
 
+// Called at start of a game round as well as when
+// restoring sprites after showing a popup window
+void gameplay_restore_sprites(void) {
+
+    board_update_row_cursor();
+    board_update_letter_cursor();
+    // This is
+    keyboard_update_cursor();
+}
+
+
 // Runs on startup and before start of a new gameplay round
 void gameplay_restart(void) {
 
@@ -276,16 +244,11 @@ void gameplay_restart(void) {
 
     // Draws initial empty board and keyboard
     board_redraw_clean();
-    board_update_row_cursor();
-    board_update_letter_cursor();
 
+    // Resets keyboard and it's cursor
     keyboard_reset();
 
-    // print_gotoxy(4u,0, PRINT_BKG);
-    // print_str("gb  wordyl\n");
-    // print_gotoxy(19u - 6u, 0u, PRINT_BKG);
-    // print_str("bbbbbr\n");
-
+    gameplay_restore_sprites();
 }
 
 
@@ -335,7 +298,7 @@ void gameplay_run(void)
                         // Require N select presses in a row to spawn menu
                         menu_select_count++;
                         if (menu_select_count >= MENU_SELECT_COUNT_TRIGGER) {
-                            show_options_message();
+                            settings_menu_show();
                             waitpadreleased_lowcpu(J_SELECT);
                             menu_select_count = MENU_SELECT_COUNT_RESET;
                         }

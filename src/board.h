@@ -28,12 +28,13 @@ void board_map_fill();
 
 void board_autofill_matched_letters(void);
 
+void board_update_row_cursor(void);
 void board_update_letter_cursor(void);
+
 void board_hide_letter_cursor(void);
 
-
-void board_hide_row_cursor(void);
-void board_update_row_cursor(void);
+// TODO: delete if no longer used
+// void board_hide_row_cursor(void);
 
 void board_redraw_clean(void);
 void board_render_guess_letter_at_cursor(void);

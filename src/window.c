@@ -13,6 +13,10 @@
 
 #include "window.h"
 #include "lang_text.h"
+#include "gameplay.h"
+
+// Var for calling a function from within the popup window
+void (*p_win_func_run)(void) = NULL;
 
 
 // Draw dialog box outline on the window
@@ -33,6 +37,7 @@ bool win_confirm_dialog(char * str_message) {
 
 // Draw dialog box outline on the window
 uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t * str_2) {
+
     uint8_t win_y_save = WY_REG;
     uint8_t scroll_amt;
     uint8_t ret_keys_ticked;
@@ -40,7 +45,8 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
     // Clear dialog content area
     fill_win_rect(1, 1, DEVICE_SCREEN_WIDTH-2, DEVICE_SCREEN_HEIGHT-1, BG_TILES_BLANK_START );
 
-    HIDE_SPRITES;
+    // Hide any sprites which might float on top of the menu
+    sprites_hide_all_offscreen();
 
     // Show message
     print_gotoxy(1,1, PRINT_WIN);
@@ -63,7 +69,13 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
         wait_vbl_done();
     }
 
-    waitpadticked_lowcpu(J_ANY_KEY);
+    // If a function was specified to run then execute it
+    // Otherwise default is to wait for a keypress and return that
+    if (*p_win_func_run)
+        (*p_win_func_run)();
+    else
+        waitpadticked_lowcpu(J_ANY_KEY);
+
     ret_keys_ticked = KEYS_GET_TICKED();
 
     // Scroll window out of view (with a small ease-out)
@@ -78,7 +90,13 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
         WY_REG += scroll_amt;
         wait_vbl_done();
     }
-    SHOW_SPRITES;
+
+    // The assumption here is that the popup window is always called
+    // from the gameplay board and not anywhere else
+    gameplay_restore_sprites();
+
+    // Reset the optional function that runs in the popup
+    WIN_DIALOG_CLEAR_FUNC_RUN();
 
     return ret_keys_ticked;
 }

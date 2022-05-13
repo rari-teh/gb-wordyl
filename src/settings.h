@@ -5,4 +5,10 @@
 
 void settings_load(void);
 
+void setting_bool_handle_change(bool * p_bool);
+
+void hardmode_handle_change(void);
+void autofill_handle_change(void);
+void soundfx_handle_change(void);
+
 #endif
