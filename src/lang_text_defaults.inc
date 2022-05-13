@@ -50,6 +50,7 @@
 #endif
 
 
+// "^" char gets replaced with a UI checkboxes reflecting option on/off state
 // Leading space on each line is room for Cursor
 // MAX Height is 16
 #define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(11)
@@ -65,7 +66,7 @@
     "\n" \
     " SHOW STATS\n" \
     " FORFEIT ROUND\n" \
-    " RESET STATS\n"
+    " RESET STATS"
 /*
     "RESET STATS\n" \
     "\n" \

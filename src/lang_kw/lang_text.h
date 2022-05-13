@@ -32,19 +32,45 @@
     "GWASK BOTON\n" \
     "HA DALLETH"
 
+
+#undef MENU_Y_EXIT
+#undef MENU_Y_HARD_MODE
+#undef MENU_Y_AUTO_FILL
+#undef MENU_Y_SOUND_FX
+#undef MENU_Y_SHOW_STATS
+#undef MENU_Y_FORFEIT_ROUND
+#undef MENU_Y_RESET_STATS
+// "^" char gets replaced with a UI checkboxes reflecting option on/off state
+// Leading space on each line is room for Cursor
+// MAX Height is 16
 #undef __OPTIONS_MENU_STR
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "DEWISYOW\n" \
+    " ... DEWISYOW ...\n" \
     "\n" \
-    "DISKWEDHES STATS:A\n" \
-    "NIVEL KALES:     >\n" \
-    "OMLENWEL:        /\n" \
+    " KWYTYA ROL\n" \
     "\n" \
-    "KWYTYA TRO:      ^\n" \
-    "DASSETTYA STATS: <\n" \
+    " NIVEL KALES ... ^\n" \
+    " OMLENWEL ...... ^\n" \
+    " SOUND FX ...... ^\n" \
     "\n" \
-    "KWYTYA ROL:    NEB"
+    " DISKWEDHES STATS\n" \
+    " KWYTYA TRO\n" \
+    " DASSETTYA STATS"
+
+// These need to exactly match the menu order & formating above
+// Line 0 is the first line of text
+// menu header               0
+// space                     1
+#define MENU_Y_EXIT          2
+// space                     3
+#define MENU_Y_HARD_MODE     4
+#define MENU_Y_AUTO_FILL     5
+#define MENU_Y_SOUND_FX      6
+// space                     7
+#define MENU_Y_SHOW_STATS    8
+#define MENU_Y_FORFEIT_ROUND 9
+#define MENU_Y_RESET_STATS   10
 
 
 #define CONFIRM_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(6)
