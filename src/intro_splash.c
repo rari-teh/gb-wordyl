@@ -53,9 +53,19 @@ void splash_run(void) {
     // Don't use play_sfx() since that checks if sound is enabled
     // 1) Don't want to gate by that, 2) options haven't yet been loaded from Flash ROM / SRAM
     CBTFX_init(SFX_list[(SFX_EXIT_SPLASH)]);
-    // A little delay for the sfx to play before fade-out
-    if (IS_CGB) delay(1000);
-    else        delay(500);
+
+    // A little delay for the sfx to play before fade-out.
+    // Flash the text so that it doesn't just look stuck if volume is off
+    for (uint8_t c = 0; c < 5; c++) {
+        if (IS_CGB) delay(200);
+        else        delay(100);
+
+        print_gotoxy((DEVICE_SCREEN_WIDTH - (sizeof(__INTRO_PRESS_START_STR) - 1)) / 2u, DEVICE_SCREEN_HEIGHT - 4u, PRINT_BKG);
+        if (c & 0x01)
+            print_str(__INTRO_PRESS_START_STR);
+        else
+            print_str(__INTRO_PRESS_START_STR_BLANK);
+    }
 
 
     fade_out();
