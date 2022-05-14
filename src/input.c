@@ -15,7 +15,7 @@ uint8_t key_repeat_count = 0x00;
 // Allows a loop control to be passed in
 void waitpadreleased_lowcpu(uint8_t button_mask) {
 
-    while (joypad() & J_SELECT) { wait_vbl_done(); }
+    while (joypad() & button_mask) { wait_vbl_done(); }
 
     UPDATE_KEYS_TICKED();
     UPDATE_KEYS();
