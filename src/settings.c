@@ -57,51 +57,22 @@ void settings_load(void) {
 }
 
 
-// General handler for inverting a bool settings option
-// Called from the popup settings menu
-void setting_bool_handle_change(bool * p_bool) {
-
-    if (*p_bool == true) *p_bool = false;
-    else *p_bool = true;
-
-    play_sfx(SFX_MENU_ACTION_ACKNOWLEDGE);
-
-    // For relevant carts, save the reset stats
-    #if defined(CART_31k_1kflash) || defined(CART_mbc5)
-        cartsave_save_data();
-    #endif
-}
-
-
 void hardmode_handle_change(void) {
 
-    if (guess_num > 0)
+    if (guess_num > GUESS_NUM_FIRST)
         win_dialog_show_message(HARD_MODE_CANT_CHANGE_WIN_Y, __MESSAGE_HARD_MODE_CANT_CHANGE_STR, NULL);
     else {
-        setting_bool_handle_change(&game_settings.opt_hard_mode_enabled);
+        if (game_settings.opt_hard_mode_enabled == true) game_settings.opt_hard_mode_enabled = false;
+        else game_settings.opt_hard_mode_enabled = true;
+
+        play_sfx(SFX_MENU_ACTION_ACKNOWLEDGE);
+
+        // For relevant carts, save the reset stats
+        #if defined(CART_31k_1kflash) || defined(CART_mbc5)
+            cartsave_save_data();
+        #endif
+
         opt_hardmode_display();
     }
-}
-
-
-void autofill_handle_change(void) {
-
-    setting_bool_handle_change(&game_settings.opt_autofill_enabled);
-
-    win_dialog_show_message(AUTOFILL_INFO_WIN_Y,
-                            (game_settings.opt_autofill_enabled ? __AUTOFILL_ON__STR : __AUTOFILL_OFF__STR), NULL);
-}
-
-void skip_autofilled_handle_change(void) {
-
-    setting_bool_handle_change(&game_settings.opt_skip_autofilled);
-
-    win_dialog_show_message(SKIP_AUTOFILLED_INFO_WIN_Y,
-                            (game_settings.opt_skip_autofilled ? __SKIP_AUTOFILLED_ON__STR : __SKIP_AUTOFILLED_OFF__STR), NULL);
-}
-
-
-void soundfx_handle_change(void) {
-    setting_bool_handle_change(&game_settings.opt_sound_fx_enabled);
 }
 

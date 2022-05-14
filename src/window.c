@@ -49,7 +49,7 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
     sprites_hide_all_offscreen();
 
     // Show message
-    print_gotoxy(1,1, PRINT_WIN);
+    print_gotoxy(POPUP_WIN_START_X,POPUP_WIN_START_Y, PRINT_WIN);
     print_str(str_1);
 
     // Optional second message

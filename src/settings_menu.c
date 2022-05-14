@@ -17,10 +17,12 @@
 #include "settings_menu.h"
 
 #include <lang_text.h>
+#include <cartsave.h>
 
 #define MENU_MOVE_UP   -1
 #define MENU_MOVE_NONE  0
 #define MENU_MOVE_DOWN  1
+
 
 
 const uint8_t menu_cursor_y_ids[] = {
@@ -38,13 +40,26 @@ const uint8_t menu_cursor_y_ids[] = {
 const void (*menu_funcs[])(void) = {
     NULL, // Exit menu, no function to call
     &hardmode_handle_change,
-    &autofill_handle_change,
-    &skip_autofilled_handle_change,
-    &soundfx_handle_change,
+    NULL, // opt_autofill_enabled
+    NULL, // opt_skip_autofilled
+    NULL, // opt_sound_fx_enabled
     &stats_show,
     &ask_forfeit_round,
     &ask_stats_reset,
 };
+
+// Bool variable pointer table to match each menu item entry
+uint8_t * const p_menu_vars[] = {
+    NULL, // Exit menu, no function to call
+    NULL, // &game_settings.opt_hard_mode_enabled,
+    &game_settings.opt_autofill_enabled,
+    &game_settings.opt_skip_autofilled,
+    &game_settings.opt_sound_fx_enabled,
+    NULL, // Show Stats
+    NULL, // Skip Auto-filled
+    NULL, // Reset Stats
+};
+
 
 #define MENU_ROW_HEIGHT_PX         8u
 #define MENU_CURSOR_X             (8u + DEVICE_SPRITE_PX_OFFSET_X)
@@ -54,7 +69,15 @@ const void (*menu_funcs[])(void) = {
 #define MENU_CURSOR_Y_AT_ROW(row) (WY_REG + (menu_cursor_y_ids[row] * MENU_ROW_HEIGHT_PX) + MENU_CURSOR_Y_BASELINE) // + (MENU_CURSOR_Y_BASELINE - DEVICE_SPRITE_PX_OFFSET_Y))
 
 
+static bool settings_save_required;
 static uint8_t menu_idx;
+static const uint8_t menu_str_template[] = __OPTIONS_MENU_STR;
+static uint8_t menu_str[sizeof(menu_str_template)];
+
+
+static void menu_update_cursor(int8_t);
+static void settings_menu_render_text(void);
+
 
 // Hide the menu cursor
 inline void menu_hide_cursor(void) {
@@ -64,9 +87,66 @@ inline void menu_hide_cursor(void) {
 }
 
 
+// Inverts a boolean variable passed in from the var pointer table
+// Only handles bool pointer vars
+inline void settings_menu_change_var(bool * p_setting) {
+
+    // Queue up a cart save if needed
+    settings_save_required = true;
+
+    if (*p_setting) *p_setting = false;
+    else *p_setting = true;
+
+    play_sfx(SFX_CURSOR_MOVE );
+    //play_sfx(SFX_MENU_ACTION_ACKNOWLEDGE);
+
+    // Redraw the menu with updated settings
+    settings_menu_render_text();
+    print_gotoxy(POPUP_WIN_START_X,POPUP_WIN_START_Y, PRINT_WIN);
+    print_str(menu_str);
+}
+
+
+// Display menu in a popup window with a cursor
+void settings_menu_show(void) {
+
+    settings_save_required = false;
+
+    settings_menu_render_text();
+
+    WIN_DIALOG_SET_FUNC_RUN(&menu_run);
+    win_dialog_show_message(OPTIONS_MENU_DIALOG_WIN_Y, menu_str, NULL);
+
+
+    // SDCC BUG?
+    // Function pointer var needs to be static local or global
+    // Otherwise SDCC generates "jp NZ, (hl)"
+    // And gets the error: ?ASlink-Warning-Undefined Global 'hl' referenced by module 'settings_menu'
+    //
+    // if (menu_funcs[menu_idx])
+    //     (*(menu_funcs[menu_idx]))();
+    //
+    // void (*p_func)(void) = menu_funcs[menu_idx];
+    //
+    // Call selected menu item handler
+    static void (*p_func)(void) = NULL;
+    p_func = menu_funcs[menu_idx];
+
+    if (p_func)
+        p_func();
+
+    #if defined(CART_31k_1kflash) || defined(CART_mbc5)
+        if (settings_save_required) {
+            cartsave_save_data();
+        }
+    #endif
+
+}
+
+
 // Move the cursor to highlight the current row
 // move_dir should only every be: -1, 0, +1
-void menu_update_cursor(int8_t move_dir) {
+static void menu_update_cursor(int8_t move_dir) {
 
     if (move_dir) {
 
@@ -89,12 +169,9 @@ void menu_update_cursor(int8_t move_dir) {
 }
 
 
-
-const uint8_t menu_str_template[] = __OPTIONS_MENU_STR;
-uint8_t menu_str[sizeof(menu_str_template)];
-
-// Display menu in a popup window with a cursor
-void settings_menu_show(void) {
+// Prepares settings text for the popup
+// Replaces "^" characters with on/off status checkboxes
+static void settings_menu_render_text(void) {
 
     // Reset display template
     // memcpy(menu_str, menu_str_template, sizeof(menu_str_template));
@@ -110,29 +187,7 @@ void settings_menu_show(void) {
     str_bool_checkbox_at_X(menu_str, game_settings.opt_skip_autofilled);
     str_bool_checkbox_at_X(menu_str, game_settings.opt_sound_fx_enabled);
     // str_bool_checkbox_at_X(menu_str, game_settings.opt_tile_flip_enabled);
-
-    WIN_DIALOG_SET_FUNC_RUN(&menu_run);
-    win_dialog_show_message(OPTIONS_MENU_DIALOG_WIN_Y, menu_str, NULL);
-
-
-    // SDCC BUG?
-    // Function pointer var needs to be static local or global
-    // Otherwise SDCC generates "jp NZ, (hl)"
-    // And gets the error: ?ASlink-Warning-Undefined Global 'hl' referenced by module 'settings_menu'
-    //
-    // if (menu_funcs[menu_idx])
-    //     (*(menu_funcs[menu_idx]))();
-    //
-    // void (*p_func)(void) = menu_funcs[menu_idx];
-    //
-    // Call selected menu item handler
-    static void (*p_func)(void) = NULL;
-    p_func = menu_funcs[menu_idx];
-
-    if (p_func)
-        p_func();
 }
-
 
 
 // Small loop that runs from within the popup menu
@@ -159,14 +214,24 @@ void menu_run(void) {
                       // TODO: B to exit is nice, but will people get confused?
                       // Use B to exit the menu regardless of where the cursor is
             case J_B: menu_idx = MENU_DEFAULT_EXIT;
-                     // Fall through to exit below
+                      menu_hide_cursor();
+                      return;
+                      break; // redundant
 
             case J_START: // Fall through to exit below
-            case J_A:   // Hide the cursor here so that it doesn't show
-                        // while the popup window is retracting
-                        menu_hide_cursor();
-                        return;
-                        break; // redundant
+            case J_A:
+                        // If it has a variable, invert it and redraw
+                        if (p_menu_vars[menu_idx])
+                            settings_menu_change_var(p_menu_vars[menu_idx]);
+
+                        // If it has a function, exit the menu and call it
+                        if (menu_funcs[menu_idx] || (menu_idx == MENU_DEFAULT_EXIT)) {
+                            // Hide the cursor here so that it doesn't show
+                            // while the popup window is retracting
+                            menu_hide_cursor();
+                            return;
+                        }
+                        break;
         }
     }
 }

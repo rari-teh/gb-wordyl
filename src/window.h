@@ -3,6 +3,8 @@
 #ifndef _WINDOW_H
 #define _WINDOW_H
 
+#define POPUP_WIN_START_X 1u
+#define POPUP_WIN_START_Y 1u
 
 #define WIN_DIALOG_SET_FUNC_RUN(p_func) (p_win_func_run = p_func)
 #define WIN_DIALOG_CLEAR_FUNC_RUN() (p_win_func_run = NULL)
