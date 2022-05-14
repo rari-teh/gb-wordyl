@@ -18,7 +18,7 @@
 // #define TEST_BENCHMARK
 // #define TEST_ANSWERWORDS
 
-// Cheats for testing
+// ==== Cheats for testing ====
 // #define DEBUG_REVEAL_WHILE_TYPE
 // #define DEBUG_FORCE_WORD "AMPLE"
 // #define DEBUG_FORCE_WORD "HUMAN"
@@ -41,6 +41,8 @@
 
 
 // Controls board size and many other things
+#define GUESS_NUM_RESET 0
+#define GUESS_NUM_FIRST (GUESS_NUM_RESET)
 #define WORD_LENGTH 5
 #define MAX_GUESSES 6
 
@@ -75,6 +77,7 @@ extern uint8_t guess_letter_cursor;
 extern uint8_t prev_guess_eval[WORD_LENGTH];
 extern uint8_t guess_eval[WORD_LENGTH];
 
+extern bool guess_auto_filled[WORD_LENGTH+1];
 extern char exact_matches[WORD_LENGTH+1];
 extern char prev_guess[WORD_LENGTH+1];
 extern char guess[WORD_LENGTH+1];
@@ -110,7 +113,7 @@ typedef struct settings_rec {
         // Not implemented
         uint8_t opt_music_type;
         bool opt_tile_flip_enabled;
-        bool opt_lock_matched;
+        bool opt_skip_autofilled;
 } settings_rec;
 
 extern settings_rec game_settings;

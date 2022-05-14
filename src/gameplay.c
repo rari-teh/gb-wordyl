@@ -156,6 +156,7 @@ void gameplay_handle_guess(void) {
             for (uint8_t c = 0; c < WORD_LENGTH; c++)
                 guess[c] = 0;
 
+            board_reset_autofilled_flags();
             // If requested, try to auto-fill next guess if game is not over
             if ((game_settings.opt_autofill_enabled) && (game_state != GAME_STATE_OVER))
                 board_autofill_matched_letters();
@@ -234,13 +235,15 @@ void gameplay_restore_sprites(void) {
 void gameplay_restart(void) {
 
     // Reset round level vars
-    guess_num = 0;
+    guess_num = GUESS_NUM_RESET;
     guess_letter_cursor = LETTER_CURSOR_START;
 
+    // Reset guess and exact match arrays
     for (uint8_t c = 0; c < WORD_LENGTH; c++) {
         guess[c] = 0;
         exact_matches[c] = 0;
     }
+    board_reset_autofilled_flags();
 
     // Draws initial empty board and keyboard
     board_redraw_clean();

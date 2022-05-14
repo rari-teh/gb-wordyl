@@ -27,6 +27,7 @@ const uint8_t menu_cursor_y_ids[] = {
     MENU_Y_EXIT,
     MENU_Y_HARD_MODE,
     MENU_Y_AUTO_FILL,
+    MENU_Y_SKIP_FILLED,
     MENU_Y_SOUND_FX,
     MENU_Y_SHOW_STATS,
     MENU_Y_FORFEIT_ROUND,
@@ -38,6 +39,7 @@ const void (*menu_funcs[])(void) = {
     NULL, // Exit menu, no function to call
     &hardmode_handle_change,
     &autofill_handle_change,
+    &skip_autofilled_handle_change,
     &soundfx_handle_change,
     &stats_show,
     &ask_forfeit_round,
@@ -105,9 +107,9 @@ void settings_menu_show(void) {
 
     str_bool_checkbox_at_X(menu_str, game_settings.opt_hard_mode_enabled);
     str_bool_checkbox_at_X(menu_str, game_settings.opt_autofill_enabled);
+    str_bool_checkbox_at_X(menu_str, game_settings.opt_skip_autofilled);
     str_bool_checkbox_at_X(menu_str, game_settings.opt_sound_fx_enabled);
     // str_bool_checkbox_at_X(menu_str, game_settings.opt_tile_flip_enabled);
-    // str_bool_checkbox_at_X(menu_str, game_settings.opt_lock_matched);
 
     WIN_DIALOG_SET_FUNC_RUN(&menu_run);
     win_dialog_show_message(OPTIONS_MENU_DIALOG_WIN_Y, menu_str, NULL);

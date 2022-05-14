@@ -116,6 +116,14 @@ void board_map_fill() {
 }
 
 
+// Reset guess auto-filled flags
+// Should be called **before** autofill is called at start of a new guess and game
+void board_reset_autofilled_flags(void) {
+    for (uint8_t c=0; c < WORD_LENGTH; c++)
+        guess_auto_filled[c] = false;
+}
+
+
 // Auto-populate current guess with exact matches from previous guess
 //
 // Can be called manually (hotkey) or automatically via an option
@@ -126,16 +134,19 @@ void board_autofill_matched_letters(void) {
     if (game_settings.opt_autofill_enabled)
         BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_NONE);
 
-    // Don't auto-fill on the first guess (nothing to fill with)
+    // Don't auto-fill on the first guess (nothing to fill with) nor last guess
     if ((guess_num > 0) && (guess_num < MAX_GUESSES)) {
         // Fill in end to start for ease of setting the cursor left-most
         for (int8_t c = WORD_LENGTH - 1; c >= 0; c--) {
 
             if (exact_matches[c]) {
                 play_sfx(SFX_TILE_REVEAL_RESULT);
-                
+
                 // Copy letter into current guess
+                // and flag as auto-filled
                 guess[c] = exact_matches[c];
+                guess_auto_filled[c] = true;
+
                 // Make sure autofill coloring will draw corerctly
                 guess_eval[c] = LETTER_RIGHT_PLACE;
                 board_draw_letter(guess_num, c, guess[c], BOARD_HIGHLIGHT_YES);
@@ -259,6 +270,7 @@ void board_render_guess_letter_at_cursor(void) {
 }
 
 
+bool opt_skip_matched = true;
 
 // Add a guess letter to the board
 void board_add_guess_letter(void) {
@@ -271,8 +283,21 @@ void board_add_guess_letter(void) {
     }
 
     // Advance the cursor if applicible
-    if (guess_letter_cursor < LETTER_CURSOR_MAX) {
-        guess_letter_cursor++;
+    if (game_settings.opt_skip_autofilled && (guess_num != (GUESS_NUM_FIRST))) {
+        // If skip autofilled is enabled AND it's not the first guess
+        // then skip over auto-filled board letter slots
+        for (int8_t c = guess_letter_cursor + 1; c < WORD_LENGTH; c++) {
+            // Only select slot if not currently auto-filled
+            if (guess_auto_filled[c] == false) {
+                guess_letter_cursor = c;
+                break;
+            }
+        }
+    } else {
+        // Default behavior: move to next letter regardless if auto-match
+        if (guess_letter_cursor < LETTER_CURSOR_MAX) {
+            guess_letter_cursor++;
+        }
     }
 }
 
@@ -282,12 +307,32 @@ void board_remove_guess_letter(void) {
 
     // If current letter is blank, act as Backspace key
     // otherwise behave as a Delete key
-    if (! guess[guess_letter_cursor])
-        if (guess_letter_cursor > LETTER_CURSOR_START)
-            guess_letter_cursor--;
+    if (! guess[guess_letter_cursor]) {
+
+        // Advance the cursor if applicible
+        if (game_settings.opt_skip_autofilled && (guess_num != (GUESS_NUM_FIRST))) {
+            // If skip autofilled is enabled AND it's not the first guess
+            // then skip over auto-filled board letter slots
+            for (int8_t c = guess_letter_cursor - 1; c >= 0; c--) {
+                // Only select slot if not currently auto-filled
+                if (guess_auto_filled[c] == false) {
+                    guess_letter_cursor = c;
+                    break;
+                }
+            }
+        } else {
+            // Default behavior: move to previous letter regardless if auto-match
+            if (guess_letter_cursor > LETTER_CURSOR_START) {
+                guess_letter_cursor--;
+            }
+        }
+
+    }
 
     if (guess[guess_letter_cursor]) {
+        // Clear letter and remove potential auto-fill flag
         guess[guess_letter_cursor] = 0;
+        guess_auto_filled[guess_letter_cursor] = false;
         board_render_guess_letter_at_cursor();
     }
 }

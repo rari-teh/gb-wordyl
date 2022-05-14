@@ -52,11 +52,14 @@
     "\n" \
     " NIVEL KALES ... ^\n" \
     " OMLENWEL ...... ^\n" \
+    " SKIP AUTOFILLED ^\n" \
     " SOUND FX ...... ^\n" \
     "\n" \
     " DISKWEDHES STATS\n" \
     " KWYTYA TRO\n" \
     " DASSETTYA STATS"
+
+// "SKIP FILLED" is ok for "SKIP AUTOFILLED"
 
 // These need to exactly match the menu order & formating above
 // Line 0 is the first line of text
@@ -66,11 +69,12 @@
 // space                     3
 #define MENU_Y_HARD_MODE     4
 #define MENU_Y_AUTO_FILL     5
-#define MENU_Y_SOUND_FX      6
-// space                     7
-#define MENU_Y_SHOW_STATS    8
-#define MENU_Y_FORFEIT_ROUND 9
-#define MENU_Y_RESET_STATS   10
+#define MENU_Y_SKIP_FILLED   6
+#define MENU_Y_SOUND_FX      7
+// space                     8
+#define MENU_Y_SHOW_STATS    9
+#define MENU_Y_FORFEIT_ROUND 10
+#define MENU_Y_RESET_STATS   11
 
 
 #define CONFIRM_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(6)
@@ -92,6 +96,11 @@
 #undef __AUTOFILL_OFF__STR
 #define __AUTOFILL_ON__STR "OMLENWEL: YN FYW"
 #define __AUTOFILL_OFF__STR "OMLENWEL: YN FAROW"
+
+#undef __SKIP_AUTOFILLED_ON__STR
+#undef __SKIP_AUTOFILLED_OFF__STR
+#define __SKIP_AUTOFILLED_ON__STR "SKIP\n  AUTO FILLED: ON"
+#define __SKIP_AUTOFILLED_OFF__STR "SKIP\n  AUTO FILLED: OFF"
 
 
 // Display hard mode indicator at top of screen

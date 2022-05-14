@@ -53,7 +53,7 @@
 // "^" char gets replaced with a UI checkboxes reflecting option on/off state
 // Leading space on each line is room for Cursor
 // MAX Height is 16
-#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(11)
+#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(12)
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
     " ... OPTIONS ...\n" \
@@ -62,6 +62,7 @@
     "\n" \
     " HARD MODE  .... ^\n" \
     " AUTO FILL  .... ^\n" \
+    " SKIP AUTOFILLED ^\n" \
     " SOUND FX  ..... ^\n" \
     "\n" \
     " SHOW STATS\n" \
@@ -74,6 +75,10 @@
     "LOCK MATCHED  .. ^"
 */
 
+// Changes here also need to be applied in settings_menu.c
+//       menu_cursor_y_ids[] = {
+//      (*menu_funcs[])(void) = {
+//
 // These need to exactly match the menu order & formating above
 // Line 0 is the first line of text
 // menu header               0
@@ -82,11 +87,12 @@
 // space                     3
 #define MENU_Y_HARD_MODE     4
 #define MENU_Y_AUTO_FILL     5
-#define MENU_Y_SOUND_FX      6
-// space                     7
-#define MENU_Y_SHOW_STATS    8
-#define MENU_Y_FORFEIT_ROUND 9
-#define MENU_Y_RESET_STATS   10
+#define MENU_Y_SKIP_FILLED   6
+#define MENU_Y_SOUND_FX      7
+// space                     8
+#define MENU_Y_SHOW_STATS    9
+#define MENU_Y_FORFEIT_ROUND 10
+#define MENU_Y_RESET_STATS   11
 
 
 
@@ -106,6 +112,12 @@
 #define AUTOFILL_INFO_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
 #define __AUTOFILL_ON__STR "AUTO FILL: ON"
 #define __AUTOFILL_OFF__STR "AUTO FILL: OFF"
+
+#define SKIP_AUTOFILLED_INFO_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(3)
+#define __SKIP_AUTOFILLED_ON__STR "SKIP\n  AUTO FILLED: ON"
+#define __SKIP_AUTOFILLED_OFF__STR "SKIP\n  AUTO FILLED: OFF"
+
+
 
 
 // Display hard mode indicator just above keyboard on right

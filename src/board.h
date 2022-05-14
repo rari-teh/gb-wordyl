@@ -26,6 +26,7 @@ extern const uint8_t * p_board_layout;
 
 void board_map_fill();
 
+void board_reset_autofilled_flags(void);
 void board_autofill_matched_letters(void);
 
 void board_update_row_cursor(void);

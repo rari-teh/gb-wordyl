@@ -19,8 +19,9 @@
 void options_reset() {
     game_settings.opt_hard_mode_enabled = false;
     game_settings.opt_autofill_enabled = false;
+    game_settings.opt_sound_fx_enabled = true;
+    game_settings.opt_skip_autofilled = false;
         // Not implemented
-        game_settings.opt_sound_fx_enabled = true;
         game_settings.opt_music_type = 1;
         game_settings.opt_tile_flip_enabled = true;
 
@@ -89,6 +90,14 @@ void autofill_handle_change(void) {
 
     win_dialog_show_message(AUTOFILL_INFO_WIN_Y,
                             (game_settings.opt_autofill_enabled ? __AUTOFILL_ON__STR : __AUTOFILL_OFF__STR), NULL);
+}
+
+void skip_autofilled_handle_change(void) {
+
+    setting_bool_handle_change(&game_settings.opt_skip_autofilled);
+
+    win_dialog_show_message(SKIP_AUTOFILLED_INFO_WIN_Y,
+                            (game_settings.opt_skip_autofilled ? __SKIP_AUTOFILLED_ON__STR : __SKIP_AUTOFILLED_OFF__STR), NULL);
 }
 
 

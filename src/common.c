@@ -22,6 +22,7 @@ bool guess_letter_used[WORD_LENGTH];
 uint8_t guess_num;
 uint8_t guess_letter_cursor;
 
+bool guess_auto_filled[WORD_LENGTH+1];
 char exact_matches[WORD_LENGTH+1]; // Used for auto-fill of previous exact matched letters
 char prev_guess[WORD_LENGTH+1]; // Used for hard-mode enforcement
 char guess[WORD_LENGTH+1]; // Current guess
@@ -84,6 +85,8 @@ void str_u16_left_at_X(uint8_t * p_str, uint16_t num) {
 // Check a guess word for letter matches and marks
 // them as LETTER_NOT_IN_WORD, LETTER_WRONG_PLACE or LETTER_RIGHT_PLACE
 // Original: arpruss. Optimized some
+//
+// Called after a user has submitted a guess (which validated as a dictionary word)
 void evaluate_letters(char* guess) {
 
     // First scan word for exact letter matches
