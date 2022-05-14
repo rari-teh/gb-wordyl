@@ -118,7 +118,7 @@ void settings_menu_show(void) {
     // Otherwise SDCC generates "jp NZ, (hl)"
     // And gets the error: ?ASlink-Warning-Undefined Global 'hl' referenced by module 'settings_menu'
     //
-    // if (*(menu_funcs[menu_idx]))
+    // if (menu_funcs[menu_idx])
     //     (*(menu_funcs[menu_idx]))();
     //
     // void (*p_func)(void) = menu_funcs[menu_idx];
@@ -127,8 +127,8 @@ void settings_menu_show(void) {
     static void (*p_func)(void) = NULL;
     p_func = menu_funcs[menu_idx];
 
-    if (*p_func)
-        (*p_func)();
+    if (p_func)
+        p_func();
 }
 
 
