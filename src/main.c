@@ -105,7 +105,6 @@ void main() {
                 break;
 
             case GAME_STATE_OVER:
-                stats_show();
                 fade_out();
                 game_state = GAME_STATE_RESTART;
                 break;

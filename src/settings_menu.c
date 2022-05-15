@@ -114,6 +114,10 @@ void settings_menu_show(void) {
 
     settings_menu_render_text();
 
+    // Prevent the cursor from flashing between popups
+    // (The window dialog will handle hiding them)
+    WIN_DIALOG_RESTORE_SPRITES_AFTER_NO;
+
     WIN_DIALOG_SET_FUNC_RUN(&menu_run);
     win_dialog_show_message(OPTIONS_MENU_DIALOG_WIN_Y, menu_str, NULL);
 
@@ -141,6 +145,9 @@ void settings_menu_show(void) {
         }
     #endif
 
+    // Restore normal sprite hiding behavior
+    WIN_DIALOG_RESTORE_SPRITES_AFTER_YES;
+    gameplay_restore_sprites();
 }
 
 

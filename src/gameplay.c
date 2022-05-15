@@ -32,8 +32,6 @@
 #define GAMEPLAY_SET_GAMEOVER  game_state = GAME_STATE_OVER
 
 
-// TODO: dialogs.c
-
 void show_intro_message(void) {
 
     win_dialog_show_message(INTRO_DIALOG_WIN_Y, __INTRO_MESSAGE_STR, NULL);
@@ -67,14 +65,17 @@ void show_lose_message(char *correct_word) {
 }
 
 
+// Called from Menu
 void ask_forfeit_round(void) {
     // Forfeit Round
     // sets: GAMEPLAY_SET_GAMEOVER
-    if (win_confirm_dialog(__CONFIRM_FORFEIT_STR))
-        gameplay_handle_lose();
+    if (win_confirm_dialog(__CONFIRM_FORFEIT_STR)) {
+        gameplay_handle_gameover(GAME_NOT_WON);
+    }
 }
 
 
+// Called from Menu
 void ask_stats_reset(void) {
     // Reset Stats
     if (win_confirm_dialog(__CONFIRM_STATS_RESET_STR)) {
@@ -84,13 +85,31 @@ void ask_stats_reset(void) {
 }
 
 
-void gameplay_handle_lose(void) {
-    // Hide cursor so it doesn't flash between popups
-    sprites_hide_all_offscreen();
-        // board_hide_row_cursor();
-        // board_hide_letter_cursor();
-    show_lose_message(word);
-    stats_update(GAME_NOT_WON, guess_num);
+// Called if:
+// - The guess matched the word  : game_was_won == true
+// - The last guess was wrong    : game_was_won == false && guess_num == MAX_GUESSES
+// - The user forfeited the game : game_was_won == false
+// sets: GAMEPLAY_SET_GAMEOVER
+void gameplay_handle_gameover(bool game_was_won) {
+
+    // Prevent the cursor from flashing between popups
+    // (The window dialog will handle hiding them)
+    WIN_DIALOG_RESTORE_SPRITES_AFTER_NO;
+
+    if (game_was_won)
+        show_win_message(guess_num);
+    else
+        show_lose_message(word);
+
+    stats_update(game_was_won, guess_num);
+    stats_show();
+
+    // Restore normal sprite hiding behavior
+    WIN_DIALOG_RESTORE_SPRITES_AFTER_YES;
+
+    // gameplay_restart() will handle restoring the sprites
+    // at the start of the next round
+
     GAMEPLAY_SET_GAMEOVER;
 }
 
@@ -120,29 +139,21 @@ void gameplay_handle_guess(void) {
         else {
 
             // Otherwise process the guess word
+            //
+            // If it's reached this point, the guess is a valid dictionary word
+            // and has passed hard-mode criteria (if needed)
 
             board_draw_word(guess_num, guess, BOARD_HIGHLIGHT_YES);
             guess_num += 1;
             keyboard_update_from_guess();
-            // keyboard_update_cursor();
 
             // == Handle Game Over scenarios ==
 
             // Check for correct match
             bool game_was_won = (strcmp(word, guess) == 0);
 
-            if (game_was_won) {
-                // Hide cursor so it doesn't flash between popups
-                sprites_hide_all_offscreen();
-                    // board_hide_row_cursor();
-                    // board_hide_letter_cursor();
-                show_win_message(guess_num);
-                stats_update(GAME_WAS_WON, guess_num);
-                GAMEPLAY_SET_GAMEOVER;
-            }
-            else if (guess_num == MAX_GUESSES) {
-                // sets: GAMEPLAY_SET_GAMEOVER;
-                gameplay_handle_lose();
+            if (game_was_won || (guess_num == MAX_GUESSES)) {
+                gameplay_handle_gameover(game_was_won);
             } else {
                 guess_letter_cursor = LETTER_CURSOR_START; // reset letter cursor to start of row
                 board_update_row_cursor();

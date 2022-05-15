@@ -20,7 +20,7 @@ void show_lose_message(char *correct_word);
 void ask_forfeit_round(void);
 void ask_stats_reset(void);
 
-void gameplay_handle_lose(void);
+void gameplay_handle_gameover(bool);
 void gameplay_handle_guess(void);
 
 void gameplay_restore_sprites(void);

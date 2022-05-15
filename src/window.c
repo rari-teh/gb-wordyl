@@ -17,6 +17,7 @@
 
 // Var for calling a function from within the popup window
 void (*p_win_func_run)(void) = NULL;
+bool win_restore_sprites_after = true;
 
 
 // Draw dialog box outline on the window
@@ -93,7 +94,8 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
 
     // The assumption here is that the popup window is always called
     // from the gameplay board and not anywhere else
-    gameplay_restore_sprites();
+    if (win_restore_sprites_after)
+        gameplay_restore_sprites();
 
     // Reset the optional function that runs in the popup
     WIN_DIALOG_CLEAR_FUNC_RUN();
