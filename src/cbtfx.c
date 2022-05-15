@@ -115,22 +115,22 @@ void CBTFX_update_isr(void) __interrupt __naked {
         ; // if (CBTFX_size != 0){ // If we have an SFX to play...
         ld  a, (#_CBTFX_size)
         or  a, a
-        jp  Z, .cbtfx_done$
+        jp  Z, .cbtfx_done
 
         ; // if(CBTFX_repeater != 0){ // If we are still playing a frame
         ld  a, (#_CBTFX_repeater)
         or  a, a
-        jr  Z, .cbtfx_play_update$
+        jr  Z, .cbtfx_play_update
 
             ; // Still repeating, decrement and exit
             // CBTFX_repeater--; // Remove one from the frame counter
             dec a
             ld  (#_CBTFX_repeater), a
-            jp  .cbtfx_done$
+            jp  .cbtfx_done
 
 
         // Continue playing current FX
-        .cbtfx_play_update$:
+        .cbtfx_play_update:
             ; // Load _CBTFX_pointer into HL
             ; //
             ; // Load the frame's length
@@ -164,14 +164,14 @@ void CBTFX_update_isr(void) __interrupt __naked {
                 ;// xor a
                 ;//
                 ;// bit 7, c
-                ;//     jr  Z, .cbtfx_skip_ch2_skip_mask$
+                ;//     jr  Z, .cbtfx_skip_ch2_skip_mask
                 ;//     or  a, #0x22
-                ;// .cbtfx_skip_ch2_skip_mask$:
+                ;// .cbtfx_skip_ch2_skip_mask:
 
                 ;// bit 5, c
-                ;// jr  Z, .cbtfx_skip_ch4_skip_mask$
+                ;// jr  Z, .cbtfx_skip_ch4_skip_mask
                 ;//     or  a, #0x88
-                ;// .cbtfx_skip_ch4_skip_mask$:
+                ;// .cbtfx_skip_ch4_skip_mask:
 
             ; // Mask out the CH2 and CH4 pan values
             ; // src/cbtfx.c:55: NR51_REG &= ~mask;
@@ -201,7 +201,7 @@ void CBTFX_update_isr(void) __interrupt __naked {
             ld  c, a
 
             bit 7, c
-            jr  Z, .cbtfx_skip_ch2_env_zero$
+            jr  Z, .cbtfx_skip_ch2_env_zero
 
                 ld   a, (hl+)
                 ldh  (_NR21_REG + 0), a
@@ -209,19 +209,19 @@ void CBTFX_update_isr(void) __interrupt __naked {
                 ld   a, (hl)
                 and  a, #0xF0
                 ldh  (_NR22_REG + 0), a
-            .cbtfx_skip_ch2_env_zero$:
+            .cbtfx_skip_ch2_env_zero:
 
             ; // if (CBTFX_ch_used & 32){
             ; //     NR42_REG = *CBTFX_pointer << 4; // Volume for the noise channel is the lower 4 bits of the same byte
             ; // }
             bit 5, c
-            jr  Z, .cbtfx_skip_ch4_vol$
+            jr  Z, .cbtfx_skip_ch4_vol
 
                 ld   a, (hl)
                 swap a
                 and  #0xF0
                 ldh  (_NR42_REG + 0), a
-            .cbtfx_skip_ch4_vol$:
+            .cbtfx_skip_ch4_vol:
 
             ; // CBTFX_pointer++;
             inc  hl
@@ -232,14 +232,14 @@ void CBTFX_update_isr(void) __interrupt __naked {
             ; //     NR24_REG = *CBTFX_pointer++; // Higher 3 bits of the frequency + making sure the length isn't used and triggering the channel
             ; // }
             bit 7, c
-            jr  Z, .cbtfx_skip_ch2_data$
+            jr  Z, .cbtfx_skip_ch2_data
 
                 ld   a, (hl+)
                 ldh  (_NR23_REG + 0), a
 
                 ld   a, (hl+)
                 ldh  (_NR24_REG + 0), a
-            .cbtfx_skip_ch2_data$:
+            .cbtfx_skip_ch2_data:
 
             ; // If CH4 isn't used, we omit this data
             ; // if (CBTFX_ch_used & 32) {
@@ -247,14 +247,14 @@ void CBTFX_update_isr(void) __interrupt __naked {
             ; //     NR44_REG = 0x80; // Trigger the noise channel
             ; // }
             bit 5, c
-            jr  Z, .cbtfx_skip_ch4_data$
+            jr  Z, .cbtfx_skip_ch4_data
 
                 ld   a, (hl+)
                 ldh  (_NR43_REG + 0), a
 
                 ld   a, #0x80
                 ldh  (_NR44_REG + 0), a
-            .cbtfx_skip_ch4_data$:
+            .cbtfx_skip_ch4_data:
 
 
             ; // CBTFX_size--;
@@ -262,7 +262,7 @@ void CBTFX_update_isr(void) __interrupt __naked {
             ld  a, (#_CBTFX_size)
             dec a
             ld  (#_CBTFX_size), a
-            jp  NZ, .cbtfx_play_update_done$
+            jp  NZ, .cbtfx_play_update_done
 
                 xor a
 
@@ -274,34 +274,34 @@ void CBTFX_update_isr(void) __interrupt __naked {
                 ; //     NR21_REG = NR22_REG = NR23_REG = NR24_REG = 0;
                 ; // }
                 bit 7, c
-                jr  Z, .cbtfx_skip_ch2_zero$
+                jr  Z, .cbtfx_skip_ch2_zero
 
                     ldh  (_NR21_REG + 0), a
                     ldh  (_NR22_REG + 0), a
                     ldh  (_NR23_REG + 0), a
                     ldh  (_NR24_REG + 0), a
-                .cbtfx_skip_ch2_zero$:
+                .cbtfx_skip_ch2_zero:
 
                 ; // if (CBTFX_ch_used & 32){
                 ; //     NR41_REG = NR42_REG = NR43_REG = NR44_REG = 0;
                 ; // }
                 bit 5, c
-                jr  Z, .cbtfx_skip_ch4_zero$
+                jr  Z, .cbtfx_skip_ch4_zero
 
                     ldh  (_NR41_REG + 0), a
                     ldh  (_NR42_REG + 0), a
                     ldh  (_NR43_REG + 0), a
                     ldh  (_NR44_REG + 0), a
-                .cbtfx_skip_ch4_zero$:
+                .cbtfx_skip_ch4_zero:
 
-            .cbtfx_play_update_done$:
+            .cbtfx_play_update_done:
             ; // Store updated CBT pointer address
             ld  a, l
             ld  (_CBTFX_pointer + 0), a
             ld  a, h
             ld  (_CBTFX_pointer + 1), a
 
-        .cbtfx_done$:
+        .cbtfx_done:
 
         pop bc
         pop hl

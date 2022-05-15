@@ -517,7 +517,7 @@ void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
     // const AnswerBucket_t* bucket = answerBuckets;
     ld    de, #_answerBitmap
     ld    hl, #_answerBuckets
-    .preload_loop$:
+    .preload_loop:
 
         push  de
         // while (answer_word_num >= bucket->numWords)
@@ -529,7 +529,7 @@ void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
         ld    a, b
         sbc   a, #0x00
         // If answer_word_num was smaller, exit loop
-        jr    c, .preload_loop_done$
+        jr    c, .preload_loop_done
         // True: (answer_word_num >= bucket->numWords)
         // save result from above: answer_word_num -= bucket->numWords;
         ld    b, a
@@ -547,9 +547,9 @@ void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
         ld    d, a
         inc   hl
 
-    jr    .preload_loop$
+    jr    .preload_loop
 
-    .preload_loop_done$:
+    .preload_loop_done:
     // Restore answer array index pointer
     // Was pushed as de
     pop   hl
@@ -563,7 +563,7 @@ void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
     ld    d, #0x08
 
     // Load first byte of bit-packed array into a, increment array pointer
-    .lookup_loop$:
+    .lookup_loop:
 
         // c = *b++;
         ld   a, (hl+)
@@ -572,38 +572,38 @@ void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
         // Less cycles when not taken
         // if (c == 0) {
         or    a, a
-        jr    z, .lookup_loop$
+        jr    z, .lookup_loop
 
 
         // for (mask = 1 ; mask ; mask <<= 1) {
         // e is loop control
         ld     e, d
-        .bitmask_loop$:
+        .bitmask_loop:
 
             // if (c & mask) {
             // Downshift A into carry
             rrca
             // Skip answer word decrement if lowest bit was zero
-            jr   nc, .bitmask_loop_check_exit$
+            jr   nc, .bitmask_loop_check_exit
 
             // Otherwise decrement word number counter
             // if (n == 0) return
             dec  c
-            jr   nz, .bitmask_loop_check_exit$
+            jr   nz, .bitmask_loop_check_exit
 
             dec  b
-            jr   z, .lookup_done$
+            jr   z, .lookup_done
 
-            .bitmask_loop_check_exit$:
+            .bitmask_loop_check_exit:
             // for (mask = 1 ; mask ; mask <<= 1) {
             dec    e
-        jr     nz, .bitmask_loop$
+        jr     nz, .bitmask_loop
         // end _bitmask_loop$:
 
-    jr     .lookup_loop$
+    jr     .lookup_loop
     // end _lookup_loop$:
 
-    .lookup_done$:
+    .lookup_done:
     // Calculate bit index counter address from current pointer and base address
     // w = (uint16_t)(b - answerBitmap) << 3;
     ld  a, l
