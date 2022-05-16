@@ -48,6 +48,11 @@ void splash_run(void) {
     fade_in();
 
     splash_animate_title();
+
+    // Display "Press Start" after intro tile flip is complete or is skipped
+    print_gotoxy((DEVICE_SCREEN_WIDTH - (sizeof(__INTRO_PRESS_START_STR) - 1)) / 2u, DEVICE_SCREEN_HEIGHT - 4u, PRINT_BKG);
+    print_str(__INTRO_PRESS_START_STR);
+
     waitpadticked_lowcpu(J_START);
 
     // Don't use play_sfx() since that checks if sound is enabled
@@ -100,9 +105,6 @@ void splash_init_maps(void) {
 
     if (IS_CGB)
         splash_initgfx_cgb();
-
-    print_gotoxy((DEVICE_SCREEN_WIDTH - (sizeof(__INTRO_PRESS_START_STR) - 1)) / 2u, DEVICE_SCREEN_HEIGHT - 4u, PRINT_BKG);
-    print_str(__INTRO_PRESS_START_STR);
 
     // print_gotoxy((DEVICE_SCREEN_WIDTH - (sizeof("BBBBBR 2022") - 1)) / 2u, DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
     print_gotoxy(2u, DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
@@ -225,8 +227,12 @@ void splash_animate_title(void) {
 
         // Allow user to slip through animation
         UPDATE_KEYS();
-        if (KEY_PRESSED(J_ANY_KEY))
+        if (KEY_TICKED(J_ANY_KEY)) {
             skip_anim = true;
+            // Don't use play_sfx() since that checks if sound is enabled
+            // 1) Don't want to gate by that, 2) options haven't yet been loaded from Flash ROM / SRAM
+            CBTFX_init(SFX_list[(SFX_TILE_REVEAL_RESULT)]);
+        }
 
         // Don't show letter flip animation for space chars
         // and don't change their board tile color

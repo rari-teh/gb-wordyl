@@ -199,8 +199,8 @@
     " Average ____^\n"   // <-- All "____^" get replaced by numbers
 
 // Should be no more than 12 chars
-#define __INTRO_PRESS_START_STR       "PRESS START"
-#define __INTRO_PRESS_START_STR_BLANK "           "
+#define __INTRO_PRESS_START_STR       "PRESS  START"
+#define __INTRO_PRESS_START_STR_BLANK "            "
 
 
 // X, Y controls upper-left corner coordinates
