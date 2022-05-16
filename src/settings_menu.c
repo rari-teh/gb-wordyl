@@ -13,6 +13,7 @@
 #include "gameplay.h"
 #include "settings.h"
 #include "window.h"
+#include "help_info.h"
 
 #include "settings_menu.h"
 
@@ -34,6 +35,7 @@ const uint8_t menu_cursor_y_ids[] = {
     MENU_Y_SHOW_STATS,
     MENU_Y_FORFEIT_ROUND,
     MENU_Y_RESET_STATS,
+    MENU_Y_HELP
 };
 
 // Function pointer table to match each menu item entry
@@ -46,6 +48,7 @@ const void (*menu_funcs[])(void) = {
     &stats_show,
     &ask_forfeit_round,
     &ask_stats_reset,
+    &help_info_show
 };
 
 // Bool variable pointer table to match each menu item entry
@@ -58,6 +61,7 @@ uint8_t * const p_menu_vars[] = {
     NULL, // Show Stats
     NULL, // Skip Auto-filled
     NULL, // Reset Stats
+    NULL, // Help
 };
 
 

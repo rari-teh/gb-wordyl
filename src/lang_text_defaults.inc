@@ -63,7 +63,7 @@
 // "^" char gets replaced with a UI checkboxes reflecting option on/off state
 // Leading space on each line is room for Cursor
 // MAX Height is 16
-#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(12)
+#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(14)
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
     " ... OPTIONS ...\n" \
@@ -77,13 +77,9 @@
     "\n" \
     " SHOW STATS\n" \
     " FORFEIT ROUND\n" \
-    " RESET STATS"
-/*
-    "RESET STATS\n" \
+    " RESET STATS\n" \
     "\n" \
-    "TILE FLIP  ..... ^\n"
-    "LOCK MATCHED  .. ^"
-*/
+    " HELP"
 
 // Changes here also need to be applied in settings_menu.c
 //       menu_cursor_y_ids[] = {
@@ -103,7 +99,8 @@
 #define MENU_Y_SHOW_STATS    9
 #define MENU_Y_FORFEIT_ROUND 10
 #define MENU_Y_RESET_STATS   11
-
+// space                     12
+#define MENU_Y_HELP          13
 
 
 

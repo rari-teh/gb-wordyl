@@ -60,6 +60,8 @@
 // "^" char gets replaced with a UI checkboxes reflecting option on/off state
 // Leading space on each line is room for Cursor
 // MAX Height is 16
+// #undef OPTIONS_MENU_DIALOG_WIN_Y
+// #define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(14)
 #undef __OPTIONS_MENU_STR
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
@@ -74,7 +76,9 @@
     "\n" \
     " DISKWEDHES STATS\n" \
     " KWYTYA TRO\n" \
-    " DASSETTYA STATS"
+    " DASSETTYA STATS\n" \
+    "\n" \
+    " HELP"
 
 // "SKIP FILLED" is ok for "SKIP AUTOFILLED"
 
@@ -92,6 +96,9 @@
 #define MENU_Y_SHOW_STATS    9
 #define MENU_Y_FORFEIT_ROUND 10
 #define MENU_Y_RESET_STATS   11
+// space                     12
+#define MENU_Y_HELP          13
+
 
 
 #define CONFIRM_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(6)
