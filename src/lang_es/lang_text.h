@@ -12,12 +12,10 @@
 // Spanish: Translation by Adamantibus
 
 #undef INTRO_DIALOG_WIN_Y
-#define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(16)
+#define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(14)
 #undef __INTRO_MESSAGE_STR
 #define __INTRO_MESSAGE_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "ESTO ES WORDYL \n" \
-    "\n" \
     "IDIOMA ...... " STR(LANG_CODE) "\n" \
     "  SOLO A..Z\n" \
     "  NO CAR. ESPEC.\n" \
@@ -32,6 +30,24 @@
     "  SELECT + START\n" \
     "\n" \
     "PULSA OTRA TECLA"
+
+
+// #undef HELP_LEGEND_MAP_Y
+// #undef HELP_LEGEND_MAP_Y_GAP
+// #define HELP_LEGEND_MAP_Y (2u)     // Start Win Y for color key board letters
+// #define HELP_LEGEND_MAP_Y_GAP (0u) // Gap between color key board letters in case more space is needed        
+#undef HELP_LEGEND_DIALOG_WIN_Y
+#define HELP_LEGEND_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(7)
+#undef __HELP_LEGEND_DIALOG_STR
+#define __HELP_LEGEND_DIALOG_STR \
+/*  |----------------XX| Available space (16 chars wide, 2 reserved for letter legend tiles) */\
+    "COLOR KEY:\n" \
+    "\n" \
+    "NO MATCH .......\n" \
+    "\n" \
+    "WRONG PLACE ....\n" \
+    "\n" \
+    "MATCH ..........\n"
 
 
 #undef MENU_Y_EXIT
@@ -182,8 +198,9 @@
 
 // Should be no more than 18 chars
 #undef __INTRO_PRESS_START_STR
-#define __INTRO_PRESS_START_STR "PULSA START"
-
+#undef __INTRO_PRESS_START_STR_BLANK
+#define __INTRO_PRESS_START_STR       "PULSA START"
+#define __INTRO_PRESS_START_STR_BLANK "           "
 
 // X, Y controls upper-left corner coordinates
 #undef __INTRO_CREDITS_STR

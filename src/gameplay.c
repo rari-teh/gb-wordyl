@@ -23,6 +23,7 @@
 #include "stats.h"
 
 #include "settings_menu.h"
+#include "help_info.h"
 
 #include "gameplay.h"
 
@@ -34,7 +35,7 @@
 
 void show_intro_message(void) {
 
-    win_dialog_show_message(INTRO_DIALOG_WIN_Y, __INTRO_MESSAGE_STR, NULL);
+    help_info_show();
 }
 
 // Should not be const, gets modified

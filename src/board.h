@@ -16,6 +16,9 @@ extern const uint8_t board_row_ranges_game[];
 extern const uint8_t board_row_ranges_splash[];
 extern const uint8_t * p_board_layout;
 
+// Also used by help_info
+extern const uint8_t board_map_letter[];
+
 #define BOARD_SET_LAYOUT_SPLASH (p_board_layout = board_row_ranges_splash)
 #define BOARD_SET_LAYOUT_GAME   (p_board_layout = board_row_ranges_game)
 

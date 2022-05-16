@@ -12,12 +12,10 @@
 // Dutch: Translation by Ferrante Crafts
 
 #undef INTRO_DIALOG_WIN_Y
-#define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(16)
+#define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(14)
 #undef __INTRO_MESSAGE_STR
 #define __INTRO_MESSAGE_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "WELKOM BIJ WORDYL \n" \
-    "\n" \
     "TAAL .......... " STR(LANG_CODE) "\n" \
     "ALLEEN A..Z ZONDER\n" \
     "  SPECIALE TEKENS \n" \
@@ -32,6 +30,24 @@
     "  SELECT + START\n" \
     "\n" \
     "DRUK OP EEN KNOP"
+
+
+// #undef HELP_LEGEND_MAP_Y
+// #undef HELP_LEGEND_MAP_Y_GAP
+// #define HELP_LEGEND_MAP_Y (2u)     // Start Win Y for color key board letters
+// #define HELP_LEGEND_MAP_Y_GAP (0u) // Gap between color key board letters in case more space is needed        
+#undef HELP_LEGEND_DIALOG_WIN_Y
+#define HELP_LEGEND_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(7)
+#undef __HELP_LEGEND_DIALOG_STR
+#define __HELP_LEGEND_DIALOG_STR \
+/*  |----------------XX| Available space (16 chars wide, 2 reserved for letter legend tiles) */\
+    "COLOR KEY:\n" \
+    "\n" \
+    "NO MATCH .......\n" \
+    "\n" \
+    "WRONG PLACE ....\n" \
+    "\n" \
+    "MATCH ..........\n"
 
 
 #undef MENU_Y_EXIT
@@ -178,7 +194,9 @@
 
 // Should be no more than 18 chars
 #undef __INTRO_PRESS_START_STR
-#define __INTRO_PRESS_START_STR "DRUK OP START"
+#undef __INTRO_PRESS_START_STR_BLANK
+#define __INTRO_PRESS_START_STR       "DRUK OP START"
+#define __INTRO_PRESS_START_STR_BLANK "             "
 
 
 // X, Y controls upper-left corner coordinates

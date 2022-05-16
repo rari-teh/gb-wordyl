@@ -105,7 +105,7 @@ void board_map_fill() {
             *p_board_cgb_addrs++ = x;
             *p_board_cgb_addrs++ = y;
 
-            set_bkg_based_tiles(x, y, BOARD_TILE_H, BOARD_TILE_W,
+            set_bkg_based_tiles(x, y, BOARD_TILE_W, BOARD_TILE_H,
                                 board_map_letter, tile_index);
             tile_index += (BOARD_TILE_W * BOARD_TILE_H);
         }
@@ -439,6 +439,7 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
 
 // == Lookup tables for colorizing board letters ==
 
+// CGB color array is 1 color per entry
 const uint8_t board_cgb_colors[] = {
     SET_BOARD_CGB_PAL_NORMAL,      // LETTER_NOT_SET
     SET_BOARD_CGB_PAL_NOT_IN_WORD, // LETTER_NOT_MATCHED
@@ -449,7 +450,7 @@ const uint8_t board_cgb_colors[] = {
 // DMG color array is 2x colors per entry
 const uint8_t board_dmg_colors[] = {
     BOARD_DMG_COLOR_NORMAL,       // LETTER_NOT_SET
-    BOARD_DMG_COLOR_NORMAL,       // LETTER_NOT_MATCHED
+    BOARD_DMG_COLOR_NORMAL,       // LETTER_NOT_MATCHED // <-- TODO: BUG?
     BOARD_DMG_COLOR_CONTAINS,     // LETTER_WRONG_PLACE
     BOARD_DMG_COLOR_MATCHED,      // LETTER_RIGHT_PLACE
 };

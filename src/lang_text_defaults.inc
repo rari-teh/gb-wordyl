@@ -7,11 +7,9 @@
 
 #ifndef LANG_IS_EN
 
-    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(16)
+    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(14)
     #define __INTRO_MESSAGE_STR \
     /*  |------------------| Available space (18 chars wide) */\
-        "WELCOME TO WORDYL \n" \
-        "\n" \
         "LANGUAGE ...... " STR(LANG_CODE) "\n" \
         "  A..Z  ONLY\n" \
         "  NO SPECIAL CHARS\n" \
@@ -25,15 +23,13 @@
         "AUTO FILL:\n" \
         "  SELECT + START\n" \
         "\n" \
-        "ANY KEY TO BEGIN"
+        "PRESS ANY KEY"
 
 #else
 
-    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(14)
+    #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(12)
     #define __INTRO_MESSAGE_STR \
     /*  |------------------| Available space (18 chars wide) */\
-        "WELCOME TO WORDYL \n" \
-        "\n" \
         "LANGUAGE ...... " STR(LANG_CODE) "\n" \
         "\n" \
         "IN GAME MENU:\n" \
@@ -45,9 +41,23 @@
         "AUTO FILL:\n" \
         "  SELECT + START\n" \
         "\n" \
-        "ANY KEY TO BEGIN"
+        "PRESS ANY KEY"
 
 #endif
+
+
+#define HELP_LEGEND_MAP_Y (2u)     // Start Win Y for color key board letters
+#define HELP_LEGEND_MAP_Y_GAP (0u) // Gap between color key board letters in case more space is needed        
+#define HELP_LEGEND_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(7)
+#define __HELP_LEGEND_DIALOG_STR \
+/*  |----------------XX| Available space (16 chars wide, 2 reserved for letter legend tiles) */\
+    "COLOR KEY:\n" \
+    "\n" \
+    "NO MATCH .......\n" \
+    "\n" \
+    "WRONG PLACE ....\n" \
+    "\n" \
+    "MATCH ..........\n"
 
 
 // "^" char gets replaced with a UI checkboxes reflecting option on/off state

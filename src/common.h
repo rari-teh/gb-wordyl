@@ -53,7 +53,8 @@
 #define BOARD_HIGHLIGHT_NO  false
 #define BOARD_HIGHLIGHT_YES true
 
-// IMPORANT: Order of values is important and relied on for sorting, do not change!
+// IMPORANT: Order of values is important and relied on for sorting, DO NOT CHANGE!
+//           Also used for palette array lookup, help color key, etc
 // Used :
 // * Printing color lookup table
 // * Letter matching evaluation ranking
