@@ -111,10 +111,15 @@ typedef struct settings_rec {
     bool opt_hard_mode_enabled;
     bool opt_autofill_enabled;
     bool opt_sound_fx_enabled;
-        // Not implemented
-        uint8_t opt_music_type;
-        bool opt_tile_flip_enabled;
-        bool opt_skip_autofilled;
+    bool opt_skip_autofilled;
+    bool intro_message_displayed;
+        // Not implemented, set to zero on first run
+        uint8_t opt_blank_1;
+        uint8_t opt_blank_2;
+        uint8_t opt_blank_3;
+        uint8_t opt_blank_4;
+        uint8_t opt_blank_5;
+
 } settings_rec;
 
 extern settings_rec game_settings;

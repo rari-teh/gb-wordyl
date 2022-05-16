@@ -81,6 +81,10 @@ void main() {
                 gameplay_restart();
                 fade_in();
                 if (is_first_run) {
+                    // Load or reset stats depending on cart type
+                    // Call this before show_intro_message(), it uses a loaded flag
+                    settings_load();
+
                     show_intro_message();
                     is_first_run = false;
                     // Second half of random init (after button press to exit welcome dialog)
@@ -90,8 +94,6 @@ void main() {
                     // Wait to turn on all sprites until after first popup intro message
                     SHOW_SPRITES;
 
-                    // Load or reset stats depending on cart type
-                    settings_load();
                     #ifdef TEST_DICT_ENABLED
                         dumpTestToEmuConsole();
                     #endif

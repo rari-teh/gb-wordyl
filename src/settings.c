@@ -21,9 +21,13 @@ void options_reset() {
     game_settings.opt_autofill_enabled = false;
     game_settings.opt_sound_fx_enabled = true;
     game_settings.opt_skip_autofilled = false;
+    game_settings.intro_message_displayed = false;
         // Not implemented
-        game_settings.opt_music_type = 1;
-        game_settings.opt_tile_flip_enabled = true;
+        game_settings.opt_blank_1 = 0x00;
+        game_settings.opt_blank_2 = 0x00;
+        game_settings.opt_blank_3 = 0x00;
+        game_settings.opt_blank_4 = 0x00;
+        game_settings.opt_blank_5 = 0x00;
 
     // For relevant carts, save the reset stats
     #if defined(CART_31k_1kflash) || defined(CART_mbc5)
