@@ -51,6 +51,8 @@ endif
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
+# Super Game Boy (border) support
+LCCFLAGS += -Wm-ys
 
 # Set ROM name (11 chars max in CGB land)
 LCCFLAGS += -Wm-yn"GB-WORDYL"

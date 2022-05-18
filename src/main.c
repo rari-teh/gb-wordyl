@@ -22,6 +22,8 @@
 #include "gameboy_color.h"
 #include "fade.h"
 
+#include "sgb_border.h"
+
 #include "decode.h"
 
 #include "intro_splash.h"
@@ -41,6 +43,10 @@ fixed rand_seed = {.w = 0x0000u};
 
 void main() {
 
+    // This needs to happen before main gfx_load() since
+    // it will overwrite other tile data
+    sgb_border_try_loading();
+
     fade_out();
     SHOW_WIN;
     SHOW_BKG;
@@ -55,6 +61,7 @@ void main() {
     NR52_REG = 0x80;
     NR51_REG = 0xFF;
     NR50_REG = 0x77;
+
 
     __critical {
         #ifdef CPTFX_UPDATE_ASM
