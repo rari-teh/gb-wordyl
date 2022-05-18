@@ -12,6 +12,10 @@
 #include "sgb_border_tiles.gbcomp.h"
 #include "sgb_border_map.gbcomp.h"
 
+// This gets set if sgb_check() succeeds
+// Use it to select some alternate tile coloring
+bool sgb_enabled = false;
+
 #define TILEDATA_SIZE (sgb_border_tiles_sz_decomp)
 #define TILEMAP_SIZE (sgb_border_map_sz_decomp)
 
@@ -20,19 +24,10 @@
 // "Transmit color data for SGB palette 0, color 0-3, and for SGB palette 1, color 1-3 (without separate color 0)."
 const uint8_t sgb_cmd_gb_screen_area_palette[] = {
     (SGB_PAL_01 << 3) | 1,
-    0xBB,
-    0x7F, // Light Blue  0xDEEEFD -> 0xBB7F
-
-    0xB5, // Med Grey  0xAFAFAF -> B556
-    0x56,
-
-    0xF9, // Med Orange  0xc97f48 -> 0xF925
-    0x25,
-    // 0xF8,
-    // 0x01, // Med-Dark Orange  0xC17C00 -> 0xF801
-
-    0x00, // Black
-    0x00
+    0xBB, 0x7F, // Light Blue  0xDEEEFD -> 0xBB7F
+    0xB5, 0x56, // Med Grey    0xAFAFAF -> B556
+    0xF9, 0x25, // Med Orange  0xc97f48 -> 0xF925   // 0xF8, 0x01, // Med-Dark Orange  0xC17C00 -> 0xF801
+    0x00, 0x00  // Black
 };
 
 #define SGB_CHR_BLOCK0 0
@@ -41,11 +36,12 @@ const uint8_t sgb_cmd_gb_screen_area_palette[] = {
 #define SGB_SCR_FREEZE 1
 #define SGB_SCR_UNFREEZE 0
 
+
+// Buffer used for sending SGB transfers
 uint8_t sgb_buf[20];
 
 // sgb_border_tiles_sz_decomp will be the largest size, use it for both
 uint8_t sgb_decomp_buf[sgb_border_tiles_sz_decomp];
-
 uint8_t * p_sgb_tiledata;
 
 
@@ -65,6 +61,8 @@ void sgb_border_try_loading() {
     DISPLAY_ON;
 
     if (sgb_check()) {
+
+        sgb_enabled = true;
 
 		for (uint8_t c = 0; c <=19; c++)
 			sgb_buf[c] = 0;

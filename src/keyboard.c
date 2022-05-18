@@ -8,6 +8,7 @@
 #include "common.h"
 #include "gfx_common.h"
 #include "gameboy_color.h"
+#include "sgb_border.h"
 
 #include "keyboard.h"
 
@@ -88,6 +89,14 @@ const uint8_t keyboard_dmg_colors[] = {
     KEYBD_COLOR_MATCHED,         // LETTER_RIGHT_PLACE
 };
 
+// SGB color array is 2x colors per entry
+const uint8_t keyboard_sgb_colors[] = {
+    KEYBD_COLOR_NORMAL_SGB,          // LETTER_NOT_SET
+    KEYBD_COLOR_NOT_IN_WORD_SGB,     // LETTER_NOT_MATCHED
+    KEYBD_COLOR_CONTAINS_SGB,        // LETTER_WRONG_PLACE
+    KEYBD_COLOR_MATCHED_SGB,         // LETTER_RIGHT_PLACE
+};
+
 
 // Set highlight color for a letter on the keyboard based on guess status
 void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type, uint8_t tile_id) {
@@ -111,11 +120,17 @@ void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type,
         keyboard_fill_letter_cgb_pal(row, col, keyboard_cgb_colors[match_type]);
     }
     else {
-        // DMG mode
 
-        // DMG color array is 2x colors per entry
-        match_type <<= 1; // This doesn't mess with test further below since (!IS_CGB) will be true
-        set_1bpp_colors(keyboard_dmg_colors[match_type], keyboard_dmg_colors[match_type + 1]);
+        // DMG/SGB mode (2 bytes per color entry, so upshift match type)
+        const uint8_t * p_keyboard_colors;
+
+        if (SGB_IS_ENABLED)
+            p_keyboard_colors = &keyboard_sgb_colors[match_type << 1];
+        else
+            p_keyboard_colors = &keyboard_dmg_colors[match_type << 1];
+
+        // DMG/SGB color array is 2x colors per entry
+        set_1bpp_colors(*p_keyboard_colors, *(p_keyboard_colors + 1));
     }
 
     // DMG: Always needs to draw

@@ -237,6 +237,16 @@ void gfx_load(void);
     #define SET_KEYBD_COLOR_MATCHED      set_1bpp_colors(KEYBD_COLOR_MATCHED)
     #define SET_KEYBD_COLOR_NOT_IN_WORD  set_1bpp_colors(KEYBD_COLOR_NOT_IN_WORD)
 
+// SGB uses a slightly different keyboard coloring
+// since its dark grey color (orange) has more contrast
+// versus black
+#define KEYBD_COLOR_NORMAL_SGB       DMG_BLACK, DMG_WHITE
+#define KEYBD_COLOR_CONTAINS_SGB     DMG_WHITE, DMG_DARK_GRAY // <-- Main difference versus DMG
+#define KEYBD_COLOR_MATCHED_SGB      DMG_WHITE, DMG_BLACK
+#define KEYBD_COLOR_NOT_IN_WORD_SGB  DMG_LITE_GRAY, DMG_WHITE
+
+
+
 /*
 // Board Letter box colors: Foreground, Background
 // Alt color scheme #3 (lighter board, less inversion)
