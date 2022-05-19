@@ -1,6 +1,6 @@
 
 
-#define sgb_border_map_sz_comp 388
+#define sgb_border_map_sz_comp 365
 #define sgb_border_map_sz_decomp 1792
 
 
