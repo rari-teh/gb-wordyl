@@ -30,6 +30,10 @@ uint8_t font_letters_decomp_buf[FONT_LETTERS_COUNT * FONT_LETTERS_BYTES_PER_TILE
 // const uint8_t sp_cursor_offset_y[] = { 0, 0, 8, 8 };
 
 
+void gfx_clear_bkg_blank_tile(void) {
+    fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
+}
+
 void sprites_hide_all_offscreen(void) {
     for (uint8_t c = 0u; c < SP_ID_COUNT_TOTAL; c++)
         hide_sprite(c);
@@ -221,8 +225,10 @@ void gfx_load(void) {
     set_sprite_prop(SP_ID_CURSOR_MENU_START + 1u, S_FLIPY);
 
 
-    // Clear window and move it offscreen at the bottom
-    move_win(0 + WIN_X_OFFSET, DEVICE_SCREEN_PX_HEIGHT); // Window is offscreen by default
+    // Moved this to Main so it could happen before 31k+1k logo splash
+    //
+    // // Clear window and move it offscreen at the bottom
+    // move_win(0 + WIN_X_OFFSET, DEVICE_SCREEN_PX_HEIGHT); // Window is offscreen by default
 
     // Center screen by scrolling slightly to the left
     // move_bkg(252, 252);

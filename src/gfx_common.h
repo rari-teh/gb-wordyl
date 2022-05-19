@@ -29,6 +29,8 @@ extern uint8_t font_letters_decomp_buf[];
 
 extern const uint8_t tile_blank[];
 
+void gfx_clear_bkg_blank_tile(void);
+
 void sprites_hide_all_offscreen(void);
 
 void print_gotoxy(uint8_t x, uint8_t y, uint8_t target);

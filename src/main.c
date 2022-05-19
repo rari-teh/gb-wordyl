@@ -9,7 +9,6 @@
  */
 
 #include <gbdk/platform.h>
-#include <gbdk/incbin.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <rand.h>
@@ -35,6 +34,9 @@
     #include "decode.h"
 #endif
 
+#if defined(CART_31k_1kflash)
+    #include "cart_31k_1kflash/logo_splash_ferrante_skullcat.h"
+#endif
 
 bool is_first_run = true;
 
@@ -43,15 +45,22 @@ fixed rand_seed = {.w = 0x0000u};
 
 void main() {
 
-    // This needs to happen before main gfx_load() since
-    // it will overwrite other tile data
+    // Call before gfx_load() since it will overwrite other tile data
     sgb_border_try_loading();
 
     fade_out();
+    move_win(0 + WIN_X_OFFSET, DEVICE_SCREEN_PX_HEIGHT); // Window is offscreen by default
     SHOW_WIN;
     SHOW_BKG;
+    DISPLAY_ON;
 
     cgb_check_and_init();
+
+    #if defined(CART_31k_1kflash)
+        // Call before gfx_load() since it will overwrite other tile data
+        logo_splash_ferrante_skullcat_show();
+    #endif
+
     gfx_load();
 
     initDict();

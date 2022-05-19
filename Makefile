@@ -48,6 +48,10 @@ ifeq ($(CART_TYPE),mbc5)
 	LCCFLAGS_gb      += -Wl-yt0x1B -Wl-ya1 # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
 	LCCFLAGS_pocket  += -Wl-yt0x1B -Wl-ya1 # Same as for .gb
 endif
+# 31K+1k cart loses 1024 bytes at the end for flash storage
+ifeq ($(CART_TYPE),31k_1kflash)
+	ROMUSAGE_flags = -e:FLASH_SAVE:7C00:400
+endif
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
@@ -200,7 +204,8 @@ langs-compress:
 
 romusage:
 # Ignores failure if romusage not in path
-	-romusage build/gb/gb-wordyl_$(VERSION)_$(CART_TYPE)_$(LANG_CODE).noi -e:STACK:DEFF:100 -e:SHADOW_OAM:C000:A0; romusage build/gb/gb-wordyl_$(VERSION)_$(CART_TYPE)_$(LANG_CODE).noi -e:STACK:DEFF:100 -e:SHADOW_OAM:C000:A0 > romusage.txt
+	-romusage build/gb/gb-wordyl_$(VERSION)_$(CART_TYPE)_$(LANG_CODE).noi $(ROMUSAGE_flags) -e:STACK:DEFF:100 -e:SHADOW_OAM:C000:A0
+	-romusage build/gb/gb-wordyl_$(VERSION)_$(CART_TYPE)_$(LANG_CODE).noi $(ROMUSAGE_flags) -e:STACK:DEFF:100 -e:SHADOW_OAM:C000:A0 > romusage.txt
 
 clean:
 	@echo Cleaning
