@@ -14,7 +14,7 @@
 
 void logo_splash_ferrante_skullcat_show(void) {
 
-    set_bkg_data((BG_TILES_BLANK_START), 1u, tile_blank);
+    // This works before gfx_load() because the splash logo tile 0 is also blank
     gfx_clear_bkg_blank_tile();
 
     // ** Borrows board_letters_decomp_buf temporarily before its actual use **

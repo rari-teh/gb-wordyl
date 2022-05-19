@@ -223,7 +223,7 @@ void gameplay_init_maps(void) {
     // == Setup the game board & keyboard ==
 
     // Clear screen
-    fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
+    gfx_clear_bkg_blank();
     keyboard_draw_map();
 
     // Draw stars

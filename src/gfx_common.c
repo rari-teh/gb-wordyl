@@ -139,7 +139,6 @@ void gfx_load(void) {
     SET_PRINT_COLOR_NORMAL;
 
     // Load 2bpp blank tile
-    // gb_decompress_bkg_data((BG_TILES_BLANK_START), tile_blank);
     set_bkg_data((BG_TILES_BLANK_START), 1u, tile_blank);
 
 
