@@ -20,6 +20,7 @@ endif
 # make CART_TYPE=<cart type>
 ifndef CART_TYPE
 #	CART_TYPE=32k_nosave
+#	CART_TYPE=mbc5
 	CART_TYPE=31k_1kflash
 endif
 
@@ -30,10 +31,6 @@ CFLAGS += -DCART_$(CART_TYPE)
 # CFLAGS += -Wf--max-allocs-per-node500000
 # CFLAGS += -Wf--opt-code-size # This doesn't shrink code size much vs -Wf--max-allocs-per-node150000
 
-# Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
-# They can also be built/cleaned individually: "make gg" and "make gg-clean"
-# Possible are: gb gbc pocket megaduck sms gg
-TARGETS=gb # pocket
 
 # Configure platform specific LCC flags here:
 LCCFLAGS_gb      = -Wm-yc # ColorNo MBC  Wl-yt0x1B # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
@@ -45,13 +42,25 @@ LCCFLAGS_gg      =
 
 # Handle cart specific flags
 ifeq ($(CART_TYPE),mbc5)
+	TARGETS=gb pocket
 	LCCFLAGS_gb      += -Wl-yt0x1B -Wl-ya1 # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
 	LCCFLAGS_pocket  += -Wl-yt0x1B -Wl-ya1 # Same as for .gb
 endif
 # 31K+1k cart loses 1024 bytes at the end for flash storage
 ifeq ($(CART_TYPE),31k_1kflash)
+	# No reason to build .pocket for the 31K + 1k flash cart
+	TARGETS=gb
+	# Add the flash 1K region as an exclusive no-use area for rom usage calcs
 	ROMUSAGE_flags = -e:FLASH_SAVE:7C00:400
 endif
+
+# Targets can be forced with this override, but normally they will be controlled per-cart type above
+#
+# Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
+# They can also be built/cleaned individually: "make gg" and "make gg-clean"
+# Possible are: gb gbc pocket megaduck sms gg
+# TARGETS=gb pocket
+
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
