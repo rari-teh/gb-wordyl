@@ -75,10 +75,10 @@ void keyboard_fill_letter_cgb_pal(uint8_t row, uint8_t col, uint8_t palnum) {
 
 const uint8_t keyboard_cgb_colors[] = {
 
-    SET_BOARD_CGB_PAL_NORMAL,       // LETTER_NOT_SET
-    SET_KEYBD_CGB_PAL_NOT_IN_WORD,  // LETTER_NOT_MATCHED
-    SET_BOARD_CGB_PAL_CONTAINS,     // LETTER_WRONG_PLACE
-    SET_BOARD_CGB_PAL_MATCHED,      // LETTER_RIGHT_PLACE
+    KEYBD_CGB_PAL_NORMAL,       // LETTER_NOT_SET
+    KEYBD_CGB_PAL_NOT_IN_WORD,  // LETTER_NOT_MATCHED
+    KEYBD_CGB_PAL_CONTAINS,     // LETTER_WRONG_PLACE
+    KEYBD_CGB_PAL_MATCHED,      // LETTER_RIGHT_PLACE
 };
 
 // DMG color array is 2x colors per entry
@@ -121,15 +121,17 @@ void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type,
     }
     else {
 
-        // DMG/SGB mode (2 bytes per color entry, so upshift match type)
+        // DMG/SGB mode
         const uint8_t * p_keyboard_colors;
 
         if (SGB_IS_ENABLED)
-            p_keyboard_colors = &keyboard_sgb_colors[match_type << 1];
+            p_keyboard_colors = keyboard_sgb_colors;
         else
-            p_keyboard_colors = &keyboard_dmg_colors[match_type << 1];
+            p_keyboard_colors = keyboard_dmg_colors;
 
         // DMG/SGB color array is 2x colors per entry
+        // Use match type to select correct array index
+        p_keyboard_colors +=  (match_type << 1);
         set_1bpp_colors(*p_keyboard_colors, *(p_keyboard_colors + 1));
     }
 

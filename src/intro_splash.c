@@ -101,10 +101,13 @@ void splash_init_maps(void) {
     //                     board_map,
     //                     BG_TILES_BOARD_LETTERS_START);
 
-    board_redraw_clean();
 
+    // IMPORTANT: Needs to happen before board_redraw_clean() so it doesn't wipe out those attributes
     if (IS_CGB)
         splash_initgfx_cgb();
+
+    board_redraw_clean();
+
 
     // print_gotoxy((DEVICE_SCREEN_WIDTH - (sizeof("BBBBBR 2022") - 1)) / 2u, DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
     print_gotoxy(2u, DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
@@ -237,16 +240,18 @@ void splash_animate_title(void) {
         // Don't show letter flip animation for space chars
         // and don't change their board tile color
         if (splash_text[c] != BOARD_LETTERS_SPACE_CHAR) {
-            if (!skip_anim) board_draw_tile_flip_anim(row, col);
-            SET_BOARD_COLOR_MATCHED;
+            if (!skip_anim)
+                board_draw_tile_flip_anim(row, col);
+
+            if (IS_CGB) {
+                SET_BOARD_COLOR_FOR_CGB;
+                board_fill_letter_cgb_pal(row, col, splash_text_color[c]);
+            } else {
+                SET_BOARD_COLOR_MATCHED;
+            }
+
+            board_draw_letter_bits(row, col, splash_text[c]);
         }
-        else
-            SET_BOARD_COLOR_NORMAL;
-
-        if (IS_CGB)
-            board_fill_letter_cgb_pal(row, col, splash_text_color[c]);
-
-        board_draw_letter_bits(row, col, splash_text[c]);
 
         // Simulate transition between board rows as
         // letters increment, to re-use board drawing logic

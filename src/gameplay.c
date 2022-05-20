@@ -223,7 +223,7 @@ void gameplay_init_maps(void) {
     // == Setup the game board & keyboard ==
 
     // Clear screen
-    gfx_clear_bkg_blank();
+    gfx_clear_bkg_blank_tile();
     keyboard_draw_map();
 
     // Draw stars

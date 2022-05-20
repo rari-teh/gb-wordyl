@@ -47,16 +47,15 @@ void cgb_check_and_init(void) {
 }
 
 
-// TODO: consolidate with board_initgfx_cgb() if possible
 // Set up colors for board area
 void splash_initgfx_cgb(void) {
 
     // Select CGB attribute tile mode for bkg map access
     VBK_REG = VBKF_BKG_ATTRIB;
 
-    // Fill screen top region under baord with blue
-    fill_bkg_rect(0,0, DEVICE_SCREEN_BUFFER_WIDTH + 1,
-                  DEVICE_SCREEN_BUFFER_HEIGHT + 1,
+    // Fill screen top region under board with white
+    fill_bkg_rect(0,0, DEVICE_SCREEN_BUFFER_WIDTH,
+                  DEVICE_SCREEN_BUFFER_HEIGHT,
                   CGB_PAL_WHITE);
 
     // Return to normal tile BKG mode

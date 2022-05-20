@@ -219,14 +219,23 @@ void gfx_load(void);
 #define SET_PRINT_COLOR_NORMAL       set_1bpp_colors(DMG_BLACK, DMG_WHITE)     // Full contrast text
 
 // Board
-#define BOARD_DMG_COLOR_NORMAL       DMG_LITE_GRAY, DMG_WHITE
+#define BOARD_DMG_COLOR_NOT_IN_WORD  DMG_LITE_GRAY, DMG_WHITE
 #define BOARD_DMG_COLOR_CONTAINS     DMG_WHITE,     DMG_DARK_GRAY
 #define BOARD_DMG_COLOR_MATCHED      DMG_BLACK,     DMG_WHITE
 
+#define BOARD_DMG_COLOR_BLANK        DMG_LITE_GRAY, DMG_WHITE
+#define BOARD_DMG_COLOR_ENTRY        DMG_BLACK,     DMG_WHITE
+
     // Board
-    #define SET_BOARD_COLOR_NORMAL       set_1bpp_colors(BOARD_DMG_COLOR_NORMAL)
+    #define SET_BOARD_COLOR_BLANK        set_1bpp_colors(BOARD_DMG_COLOR_BLANK)
+    #define SET_BOARD_COLOR_ENTRY        set_1bpp_colors(BOARD_DMG_COLOR_ENTRY)
+    #define SET_BOARD_COLOR_NOT_IN_WORD  set_1bpp_colors(BOARD_DMG_COLOR_NOT_IN_WORD)
     #define SET_BOARD_COLOR_CONTAINS     set_1bpp_colors(BOARD_DMG_COLOR_CONTAINS)
     #define SET_BOARD_COLOR_MATCHED      set_1bpp_colors(BOARD_DMG_COLOR_MATCHED)
+
+    // CGB does all colorizing with palettes instead
+    // Uses same color as DMG ENTRY mode
+    #define SET_BOARD_COLOR_FOR_CGB      set_1bpp_colors(BOARD_DMG_COLOR_ENTRY)
 
 // Keyboard
 #define KEYBD_COLOR_NORMAL       DMG_BLACK, DMG_WHITE

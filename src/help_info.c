@@ -32,15 +32,15 @@ static void help_info_draw_color_legend(void);
 
 // CGB color array is 1 color per entry
 const uint8_t help_cgb_match_colors[] = {
-    SET_BOARD_CGB_PAL_NOT_IN_WORD, // LETTER_NOT_MATCHED
-    SET_BOARD_CGB_PAL_CONTAINS,    // LETTER_WRONG_PLACE
-    SET_BOARD_CGB_PAL_MATCHED,     // LETTER_RIGHT_PLACE
+    BOARD_CGB_PAL_NOT_IN_WORD, // LETTER_NOT_MATCHED
+    BOARD_CGB_PAL_CONTAINS,    // LETTER_WRONG_PLACE
+    BOARD_CGB_PAL_MATCHED,     // LETTER_RIGHT_PLACE
 };
 
 
 // DMG color array is 2x colors per entry
 const uint8_t help_dmg_match_colors[] = {
-    BOARD_DMG_COLOR_NORMAL,       // LETTER_NOT_MATCHED   // <-- TODO: BUG?
+    BOARD_DMG_COLOR_NOT_IN_WORD,  // LETTER_NOT_MATCHED
     BOARD_DMG_COLOR_CONTAINS,     // LETTER_WRONG_PLACE
     BOARD_DMG_COLOR_MATCHED,      // LETTER_RIGHT_PLACE
 };
@@ -81,7 +81,7 @@ void help_info_draw_color_legend(void) {
 
         if (IS_CGB) {
 
-            SET_PRINT_COLOR_NORMAL;
+            SET_BOARD_COLOR_FOR_CGB;
             // Select CGB attribute tile mode for bkg map access
             VBK_REG = VBKF_BKG_ATTRIB;
             // Fill region with requested CGB palette attribute
