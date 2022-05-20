@@ -40,13 +40,13 @@
 #undef __HELP_LEGEND_DIALOG_STR
 #define __HELP_LEGEND_DIALOG_STR \
 /*  |----------------XX| Available space (16 chars wide, 2 reserved for letter legend tiles) */\
-    "COLOR KEY:\n" \
+    "FARBCODES:\n" \
     "\n" \
-    "NO MATCH .......\n" \
+    "NICHT DABEI ....\n" \
     "\n" \
-    "WRONG PLACE ....\n" \
+    "FALSCHE STELLE..\n" \
     "\n" \
-    "MATCH ..........\n"
+    "RICHTIG ........\n"
 
 
 #undef MENU_Y_EXIT
@@ -66,7 +66,7 @@
 /*  |------------------| Available space (18 chars wide) */\
     "  .. OPTIONEN ..\n" \
     "\n" \
-    " EXIT MENU\n" \
+    " MENUE BEENDEN\n" \
     "\n" \
     " PROFI MODUS ... ^\n" \
     " AUTOEINGABE ... ^\n" \
@@ -77,7 +77,7 @@
     " RUNDE AUFGEBEN\n" \
     " STATS ERNEUERN\n" \
     "\n" \
-    " HELP"
+    " HILFE"
 
  // "SKIP FILLED" is ok for "SKIP AUTOFILLED"
 
@@ -207,7 +207,7 @@
 #undef __INTRO_CREDITS_STR
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
-    "THX TO:\n" \
+    "DANKE AN:\n" \
     "TOXA\n" \
     "DAEO\n" \
     "ARPRUSS\n" \
