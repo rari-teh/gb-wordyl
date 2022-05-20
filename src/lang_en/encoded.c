@@ -923,7 +923,7 @@ const dictIndexBucket_t dictIndexes[44] = {
 // Lookup Table to fast-forward through Answers->in->Dictionary bitmap
 // {uint8_t num Answer Words, uint8_t byte offset delta in Dictionary Bitmap} [
 const AnswerBucket_t answerBuckets[] = {
-  { 165, 139},
+  { 164, 139},
   { 165, 66},
   { 163, 96},
   { 67, 247},
