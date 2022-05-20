@@ -59,6 +59,7 @@
 // * Printing color lookup table
 // * Letter matching evaluation ranking
 // * Ensuring keyboard highlighting only gets upgraded and not downgraded with progressive guesses
+#define LETTER_BEING_ENTERED 4u
 #define LETTER_RIGHT_PLACE 3u
 #define LETTER_WRONG_PLACE 2u
 #define LETTER_NOT_MATCHED 1u

@@ -383,11 +383,50 @@ void board_draw_tile_flip_anim(uint8_t row, uint8_t col) {
 }
 
 
+// == Lookup tables for colorizing board letters ==
+
+// CGB color array is 1 color per entry
+const uint8_t board_cgb_colors[] = {
+    BOARD_CGB_PAL_BLANK,       // LETTER_NOT_SET
+    BOARD_CGB_PAL_NOT_IN_WORD, // LETTER_NOT_MATCHED
+    BOARD_CGB_PAL_CONTAINS,    // LETTER_WRONG_PLACE
+    BOARD_CGB_PAL_MATCHED,     // LETTER_RIGHT_PLACE
+    BOARD_CGB_PAL_ENTRY,       // LETTER_BEING_ENTERED
+};
+
+// DMG color array is 2x colors per entry
+const uint8_t board_dmg_colors[] = {
+    BOARD_DMG_COLOR_BLANK,        // LETTER_NOT_SET
+    BOARD_DMG_COLOR_NOT_IN_WORD,  // LETTER_NOT_MATCHED
+    BOARD_DMG_COLOR_CONTAINS,     // LETTER_WRONG_PLACE
+    BOARD_DMG_COLOR_MATCHED,      // LETTER_RIGHT_PLACE
+    BOARD_DMG_COLOR_ENTRY,        // LETTER_BEING_ENTERED
+};
+
+
+// Set board letter color highlighting for match status, blank, or letter entry
+inline void board_set_highlight_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type) {
+
+    if (IS_CGB) {
+        // Apply the CGB coloring
+        SET_BOARD_COLOR_FOR_CGB;
+        board_fill_letter_cgb_pal(row, col, board_cgb_colors[match_type]);
+    }
+    else {
+        // DMG mode
+        // DMG color array is 2x colors per entry
+        match_type <<= 1;
+        set_1bpp_colors(board_dmg_colors[match_type], board_dmg_colors[match_type + 1]);
+    }
+}
+
+
 // Direct render a tile to VRAM to fill a board letter square
 // Previous calls to set_1bpp_colors() will affect colors produced here
 //
 void board_draw_letter(uint8_t row, uint8_t col, uint8_t letter, bool do_highlight) {
 
+    uint8_t match_type;
 
     if (g_board_tile_flip_speed) {
         // Used for tile flip, but may get overridden below by board_set_color_for_letter()
@@ -403,16 +442,20 @@ void board_draw_letter(uint8_t row, uint8_t col, uint8_t letter, bool do_highlig
     else if (letter >= 'A')
         letter -= 'A';
 
-    // Only apply match color highlighting when not doing guess entry
+
+    // Select highlighting mode
     if (do_highlight)
-        board_set_highlight_color_for_letter(row, col);
+        match_type = guess_eval[col];
+    else if (letter == BOARD_LETTERS_SPACE_CHAR)
+        match_type = LETTER_NOT_SET;
     else
-        board_set_non_highlight_color_for_letter(row, col, letter == BOARD_LETTERS_SPACE_CHAR);
+        match_type = LETTER_BEING_ENTERED;
+
+    board_set_highlight_color_for_letter(row, col, match_type);
 
     // Now draw the letter
     board_draw_letter_bits(row, col, letter);
 }
-
 
 
 // Render a word at * p_guess onto the board
@@ -437,59 +480,4 @@ void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight) {
         board_draw_letter(row, col, p_guess[col], do_highlight);
     }
 }
-
-
-
-// Sets board 1bpp DMG or CGB palette colors when NOT doing guess reveal highlights
-// Counterpart to board_set_highlight_color_for_letter()
-void board_set_non_highlight_color_for_letter(uint8_t row, uint8_t col, bool is_blank) {
-
-    if (IS_CGB) {
-        SET_BOARD_COLOR_FOR_CGB;
-        board_fill_letter_cgb_pal(row, col, (is_blank) ? BOARD_CGB_PAL_BLANK : BOARD_CGB_PAL_ENTRY);
-    } else {
-        if (is_blank)
-            SET_BOARD_COLOR_BLANK;
-        else
-            SET_BOARD_COLOR_ENTRY;
-    }
-}
-
-// == Lookup tables for colorizing board letters ==
-
-// CGB color array is 1 color per entry
-const uint8_t board_cgb_colors[] = {
-    BOARD_CGB_PAL_BLANK,       // LETTER_NOT_SET
-    BOARD_CGB_PAL_NOT_IN_WORD, // LETTER_NOT_MATCHED
-    BOARD_CGB_PAL_CONTAINS,    // LETTER_WRONG_PLACE
-    BOARD_CGB_PAL_MATCHED,     // LETTER_RIGHT_PLACE
-};
-
-// DMG color array is 2x colors per entry
-const uint8_t board_dmg_colors[] = {
-    BOARD_DMG_COLOR_BLANK,        // LETTER_NOT_SET
-    BOARD_DMG_COLOR_NOT_IN_WORD,  // LETTER_NOT_MATCHED
-    BOARD_DMG_COLOR_CONTAINS,     // LETTER_WRONG_PLACE
-    BOARD_DMG_COLOR_MATCHED,      // LETTER_RIGHT_PLACE
-};
-
-
-// Set match color highlighting for a letter on board based on guess status
-void board_set_highlight_color_for_letter(uint8_t row, uint8_t col) {
-
-    uint8_t match_type = guess_eval[col];
-
-    if (IS_CGB) {
-        // Apply the CGB coloring
-        SET_BOARD_COLOR_FOR_CGB;
-        board_fill_letter_cgb_pal(row, col, board_cgb_colors[match_type]);
-    }
-    else {
-        // DMG mode
-        // DMG color array is 2x colors per entry
-        match_type <<= 1;
-        set_1bpp_colors(board_dmg_colors[match_type], board_dmg_colors[match_type + 1]);
-    }
-}
-
 

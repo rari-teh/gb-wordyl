@@ -49,7 +49,5 @@ void board_draw_letter_bits(uint8_t row, uint8_t col, uint8_t letter);
 void board_draw_tile_flip_anim(uint8_t row, uint8_t col);
 void board_draw_letter(uint8_t row, uint8_t col, uint8_t letter, bool do_highlight);
 void board_draw_word(uint8_t row, uint8_t * p_guess, bool do_highlight);
-void board_set_non_highlight_color_for_letter(uint8_t row, uint8_t col, bool is_blank);
-void board_set_highlight_color_for_letter(uint8_t row, uint8_t col);
 
 #endif
