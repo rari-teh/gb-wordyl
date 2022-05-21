@@ -41,11 +41,11 @@
 #undef __HELP_LEGEND_DIALOG_STR
 #define __HELP_LEGEND_DIALOG_STR \
 /*  |----------------XX| Available space (16 chars wide, 2 reserved for letter legend tiles) */\
-    "COLOR KEY:\n" \
+    "KLEURCODE:\n" \
     "\n" \
-    "NO MATCH .......\n" \
+    "GEEN MATCH .....\n" \
     "\n" \
-    "WRONG PLACE ....\n" \
+    "VERKEERDE PLEK .\n" \
     "\n" \
     "MATCH ..........\n"
 
@@ -53,10 +53,12 @@
 #undef MENU_Y_EXIT
 #undef MENU_Y_HARD_MODE
 #undef MENU_Y_AUTO_FILL
+#undef MENU_Y_SKIP_FILLED
 #undef MENU_Y_SOUND_FX
 #undef MENU_Y_SHOW_STATS
 #undef MENU_Y_FORFEIT_ROUND
 #undef MENU_Y_RESET_STATS
+#undef MENU_Y_HELP
 // "^" char gets replaced with a UI checkboxes reflecting option on/off state
 // Leading space on each line is room for Cursor
 // MAX Height is 16
@@ -67,12 +69,13 @@
 /*  |------------------| Available space (18 chars wide) */\
     "  ... OPTIES ...\n" \
     "\n" \
-    " EXIT MENU\n" \
+    " VERLAAT MENU\n" \
     "\n" \
     " MOEILIJKE MODUS ^\n" \
     " AUTO AANVULLEN  ^\n" \
-    " SKIP AUTOFILLED ^\n" \
-    " SOUND FX  ..... ^\n" \
+    " SLA INGEVULDE   ^\n" \
+	"   OVER\n" \
+    " GELUIDSEFFECTEN ^\n" \
     "\n" \
     " TOON STATS\n" \
     " RONDE OPGEVEN\n" \
@@ -91,13 +94,13 @@
 #define MENU_Y_HARD_MODE     4
 #define MENU_Y_AUTO_FILL     5
 #define MENU_Y_SKIP_FILLED   6
-#define MENU_Y_SOUND_FX      7
-// space                     8
-#define MENU_Y_SHOW_STATS    9
-#define MENU_Y_FORFEIT_ROUND 10
-#define MENU_Y_RESET_STATS   11
-// space                     12
-#define MENU_Y_HELP          13
+#define MENU_Y_SOUND_FX      8
+// space                     9
+#define MENU_Y_SHOW_STATS    10
+#define MENU_Y_FORFEIT_ROUND 11
+#define MENU_Y_RESET_STATS   12
+// space                     13
+#define MENU_Y_HELP          14
 
 
 
