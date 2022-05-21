@@ -33,35 +33,38 @@
 
 
 // #undef HELP_LEGEND_MAP_Y
-// #undef HELP_LEGEND_MAP_Y_GAP
+#undef HELP_LEGEND_MAP_Y_GAP
 // #define HELP_LEGEND_MAP_Y (2u)     // Start Win Y for color key board letters
-// #define HELP_LEGEND_MAP_Y_GAP (0u) // Gap between color key board letters in case more space is needed        
+#define HELP_LEGEND_MAP_Y_GAP (1u) // Gap between color key board letters in case more space is needed        
 #undef HELP_LEGEND_DIALOG_WIN_Y
-#define HELP_LEGEND_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(7)
+#define HELP_LEGEND_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(9)
 #undef __HELP_LEGEND_DIALOG_STR
 #define __HELP_LEGEND_DIALOG_STR \
 /*  |----------------XX| Available space (16 chars wide, 2 reserved for letter legend tiles) */\
-    "COLOR KEY:\n" \
+    "CLAVE:\n" \
     "\n" \
-    "NO MATCH .......\n" \
+    "FALLO ..........\n" \
     "\n" \
-    "WRONG PLACE ....\n" \
+    "POSICION\n"\
+    "  INCORRECTA ...\n" \
     "\n" \
-    "MATCH ..........\n"
+    "ACIERTO ........"
 
 
 #undef MENU_Y_EXIT
 #undef MENU_Y_HARD_MODE
 #undef MENU_Y_AUTO_FILL
+#undef MENU_Y_SKIP_FILLED
 #undef MENU_Y_SOUND_FX
 #undef MENU_Y_SHOW_STATS
 #undef MENU_Y_FORFEIT_ROUND
 #undef MENU_Y_RESET_STATS
+#undef MENU_Y_HELP
 // "^" char gets replaced with a UI checkboxes reflecting option on/off state
 // Leading space on each line is room for Cursor
 // MAX Height is 16
-// #undef OPTIONS_MENU_DIALOG_WIN_Y
-// #define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(14)
+#undef OPTIONS_MENU_DIALOG_WIN_Y
+#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(15)
 #undef __OPTIONS_MENU_STR
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
@@ -71,14 +74,15 @@
     "\n" \
     " MODO DIFICIL .. ^\n" \
     " AUTORELLENAR .. ^\n" \
-    " SKIP AUTOFILLED ^\n" \
+    " SALTAR\n" \
+    "   COMPLETADAS . ^\n" \
     " SONIDO FX ..... ^\n" \
     "\n" \
     " VER STATS\n" \
     " ABANDONAR\n" \
     " BORRAR STATS\n" \
     "\n" \
-    " HELP"
+    " AYUDA"
 
 // "SKIP FILLED" is ok for "SKIP AUTOFILLED"
 
@@ -91,13 +95,13 @@
 #define MENU_Y_HARD_MODE     4
 #define MENU_Y_AUTO_FILL     5
 #define MENU_Y_SKIP_FILLED   6
-#define MENU_Y_SOUND_FX      7
-// space                     8
-#define MENU_Y_SHOW_STATS    9
-#define MENU_Y_FORFEIT_ROUND 10
-#define MENU_Y_RESET_STATS   11
-// space                     12
-#define MENU_Y_HELP          13
+#define MENU_Y_SOUND_FX      8
+// space                     9
+#define MENU_Y_SHOW_STATS    10
+#define MENU_Y_FORFEIT_ROUND 11
+#define MENU_Y_RESET_STATS   12
+// space                     13
+#define MENU_Y_HELP          14
 
 
 
