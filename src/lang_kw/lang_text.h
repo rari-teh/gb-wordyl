@@ -41,13 +41,13 @@
 #undef __HELP_LEGEND_DIALOG_STR
 #define __HELP_LEGEND_DIALOG_STR \
 /*  |----------------XX| Available space (16 chars wide, 2 reserved for letter legend tiles) */\
-    "COLOR KEY:\n" \
+    "ALHWEDH:\n" \
     "\n" \
-    "NO MATCH .......\n" \
+    "LE VYTH ........\n" \
     "\n" \
-    "WRONG PLACE ....\n" \
+    "LE KAMM ........\n" \
     "\n" \
-    "MATCH ..........\n"
+    "LE EWN  ........\n"
 
 
 #undef MENU_Y_EXIT
@@ -71,14 +71,14 @@
     "\n" \
     " NIVEL KALES ... ^\n" \
     " OMLENWEL ...... ^\n" \
-    " SKIP AUTOFILLED ^\n" \
-    " SOUND FX ...... ^\n" \
+    " TERLEMMEL LENWYS^\n" \
+    " SONYOW ........ ^\n" \
     "\n" \
     " DISKWEDHES STATS\n" \
     " KWYTYA TRO\n" \
     " DASSETTYA STATS\n" \
     "\n" \
-    " HELP"
+    " GWERES"
 
 // "SKIP FILLED" is ok for "SKIP AUTOFILLED"
 
