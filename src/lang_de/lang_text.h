@@ -66,11 +66,11 @@
 /*  |------------------| Available space (18 chars wide) */\
     "  .. OPTIONEN ..\n" \
     "\n" \
-    " MENUE BEENDEN\n" \
+    " WEITERSPIELEN\n" \
     "\n" \
     " PROFI MODUS ... ^\n" \
     " AUTOEINGABE ... ^\n" \
-    " SKIP AUTOFILLED ^\n" \
+    " UEBERSPRINGE OK ^\n" \
     " SOUND FX  ..... ^\n" \
     "\n" \
     " ZEIGE STATS\n" \
