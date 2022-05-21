@@ -53,10 +53,12 @@
 #undef MENU_Y_EXIT
 #undef MENU_Y_HARD_MODE
 #undef MENU_Y_AUTO_FILL
+#undef MENU_Y_SKIP_FILLED
 #undef MENU_Y_SOUND_FX
 #undef MENU_Y_SHOW_STATS
 #undef MENU_Y_FORFEIT_ROUND
 #undef MENU_Y_RESET_STATS
+#undef MENU_Y_HELP
 // "^" char gets replaced with a UI checkboxes reflecting option on/off state
 // Leading space on each line is room for Cursor
 // MAX Height is 16
