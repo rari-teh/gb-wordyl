@@ -11,6 +11,8 @@ It adds a full dictionary (versus the bloom filter), thousands more solution wor
 
 Downloads and online playable version are at: https://bbbbbr.itch.io/gb-wordyl
 
+- [User's Manual](Manual.md)
+
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo_cgb.gif)
 
 
@@ -40,8 +42,9 @@ Additional code and contributions from:
 
 ### Features
   - Game stats: Won, Lost, Streak & Win Percentage (since power on)
-  - Hard mode (with auto-fill of previous exact matches)
+  - Hard mode, Auto-fill of previous exact matches, Skip Auto-Filled for faster letter entry
   - Full official English answer word list and dictionary less a couple cringy words (~12,900 words)
+  - Super Game Boy Border
   - All in a 32K ROM
   - Controls:
     - A: Add Letter
@@ -57,7 +60,7 @@ Additional code and contributions from:
     - Translated UI text for Deutsch (DE), English (EN), Español (ES), Nederlands (NL), Português Brasileiro (PT-BR)
 
 
-Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020)
+Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020) (4.0.6 / 4.1.0-Pre+)
 
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo.gif)
 
