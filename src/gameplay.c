@@ -194,13 +194,21 @@ void gameplay_handle_guess(void) {
 // Modifies global: word
 void gameplay_init_answer_word(void) {
 
-    uint16_t r = randw() % NUM_ANSWERS;
+    uint16_t wordnum;
+
+    // Prevent having the same word two times in a row
+    // (unlikely, but possible)
+    do {
+        wordnum = randw() % NUM_ANSWERS;
+    } while (wordnum == wordnum_last);
+
+    wordnum_last = wordnum;
 
     #ifdef DEBUG_FORCE_WORD_BY_NUM
-        r = DEBUG_FORCE_WORD_BY_NUM;
+        wordnum = DEBUG_FORCE_WORD_BY_NUM;
     #endif
 
-    getSpecialWord(r, word);
+    getSpecialWord(wordnum, word);
 
     #ifdef DEBUG_FORCE_WORD
         strcpy(word, DEBUG_FORCE_WORD);

@@ -71,6 +71,7 @@
 
 #define GUESS_LETTER_EMPTY   0
 
+extern uint16_t wordnum_last;
 extern uint8_t game_state;
 
 extern uint8_t guess_num;

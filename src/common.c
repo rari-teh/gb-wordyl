@@ -8,6 +8,7 @@
 #include "common.h"
 #include "gfx_common.h"
 
+uint16_t wordnum_last = 0;
 uint8_t game_state;
 
 // Options and stats
