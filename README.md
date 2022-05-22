@@ -39,28 +39,31 @@ Additional code and contributions from:
   - [zeta_two](https://github.com/ZetaTwo/gb-wordle) : Previous dictionary compression
   - [stacksmashing](https://github.com/stacksmashing/gb-wordle) : original base code (mostly now rewritten)
 
+Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020) (4.0.6 / 4.1.0-Pre+)
 
 ### Features
-  - Game stats: Won, Lost, Streak & Win Percentage (since power on)
-  - Hard mode, Auto-fill of previous exact matches, Skip Auto-Filled for faster letter entry
+  - Game stats: Won, Lost, Streak & Win Percentage
+  - Hard mode
+  - Auto-fill letters of previous exact matches
+  - Skip Auto-filled letters for faster letter entry
   - Full official English answer word list and dictionary less a couple cringy words (~12,900 words)
   - Super Game Boy Border
   - All in a 32K ROM
-  - Controls:
-    - A: Add Letter
-    - B: Remove Letter
-    - START: Submit guess
-    - SELECT + B: Move Board Cursor Left
-    - SELECT + A:  Move Board Cursor Right
-    - SELECT + START: Auto-fill exact matches of previous guesses
-    - 3 x SELECT: Options menu (Stats, Reset Stats, Forfeit Round)
   - Multiple language dictionaries (different ROM for each)
     - Deutsch (DE), English (EN), Español (ES), Français (FR), Italiano (IT), Nederlands (NL), Latin (LA), Português Brasileiro (PT-BR)
     - No words with special chars, just English A-Z letters
     - Translated UI text for Deutsch (DE), English (EN), Español (ES), Nederlands (NL), Português Brasileiro (PT-BR)
 
+### Controls:
+  - A: Add Letter
+  - B: Remove Letter
+  - START: Submit guess
+  - SELECT + B: Move Board Cursor Left
+  - SELECT + A:  Move Board Cursor Right
+  - SELECT + START: Auto-fill exact matches of previous guesses
+  - 3 x SELECT: Options menu (Stats, Reset Stats, Forfeit Round)
+  - ARROW KEYS: Move Keyboard Cursor
 
-Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020) (4.0.6 / 4.1.0-Pre+)
 
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo.gif)
 
