@@ -17,7 +17,7 @@ Guess the hidden word within 6 tries. Each guess will reveal clues about whether
   - SELECT + A:  Move Board Cursor Right
   - SELECT + START: Auto-fill Previous Letter Matches
   - 3 x SELECT: Options Menu (Help, Options, Stats, Reset Stats, Forfeit Round)
-  - ARROW KEYS: Keyboard Cursor
+  - ARROW KEYS: Move Keyboard Cursor
 
 ### Options
   - Hard mode: All revealed letters clues must be used in the next guess.
