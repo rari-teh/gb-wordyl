@@ -13,7 +13,7 @@
 // Brazilian Portuguese: Translation by Daniel Tolentino
 
 #undef INTRO_DIALOG_WIN_Y
-#define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(14)
+#define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(15)
 #undef __INTRO_MESSAGE_STR
 #define __INTRO_MESSAGE_STR \
 /*  |------------------| Available space (18 chars wide) */\
@@ -30,7 +30,8 @@
     "PREENCHER:\n" \
     "  SELECT + START\n" \
     "\n" \
-    "PRESS ANY KEY"
+    "APERTE QUALQUER\n" \
+    "  TECLA"
 
 
 // #undef HELP_LEGEND_MAP_Y
@@ -42,13 +43,13 @@
 #undef __HELP_LEGEND_DIALOG_STR
 #define __HELP_LEGEND_DIALOG_STR \
 /*  |----------------XX| Available space (16 chars wide, 2 reserved for letter legend tiles) */\
-    "COLOR KEY:\n" \
+    "TECLA DE CORES:\n" \
     "\n" \
-    "NO MATCH .......\n" \
+    "NO CORRESPONDER.\n" \
     "\n" \
-    "WRONG PLACE ....\n" \
+    "LUGAR ERRADO ...\n" \
     "\n" \
-    "MATCH ..........\n"
+    "CORRESPONDER ..."
 
 
 #undef MENU_Y_EXIT
@@ -63,25 +64,26 @@
 // "^" char gets replaced with a UI checkboxes reflecting option on/off state
 // Leading space on each line is room for Cursor
 // MAX Height is 16
-// #undef OPTIONS_MENU_DIALOG_WIN_Y
-// #define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(14)
+#undef OPTIONS_MENU_DIALOG_WIN_Y
+#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(15)
 #undef __OPTIONS_MENU_STR
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "  ... OPCOES ...\n" \
     "\n" \
-    " EXIT MENU\n" \
+    " SAIR DO MENU\n" \
     "\n" \
     " MODO DIFICIL .. ^\n" \
     " AUTOPREENCHER . ^\n" \
-    " SKIP AUTOFILLED ^\n" \
-    " SOUND FX ...... ^\n" \
+    " SALTAR\n" \
+    "   AUTOPREENCHER ^\n" \
+    " SONOROS ....... ^\n" \
     "\n" \
     " VER STATS\n" \
     " SAIR\n" \
     " APAGAR STATS\n" \
     "\n" \
-    " HELP"
+    " AJUDA"
 
 // "SKIP FILLED" is ok for "SKIP AUTOFILLED"
 
@@ -94,13 +96,13 @@
 #define MENU_Y_HARD_MODE     4
 #define MENU_Y_AUTO_FILL     5
 #define MENU_Y_SKIP_FILLED   6
-#define MENU_Y_SOUND_FX      7
-// space                     8
-#define MENU_Y_SHOW_STATS    9
-#define MENU_Y_FORFEIT_ROUND 10
-#define MENU_Y_RESET_STATS   11
-// space                     12
-#define MENU_Y_HELP          13
+#define MENU_Y_SOUND_FX      8
+// space                     9
+#define MENU_Y_SHOW_STATS    10
+#define MENU_Y_FORFEIT_ROUND 11
+#define MENU_Y_RESET_STATS   12
+// space                     13
+#define MENU_Y_HELP          14
 
 
 
