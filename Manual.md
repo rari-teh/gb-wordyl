@@ -28,3 +28,8 @@ Guess the hidden word within 6 tries. Each guess will reveal clues about whether
   - Skip Auto-Filled: Board letter entry will skip over any letters which have been auto-filled. They can still be changed using the board cursor.
 
   - Sound FX: Toggle game sound effects On or Off
+
+
+### Source
+GB-Wordyl is open source and licensed under the GPL-3.0 license.
+Source can be obtained at: https://github.com/bbbbbr/gb-wordle

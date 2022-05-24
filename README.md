@@ -15,32 +15,6 @@ Downloads and online playable version are at: https://bbbbbr.itch.io/gb-wordyl
 
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo_cgb.gif)
 
-
-### Credits, Contributors and Thanks
-
-Language / UI Translation credits:
-  - German: Skite2001 - https://twitter.com/skite2001
-  - Dutch: Ferrante Crafts - https://ferrantecrafts.com
-  - Brazilian Portuguese: Daniel Tolentino - https://github.com/DanielTolentino
-  - Cornish:
-    - SJD (https://sjd-sjd.itch.io/)
-    - Niwlen Ster
-    - Kamm Cam
-    - Dyski Kernowek Discord Group
-    - Steve Harris (https://kerdle.vercel.app and https://an-wiasva.herokuapp.com)
-    - Gerlyver Kernewek (https://cornishdictionary.org.uk)
-
-
-Additional code and contributions from:
-  - Daeo : Cart and box Graphics
-  - [Coffee "Valen" Bat](https://twitter.com/cofebbat) : Game Sound FX and [CBTFX Driver](https://github.com/datguywitha3ds/CBT-FX)
-  - [toxa](https://github.com/untoxa/) : Ferrante Crafts 31k ROM + 1k Flash cart support
-  - [arpruss](https://github.com/arpruss/gb-fiver) : Highlighting fixes, Improved Dictionary compression and lookup speed
-  - [zeta_two](https://github.com/ZetaTwo/gb-wordle) : Previous dictionary compression
-  - [stacksmashing](https://github.com/stacksmashing/gb-wordle) : original base code (mostly now rewritten)
-
-Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020) (4.0.6 / 4.1.0-Pre+)
-
 ### Features
   - Game stats: Won, Lost, Streak & Win Percentage
   - Hard mode
@@ -65,6 +39,38 @@ Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020) (4.0.6 / 4.1.0-P
   - ARROW KEYS: Move Keyboard Cursor
 
 
+### Credits, Contributors and Thanks
+
+Language / UI Translation credits:
+  - German: Skite2001 - https://twitter.com/skite2001
+  - Dutch: Ferrante Crafts - https://ferrantecrafts.com
+  - Brazilian Portuguese: Daniel Tolentino - https://github.com/DanielTolentino
+  - Cornish:
+    - SJD (https://sjd-sjd.itch.io/)
+    - Niwlen Ster
+    - Kamm Cam
+    - Dyski Kernowek Discord Group
+    - Steve Harris (https://kerdle.vercel.app and https://an-wiasva.herokuapp.com)
+    - Gerlyver Kernewek (https://cornishdictionary.org.uk)
+
+Additional code and contributions from:
+  - Daeo : Cart and box Graphics
+  - [Coffee "Valen" Bat](https://twitter.com/cofebbat) : Game Sound FX and [CBTFX Driver](https://github.com/datguywitha3ds/CBT-FX)
+  - [toxa](https://github.com/untoxa/) : Ferrante Crafts 31k ROM + 1k Flash cart support
+  - [arpruss](https://github.com/arpruss/gb-fiver) : Highlighting fixes, Improved Dictionary compression and lookup speed
+  - [zeta_two](https://github.com/ZetaTwo/gb-wordle) : Previous dictionary compression
+  - [stacksmashing](https://github.com/stacksmashing/gb-wordle) : original base code (mostly now rewritten)
+
+Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020) (4.0.6 / 4.1.0-Pre+)
+
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo.gif)
+
+
+### Building from source:
+
+  - Compress the dictionaries: `make dictionaries`
+  - Build the ROM: `make` (default language `en` and default cart `31k_1kflash`)
+    - Language option: `make LANG_CODE=<lowercase 2 letter language code>`
+    - Cart option: `CART_TYPE=<cart type>` (`mbc5`, `31k_1kflash`. `32k_nosave`)
 
 
