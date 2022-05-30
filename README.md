@@ -52,6 +52,11 @@ Language / UI Translation credits:
     - Dyski Kernowek Discord Group
     - Steve Harris (https://kerdle.vercel.app and https://an-wiasva.herokuapp.com)
     - Gerlyver Kernewek (https://cornishdictionary.org.uk)
+  - Catalan:
+    - [@urixturing](https://twitter.com/urixturing)
+    - [@alvaromartinezmajado](https://github.com/alvaromartinezmajado)
+    - Their web version is at: https://factorialunar.github.io/vocable/
+    - For this repo see the [lang_catalan branch](https://github.com/bbbbbr/gb-wordle/tree/feature/lang_catalan)
 
 Additional code and contributions from:
   - Daeo : Cart and box Graphics
