@@ -45,6 +45,14 @@ fixed rand_seed = {.w = 0x0000u};
 
 void main() {
 
+    #if defined(CART_mbc5)
+        // Initialize MBC bank defaults
+        // Upper ROM bank to 1, And SRAM/XRAM bank to 0
+        SWITCH_ROM_MBC5(1);
+        SWITCH_RAM(0);
+        DISABLE_RAM_MBC5;
+    #endif
+
     // Call before gfx_load() since it will overwrite other tile data
     sgb_border_try_loading();
 
