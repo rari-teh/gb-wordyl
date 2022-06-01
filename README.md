@@ -24,9 +24,9 @@ Downloads and online playable version are at: https://bbbbbr.itch.io/gb-wordyl
   - Super Game Boy Border
   - All in a 32K ROM
   - Multiple language dictionaries (different ROM for each)
-    - Deutsch (DE), English (EN), Español (ES), Français (FR), Italiano (IT), Nederlands (NL), Latin (LA), Português Brasileiro (PT-BR), Cornish (KW)
+    - Deutsch (DE), English (EN), Español (ES), Français (FR), Italiano (IT), Nederlands (NL), Latin (LA), Português Brasileiro (PT-BR), Cornish (KW), català (CA)
     - No words with special chars, just English A-Z letters
-    - Translated UI text for Deutsch (DE), English (EN), Español (ES), Nederlands (NL), Português Brasileiro (PT-BR), Cornish (KW)
+    - Translated UI text for Deutsch (DE), English (EN), Español (ES), Nederlands (NL), Português Brasileiro (PT-BR), Cornish (KW), català
 
 ### Controls:
   - A: Add Letter
