@@ -11,6 +11,16 @@
 
 // German: Translation by skite2001 ^_-
 
+
+// DE Keyboard Map Layout (Z & Y transposed)
+#undef KEYBD_ROW_1
+#undef KEYBD_ROW_2
+#undef KEYBD_ROW_3
+#define KEYBD_ROW_1 "QWERTZUIOP"
+#define KEYBD_ROW_2  "ASDFGHJKL"
+#define KEYBD_ROW_3   "YXCVBNM"
+
+
 #undef INTRO_DIALOG_WIN_Y
 #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(13)
 #undef __INTRO_MESSAGE_STR

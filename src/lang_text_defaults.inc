@@ -5,6 +5,13 @@
 #include "../common.h"
 #include "../window.h"
 
+
+// Default Keyboard Map Layout
+#define KEYBD_ROW_1 "QWERTYUIOP"
+#define KEYBD_ROW_2  "ASDFGHJKL"
+#define KEYBD_ROW_3   "ZXCVBNM"
+
+
 #ifndef LANG_IS_EN
 
     #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(14)

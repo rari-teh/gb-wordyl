@@ -10,13 +10,14 @@
 #include "gameboy_color.h"
 #include "sgb_border.h"
 
+#include <lang_text.h>
 #include "keyboard.h"
 
 // Keyboard map
 const char *kb[KEYBD_ROWS] = {
-"QWERTYUIOP",
- "ASDFGHJKL",
-  "ZXCVBNM"};
+    KEYBD_ROW_1,  // Default: "QWERTYUIOP"
+    KEYBD_ROW_2,  // Default: "ASDFGHJKL"
+    KEYBD_ROW_3}; // Default: "ZXCVBNM"
 
 // Stores color coding for keyboard basde on guess data
 uint8_t kb_status[KEYBD_ROWS][10];
