@@ -4,7 +4,7 @@ GBDK_HOME = ../../../gbdk2020/gbdk-2020-git/build/gbdk/
 # GBDK_HOME = ../../../
 LCC = $(GBDK_HOME)bin/lcc
 
-VERSION=1.0.1
+VERSION=1.0.2
 
 # Alternate languages can be passed in as follows
 # de en es fr it nl pt-br
@@ -20,8 +20,8 @@ endif
 # make CART_TYPE=<cart type>
 ifndef CART_TYPE
 #	CART_TYPE=32k_nosave
-#	CART_TYPE=mbc5
-	CART_TYPE=31k_1kflash
+	CART_TYPE=mbc5
+#	CART_TYPE=31k_1kflash
 endif
 
 CFLAGS += -DLANG_CODE=$(LANG_CODE)
