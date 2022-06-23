@@ -7,6 +7,13 @@ This is a re-written and greatly expanded fork (by [bbbbbr](https://github.com/b
 It adds a full dictionary (versus the bloom filter), thousands more solution words, multiple dictionary languages, Game Boy Color support, and many other features.
 
 
+### Physical Cartridge available at Ferrante Crafts:
+
+https://www.etsy.com/listing/1251187027/gb-wordyl-game-cartridge-for-game-boy
+
+![GB-Wordyl cart and box](/info/gb-wordyl-box-cart.jpg)
+
+
 ### Download ROMs and Play Online
 
 Downloads and online playable version are at: https://bbbbbr.itch.io/gb-wordyl
