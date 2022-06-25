@@ -815,7 +815,6 @@ piano
 picar
 pilar
 pilha
-pilha
 pinga
 pingo
 pinho

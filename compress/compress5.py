@@ -60,6 +60,15 @@ outfile.write("#include \"../encoded.h\"\n\n");
 
 
 def preprocessWord(w):
+
+    # Validate word, only a-z allowed
+    for letter in range(len(w)):
+        if (ord(w[letter]) < ord ('a')):
+            print("Invalid character found, only a-z allowed")
+            print("--> %s , Char #%d = %c (ord:%d)" % (w, letter, w[letter], ord(w[letter])))
+            # Exit with Error
+            sys.exit(1)
+
     # Alphabet frequency remapping
     if (ALPHABET_REMAP == "freq_of_use"):
        w = remapAlpha(w)
@@ -258,7 +267,7 @@ def encodeList3bitIndexed(bucketWordlist, alphaIdx):
 
     if (WORD_NUMERIC_ENCODING != "3-bit-variable"):
         print("Incompatible encoding type")
-        sys.exit()
+        sys.exit(1)
 
     if (PER_LETTER_ENCODING == "base-26"):
         bin = tuple( map(tobinary_base26, bucketWordlist) )
@@ -408,7 +417,7 @@ outfile.write("const AnswerBucket_t answerBuckets[] = {\n""")
 bucketAnswerSize = len(answerWords) // NUM_ANSWER_BUCKETS
 if (bucketAnswerSize > 254):
     print("Error: answer bitmap bucket size exceeds max size. Use more buckets: words(%u) / buckets(%u) = bucketsize(%u)" % (len(answerWords), NUM_ANSWER_BUCKETS, bucketAnswerSize));
-    sys.exit()
+    sys.exit(1)
 
 dictPosPreOverflow = 255 - 8
 

@@ -1,6 +1,6 @@
 
 
-#define rle_answerBitmapIndex_sz_comp 905
+#define rle_answerBitmapIndex_sz_comp 896
 #define rle_answerBitmapIndex_sz_decomp 1056
 
 
