@@ -115,6 +115,8 @@ void main() {
                     //       loaded by settings_load() (in main())
                     if (game_settings.opt_help_message_on_startup)
                         help_info_show();
+                    else
+                        stats_show();
 
                     is_first_run = false;
                     // Second half of random init (after button press to exit welcome dialog)
