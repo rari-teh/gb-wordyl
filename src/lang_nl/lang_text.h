@@ -55,6 +55,7 @@
 #undef MENU_Y_AUTO_FILL
 #undef MENU_Y_SKIP_FILLED
 #undef MENU_Y_SOUND_FX
+#undef MENU_Y_STARTUP_HELP
 #undef MENU_Y_SHOW_STATS
 #undef MENU_Y_FORFEIT_ROUND
 #undef MENU_Y_RESET_STATS
@@ -62,8 +63,8 @@
 // "^" char gets replaced with a UI checkboxes reflecting option on/off state
 // Leading space on each line is room for Cursor
 // MAX Height is 16
-// #undef OPTIONS_MENU_DIALOG_WIN_Y
-// #define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(14)
+#undef OPTIONS_MENU_DIALOG_WIN_Y
+#define OPTIONS_MENU_DIALOG_WIN_Y  DIALOG_TEXT_HEIGHT_LINES(16)
 #undef __OPTIONS_MENU_STR
 #define __OPTIONS_MENU_STR \
 /*  |------------------| Available space (18 chars wide) */\
@@ -76,6 +77,7 @@
     " SLA INGEVULDE   ^\n" \
 	"   OVER\n" \
     " GELUIDSEFFECTEN ^\n" \
+    " OPSTARTHULP     ^\n" \
     "\n" \
     " TOON STATS\n" \
     " RONDE OPGEVEN\n" \
@@ -95,12 +97,13 @@
 #define MENU_Y_AUTO_FILL     5
 #define MENU_Y_SKIP_FILLED   6
 #define MENU_Y_SOUND_FX      8
-// space                     9
-#define MENU_Y_SHOW_STATS    10
-#define MENU_Y_FORFEIT_ROUND 11
-#define MENU_Y_RESET_STATS   12
-// space                     13
-#define MENU_Y_HELP          14
+#define MENU_Y_STARTUP_HELP  9
+// space                     10
+#define MENU_Y_SHOW_STATS    11
+#define MENU_Y_FORFEIT_ROUND 12
+#define MENU_Y_RESET_STATS   13
+// space                     14
+#define MENU_Y_HELP          15
 
 
 
