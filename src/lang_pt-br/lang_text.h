@@ -73,7 +73,7 @@
     "\n" \
     " FECHAR MENU\n" \
     "\n" \
-    " MODO DIFICIL. ^\n" \
+    " MODO DIFICIL.   ^\n" \
     " AUTOCOMPLETAR . ^\n" \
     " SALTAR\n" \
     "   AUTOCOMPLETAR ^\n" \
