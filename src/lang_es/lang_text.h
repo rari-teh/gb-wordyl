@@ -78,7 +78,7 @@
     " SALTAR\n" \
     "   COMPLETADAS . ^\n" \
     " SONIDO FX ..... ^\n" \
-    " INFO AL ENCENDER^\n" \
+    " INFO AL INICIAR ^\n" \
     "\n" \
     " VER STATS\n" \
     " ABANDONAR\n" \
@@ -226,6 +226,7 @@
     "ARPRUSS\n" \
     "COFFEE 'VALEN' BAT\n" \
     "STACKSMASHING\n" \
+    "ADAMANTIBUS\n" \
     "\n" \
     "GBDK2020\n" \
     "EMULICIOUS\n" \
