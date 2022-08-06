@@ -25,6 +25,7 @@ void splash_run(void) {
     DMG_PAL_INVERT_ON;
 
     // == INITIAL CREDITS SCREEN ==
+    gfx_clear_bkg_blank_tile();
     fade_in();
 
     print_gotoxy(__INTRO_CREDITS_X, __INTRO_CREDITS_Y, PRINT_BKG);

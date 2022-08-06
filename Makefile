@@ -59,7 +59,7 @@ endif
 
 # Generic 32 Cart with no save support
 ifeq ($(CART_TYPE),32k_nosave)
-	TARGETS=gb pocket
+	TARGETS=gb pocket megaduck
 endif
 
 
