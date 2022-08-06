@@ -63,15 +63,26 @@ const uint8_t board_row_ranges_game[] =
    BRD_ROW(5u, 0u, BOARD_GRID_W),
    BRD_CRD_STOP};
 
-// This makes an irregular grid for the intro screen
-const uint8_t board_row_ranges_splash[] =
-  {BRD_ROW(0u, 1u, 4u), // Game
-   BRD_ROW(1u, 3u, 3u), // Boy
-   BRD_ROW(2u, 2u, 1u), // Blank
-   BRD_ROW(3u, 1u, 4u), // Word..
-   BRD_ROW(4u, 0u, 3u), // Blank
-   BRD_ROW(4u, 4u, 2u), // ..yl
-   BRD_CRD_STOP};
+// This makes an irregular grid for the intro splash screen
+#ifdef MEGADUCK
+    const uint8_t board_row_ranges_splash[] =
+      {BRD_ROW(0u, 0u, 4u), // Duck
+       BRD_ROW(1u, 1u, 4u), // Duck
+       BRD_ROW(2u, 2u, 1u), // Blank
+       BRD_ROW(3u, 1u, 4u), // Word..
+       BRD_ROW(4u, 0u, 3u), // Blank
+       BRD_ROW(4u, 4u, 2u), // ..yl
+       BRD_CRD_STOP};
+#else
+    const uint8_t board_row_ranges_splash[] =
+      {BRD_ROW(0u, 1u, 4u), // Game
+       BRD_ROW(1u, 3u, 3u), // Boy
+       BRD_ROW(2u, 2u, 1u), // Blank
+       BRD_ROW(3u, 1u, 4u), // Word..
+       BRD_ROW(4u, 0u, 3u), // Blank
+       BRD_ROW(4u, 4u, 2u), // ..yl
+       BRD_CRD_STOP};
+#endif
 
 const uint8_t * p_board_layout;
 
