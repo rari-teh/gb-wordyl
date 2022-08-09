@@ -1,6 +1,6 @@
 # gb-wordyl
 
-A Wordle clone for the Nintendo Game Boy / Color and Analogue Pocket!
+A Wordle clone for the Nintendo Game Boy / Color, Analogue Pocket and Mega Duck!
 
 This is a re-written and greatly expanded fork (by [bbbbbr](https://github.com/bbbbbr/gb-wordle)) of the original version by [stacksmashing](https://github.com/stacksmashing/gb-wordle) ([twitter](http://twitter.com/ghidraninja)).
 
