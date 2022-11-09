@@ -77,9 +77,9 @@ void main() {
     game_state = GAME_STATE_INTRO;
 
     // Enable audio output
-    NR52_REG = 0x80;
-    NR51_REG = 0xFF;
-    NR50_REG = 0x77;
+    NR52_REG = AUDENA_ON;
+    NR51_REG = AUDTERM_ALL_LEFT | AUDTERM_ALL_RIGHT;
+    NR50_REG = 0x77u;
 
 
     __critical {
