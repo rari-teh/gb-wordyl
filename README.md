@@ -9,7 +9,7 @@ It adds a full dictionary (versus the bloom filter), thousands more solution wor
 
 ### Physical Cartridge available at Ferrante Crafts:
 
-https://www.etsy.com/listing/1251187027/gb-wordyl-game-cartridge-for-game-boy
+https://ferrantecrafts.com/products/gb-wordyl
 
 ![GB-Wordyl cart and box](/info/gb-wordyl-box-cart.jpg)
 
