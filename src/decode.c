@@ -493,25 +493,20 @@ void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
 
     __asm \
 
-    push AF
-    push HL
-    push BC
-    push DE
-
     // word number (counter):            bc   :n
     // bit index counter & bitmask loop: de   :w
     // answer array index:               hl   :answer
     // packed-bits:                      a    :c
 
     // Load str_buffer into global
-    ldhl  sp, #12
+    ldhl  sp, #4
     ld    a, (hl+)
     ld    (#_str_return_buffer), a
     ld    a, (hl)
     ld    (#_str_return_buffer + 1), a
 
     // Load _n (arg word number) to bc
-    ldhl  sp, #10
+    ldhl  sp, #2
     ld    a, (hl+)
     ld    c, a
     ld    a, (hl)
@@ -639,12 +634,7 @@ void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
     // Restore stack after pushing previous arguments
     add    sp, #2
 
-    pop DE
-    pop BC
-    pop HL
-    pop AF
     ret
-
     __endasm;
 
 }
