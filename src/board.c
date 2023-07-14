@@ -95,7 +95,7 @@ const uint8_t board_map_letter[]  = {0, 1, 2, 3};
 // Draw the board tile map
 // * Game Board is 5 x 6 array of 2x2 metatiles arranged as first row:0,1 second row: 2,3
 // * Also supports aribtrary row starts and lengths
-void board_map_fill() {
+void board_map_fill(void) {
 
     const uint8_t * p_range = p_board_layout;
     // const uint8_t * p_range = board_row_ranges_game;

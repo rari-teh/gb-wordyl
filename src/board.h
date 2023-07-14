@@ -27,7 +27,7 @@ extern const uint8_t board_map_letter[];
 #define BOARD_SET_FLIP_SPEED(speed) g_board_tile_flip_speed = (speed)
 
 
-void board_map_fill();
+void board_map_fill(void);
 
 void board_reset_autofilled_flags(void);
 void board_autofill_matched_letters(void);

@@ -52,7 +52,7 @@ void sgb_transfer_buf(uint8_t a, uint8_t b) {
 }
 
 
-void sgb_border_try_loading() {
+void sgb_border_try_loading(void) {
 
     // Wait 4 frames
     // For SGB on PAL SNES this delay is required on startup, otherwise borders don't show up

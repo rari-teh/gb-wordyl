@@ -485,8 +485,12 @@ void getSpecialWord(uint16_t _n, char* buffer) OLDCALL {
 #else
 
 
-// TODO: OLDCALL as precaution against upcoming SDCC calling convention change
+// OLDCALL for compat due to changed SDCC calling convention in newer GBDK
 void getSpecialWord(uint16_t special_word_num, char* str_buffer) OLDCALL {
+	// These remove warnings about unused vars
+	special_word_num;
+	str_buffer;
+
     __asm \
 
     push AF

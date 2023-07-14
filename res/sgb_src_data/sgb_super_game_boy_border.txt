@@ -1,6 +1,6 @@
 
 
-../../tools/png2asset sgb_border_optimized.png -map -bpp 4 -max_palettes 4 -pack_mode sgb -use_map_attributes -c sgb_border_data_optimized.c
+../../tools/png2asset sgb_border_optimized.png noflip-map -bpp 4 -max_palettes 4 -pack_mode sgb -use_map_attributes -c sgb_border_data_optimized.c
 
 
 - split tile, map, palette arrays into separate source files
