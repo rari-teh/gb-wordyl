@@ -7,4 +7,4 @@ build
 obj
 tools/gbxcart*
 tools/*.ini
-
+*.sublime*

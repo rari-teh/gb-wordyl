@@ -1,6 +1,22 @@
 
+Note: The sgb border png in source control doesn't match (by a few hundred bytes) the compressed sgb border data in source control. Possibly even when captured from the ROM and re-converted. Weird.
 
-../../tools/png2asset sgb_border_optimized.png noflip-map -bpp 4 -max_palettes 4 -pack_mode sgb -use_map_attributes -c sgb_border_data_optimized.c
+---------------------------------------------------
+* New method: (with updated GBDK in 2023)
+
+  ~/git/gbdev/gbdk2020/gbdk-2020-git/build/gbdk/bin/png2asset sgb_border_optimized.png -noflip -map -bpp 4 -max_palettes 4 -pack_mode sgb -use_map_attributes -o sgb_border_map_opt.c.uncomp -maps_only -no_palettes
+
+  ~/git/gbdev/gbdk2020/gbdk-2020-git/build/gbdk/bin/png2asset sgb_border_optimized.png -noflip -map -bpp 4 -max_palettes 4 -pack_mode sgb -use_map_attributes -o sgb_border_tiles_opt.c.uncomp -tiles_only -no_palettes
+
+    ../../tools/gbcompress --varname=sgb_border_tiles -v  --cin --cout sgb_border_tiles_opt.c.uncomp ../../src/sgb_border_tiles.gbcomp.c
+    ../../tools/gbcompress --varname=sgb_border_map -v  --cin --cout sgb_border_map_opt.c.uncomp ../../src/sgb_border_map.gbcomp.c
+
+  Copy over some of the tile header data
+
+---------------------------------------------------
+* Previous method: (used in production ROM)
+
+../../tools/png2asset sgb_border_optimized.png -noflip -map -bpp 4 -max_palettes 4 -pack_mode sgb -use_map_attributes -c sgb_border_data_optimized.c
 
 
 - split tile, map, palette arrays into separate source files
