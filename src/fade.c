@@ -56,7 +56,7 @@ void fade_out(void) {
         fade_cgb(FADE_OUT);
     else {
         for (uint8_t c = 0; c < ARRAY_LEN(fade_steps_dmg_normal); c++) {
-            wait_vbl_done();
+            vsync();
             BGP_REG = fade_steps_dmg[c];
             OBP0_REG = OBP1_REG = fade_steps_dmg[c];
             delay(70);
@@ -70,7 +70,7 @@ void fade_in(void) {
         fade_cgb(FADE_IN);
     else {
         for (uint8_t c = 0; c < ARRAY_LEN(fade_steps_dmg_normal); c++) {
-            wait_vbl_done();
+            vsync();
             BGP_REG = fade_steps_dmg[ARRAY_LEN(fade_steps_dmg_normal) - 1 - c];
             OBP0_REG = OBP1_REG= fade_steps_dmg[ARRAY_LEN(fade_steps_dmg_normal) - 1 - c];
             delay(70);
@@ -99,7 +99,7 @@ void fade_cgb(int8_t fade_dir) {
             cgb_fade_pal[pal] = cgb_palettes[pal] & FADE_LUT[i];
         }
         // Same palette used for background and sprites
-        wait_vbl_done();
+        vsync();
         set_bkg_palette(0, CGB_PAL_COUNT, cgb_fade_pal);
         set_sprite_palette(0, CGB_PAL_COUNT, cgb_fade_pal);
 

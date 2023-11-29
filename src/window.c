@@ -67,7 +67,7 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
             scroll_amt = 1u;
 
         WY_REG -= scroll_amt;
-        wait_vbl_done();
+        vsync();
     }
 
     // If a function was specified to run then execute it
@@ -89,7 +89,7 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
             scroll_amt = 6u;
 
         WY_REG += scroll_amt;
-        wait_vbl_done();
+        vsync();
     }
 
     // The assumption here is that the popup window is always called
