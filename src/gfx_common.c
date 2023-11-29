@@ -31,7 +31,8 @@ uint8_t font_letters_decomp_buf[FONT_LETTERS_COUNT * FONT_LETTERS_BYTES_PER_TILE
 
 
 void gfx_clear_bkg_blank_tile(void) {
-    fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, BG_TILES_BLANK_START);
+    // Do whole map buffer since on MegaDuck Laptop screen output is slightly offset showing excess tiles
+    fill_bkg_rect(0, 0, DEVICE_SCREEN_BUFFER_WIDTH, DEVICE_SCREEN_BUFFER_HEIGHT, BG_TILES_BLANK_START);
 }
 
 void sprites_hide_all_offscreen(void) {

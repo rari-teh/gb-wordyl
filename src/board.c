@@ -284,11 +284,14 @@ void board_render_guess_letter_at_cursor(void) {
 bool opt_skip_matched = true;
 
 // Add a guess letter to the board
-void board_add_guess_letter(void) {
+void board_add_guess_letter(char letter_to_use) {
 
     // Add letter to the space if it's not already filled
     if (! guess[guess_letter_cursor]) {
-        guess[guess_letter_cursor] = keyboard_get_letter();
+        if (letter_to_use != LETTER_ADD_USE_ON_SCREEN_KEYBOARD)
+            guess[guess_letter_cursor] = letter_to_use;
+        else
+            guess[guess_letter_cursor] = keyboard_get_letter();
         board_render_guess_letter_at_cursor();
 
     }
@@ -384,11 +387,11 @@ void board_draw_tile_flip_anim(uint8_t row, uint8_t col) {
         board_draw_letter_bits(row, col, board_flip_anim[c]);
 
         // One frame between animations in all modes
-        wait_vbl_done();
+        vsync();
 
         // Another frame of delay in slow mode
         if (g_board_tile_flip_speed == BOARD_TILE_FLIP_SLOW) {
-            wait_vbl_done();
+            vsync();
         }
     }
 }

@@ -24,6 +24,9 @@
 #if (defined(GAMEBOY) || defined(ANALOGUEPOCKET))
     #include "sgb/sgb_border.h"
 #endif
+#if (defined(MEGADUCK))
+    #include "megaduck_laptop/megaduck_laptop_io.h"
+#endif
 
 #include "decode.h"
 
@@ -60,6 +63,10 @@ void main() {
     #if defined(GAMEBOY) || defined(ANALOGUEPOCKET)
     // Call before gfx_load() since it will overwrite other tile data
     sgb_border_try_loading();
+    #endif
+
+    #if defined(MEGADUCK)
+        serial_startup();
     #endif
 
     fade_out();

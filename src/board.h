@@ -42,7 +42,7 @@ void board_hide_letter_cursor(void);
 
 void board_redraw_clean(void);
 void board_render_guess_letter_at_cursor(void);
-void board_add_guess_letter(void);
+void board_add_guess_letter(char add_letter);
 void board_remove_guess_letter(void);
 
 void board_draw_letter_bits(uint8_t row, uint8_t col, uint8_t letter);

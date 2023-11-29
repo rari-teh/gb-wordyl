@@ -30,8 +30,11 @@
 #include <lang_text.h>
 #include <cartsave.h>
 
-#define GAMEPLAY_SET_GAMEOVER  game_state = GAME_STATE_OVER
+#if (defined(MEGADUCK))
+    #include "megaduck_laptop/megaduck_keyboard.h"
+#endif
 
+#define GAMEPLAY_SET_GAMEOVER  game_state = GAME_STATE_OVER
 
 // Should not be const, gets modified
 uint8_t game_won_str[] = __MESSAGE_GAME_WON_STR;
@@ -280,7 +283,68 @@ void gameplay_run(void)
     waitpadreleased_lowcpu(J_ANY_KEY);
 
     while(game_state == GAME_STATE_RUNNING) {
-        wait_vbl_done();
+        vsync();
+
+
+        #if defined(MEGADUCK)
+            // Poll for keyboard keys every other frame
+            // (Polling intervals below 20ms may cause keyboard lockup)
+            if (sys_time & 0x01u) {
+                if (megaduck_keyboard_poll_keys()) {
+
+                    megaduck_keyboard_process_keys();
+
+                    switch (keyboard_key_pressed) {
+                        case NO_KEY: break;
+
+                        // case KEY_ARROW_UP:    keyboard_move_cursor(J_UP);    break;
+                        // case KEY_ARROW_DOWN:  keyboard_move_cursor(J_DOWN);  break;
+                        // case KEY_ARROW_LEFT:  keyboard_move_cursor(J_LEFT);  break;
+                        // case KEY_ARROW_RIGHT: keyboard_move_cursor(J_RIGHT); break;
+                        // case KEY_SPACE:       // TODO: use to add tile from on-screen keyboard?
+                        case KEY_HELP:        settings_menu_show();              break;
+                        case KEY_ENTER:       gameplay_handle_guess();           break;
+                        case KEY_ESCAPE:      board_autofill_matched_letters();  break;
+                        case KEY_ARROW_LEFT:  // Move Tile Cursor Left
+                                              if (guess_letter_cursor > LETTER_CURSOR_START) {
+                                                  guess_letter_cursor--;
+                                                  play_sfx(SFX_CURSOR_MOVE);
+                                                  board_update_letter_cursor();
+                                              }
+                                              break;
+
+                        case KEY_ARROW_RIGHT: // Move Tile Cursor Left
+                                              if (guess_letter_cursor < LETTER_CURSOR_MAX) {
+                                                  guess_letter_cursor++;
+                                                  play_sfx(SFX_CURSOR_MOVE);
+                                                  board_update_letter_cursor();
+                                              }
+                                              break;
+
+
+  //                      case KEY_DELETE:      // Fall through, same as backspace
+                        case KEY_BACKSPACE:   // Remove tile and move cursor to left
+                                              play_sfx(SFX_TILE_REMOVE);
+                                              board_remove_guess_letter();
+                                              board_update_letter_cursor();
+                                              break;
+
+                        default: // Try to add a letter from the keyboard
+                                 // Force a-z lowercase to upper-case
+                                 if ((keyboard_key_pressed >= 'a') && (keyboard_key_pressed <= 'z'))
+                                        keyboard_key_pressed -= ('a' - 'A');
+
+                                 // Only allow A-Z
+                                 if ( (keyboard_key_pressed >= 'A') && (keyboard_key_pressed <= 'Z')) {
+                                    play_sfx(SFX_TILE_ADD);
+                                    board_add_guess_letter(keyboard_key_pressed);
+                                 }
+                                 break;
+
+                    }
+                }
+            }
+        #endif
 
         UPDATE_KEYS();
         UPDATE_KEY_REPEAT(J_DPAD);
@@ -301,6 +365,7 @@ void gameplay_run(void)
                 keyboard_move_cursor(keys & J_DPAD);
             }
         }
+
 
         if (KEY_RELEASED(J_SELECT)) {
             switch(previous_keys & J_SELECT) {
@@ -353,7 +418,7 @@ void gameplay_run(void)
                         keys_select_consumed = true;
                     } else {
                         play_sfx(SFX_TILE_ADD);
-                        board_add_guess_letter();
+                        board_add_guess_letter(LETTER_ADD_USE_ON_SCREEN_KEYBOARD);
                     }
 
                     board_update_letter_cursor();
