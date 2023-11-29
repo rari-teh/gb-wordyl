@@ -73,8 +73,12 @@ endif
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
-# Super Game Boy (border) support
-LCCFLAGS += -Wm-ys
+	# Super Game Boy (border) support (only for GB/AP targets, save ROM space otherwise)
+ifeq ($(PLAT),gb)
+	LCCFLAGS += -Wm-ys
+else ifeq ($(PLAT),ap)
+	LCCFLAGS += -Wm-ys
+endif
 
 # Set ROM name (11 chars max in CGB land)
 LCCFLAGS += -Wm-yn"GB-WORDYL"
@@ -105,6 +109,8 @@ SRCDIR         = src
 SFXDIR         = $(SRCDIR)/sfx
 LANGDIR        = $(SRCDIR)/lang_$(LANG_CODE)
 CART_TYPE_DIR  = $(SRCDIR)/cart_$(CART_TYPE)
+SGBDIR         = $(SRCDIR)/sgb
+
 
 OBJDIR      = obj/$(EXT)/$(CART_TYPE)_$(LANG_CODE)
 
@@ -116,6 +122,13 @@ BINS	      = $(OBJDIR)/$(PROJECTNAME).$(EXT)
 CSOURCES      = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c)))
 CSOURCES      += $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.c)))
 CSOURCES      += $(foreach dir,$(SFXDIR),$(notdir $(wildcard $(dir)/*.c)))
+# Super Game Boy (border) support only for GB/AP targets, save ROM space otherwise
+ifeq ($(PLAT),gb)
+	CSOURCES      += $(foreach dir,$(SGBDIR),$(notdir $(wildcard $(dir)/*.c)))
+else ifeq ($(PLAT),ap)
+	CSOURCES      += $(foreach dir,$(SGBDIR),$(notdir $(wildcard $(dir)/*.c)))
+endif
+
 CSOURCES_LANG = $(foreach dir,$(LANGDIR),$(notdir $(wildcard $(dir)/*.c)))
 CSOURCES_CART = $(foreach dir,$(CART_TYPE_DIR),$(notdir $(wildcard $(dir)/*.c)))
 
@@ -147,6 +160,10 @@ $(OBJDIR)/%.o:	$(RESDIR)/%.c
 
 # Compile .c files in "sfx/" to .o object files
 $(OBJDIR)/%.o:	$(SFXDIR)/%.c
+	$(LCC) $(CFLAGS) -c -o $@ $<
+
+# Compile .c files in "sgb/" to .o object files
+$(OBJDIR)/%.o:	$(SGBDIR)/%.c
 	$(LCC) $(CFLAGS) -c -o $@ $<
 
 # Compile .c files in "src/<LANG_CODE>/" to .o object files

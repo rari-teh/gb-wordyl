@@ -8,7 +8,9 @@
 #include "common.h"
 #include "gfx_common.h"
 #include "gameboy_color.h"
-#include "sgb_border.h"
+#if (defined(GAMEBOY) || defined(ANALOGUEPOCKET))
+    #include "sgb/sgb_border.h"
+#endif
 
 #include <lang_text.h>
 #include "keyboard.h"
@@ -125,9 +127,11 @@ void keyboard_set_color_for_letter(uint8_t row, uint8_t col, uint8_t match_type,
         // DMG/SGB mode
         const uint8_t * p_keyboard_colors;
 
+        #if defined(GAMEBOY) || defined(ANALOGUEPOCKET)
         if (SGB_IS_ENABLED)
             p_keyboard_colors = keyboard_sgb_colors;
         else
+        #endif
             p_keyboard_colors = keyboard_dmg_colors;
 
         // DMG/SGB color array is 2x colors per entry

@@ -21,7 +21,9 @@
 #include "gameboy_color.h"
 #include "fade.h"
 
-#include "sgb_border.h"
+#if (defined(GAMEBOY) || defined(ANALOGUEPOCKET))
+    #include "sgb/sgb_border.h"
+#endif
 
 #include "decode.h"
 
@@ -55,8 +57,10 @@ void main() {
         DISABLE_RAM_MBC5;
     #endif
 
+    #if defined(GAMEBOY) || defined(ANALOGUEPOCKET)
     // Call before gfx_load() since it will overwrite other tile data
     sgb_border_try_loading();
+    #endif
 
     fade_out();
     move_win(0 + WIN_X_OFFSET, DEVICE_SCREEN_PX_HEIGHT); // Window is offscreen by default
