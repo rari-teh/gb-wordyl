@@ -32,6 +32,22 @@
     "DRUK OP EEN KNOP"
 
 
+#undef __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR
+#define __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR \
+/*  |------------------| Available space (18 chars wide) */\
+    "MEGADUCK JC.QUIQUE\n" \
+    "\n" \
+    "OPTIEMENU:        \n" \
+    "  HELP.AYUDA.HILFE\n" \
+    "\n" \
+    "CURSOR:\n" \
+    "  < > ^ /\n" \
+    "\n" \
+    "AUTO AANVULLEN:\n" \
+    "  ESC.SALDIA\n" \
+    "\n" \
+    "DRUK OP EEN KNOP"
+
 // #undef HELP_LEGEND_MAP_Y
 // #undef HELP_LEGEND_MAP_Y_GAP
 // #define HELP_LEGEND_MAP_Y (2u)     // Start Win Y for color key board letters

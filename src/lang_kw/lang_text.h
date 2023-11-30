@@ -33,6 +33,23 @@
     "HA DALLETH"\
 
 
+#undef __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR
+#define __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR \
+/*  |------------------| Available space (18 chars wide) */\
+    "MEGADUCK JC.QUIQUE\n" \
+    "\n" \
+    "ROL Y'N GWARI:\n" \
+    "  HELP.AYUDA.HILFE\n" \
+    "\n" \
+    "RESELL BORDH:\n" \
+    "  < > ^ /\n" \
+    "\n" \
+    "OMLENWEL:\n" \
+    "  ESC.SALDIA\n" \
+    "\n" \
+    "GWASK BOTON\n"\
+    "HA DALLETH"\
+
 // #undef HELP_LEGEND_MAP_Y
 // #undef HELP_LEGEND_MAP_Y_GAP
 // #define HELP_LEGEND_MAP_Y (2u)     // Start Win Y for color key board letters

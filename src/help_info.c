@@ -53,6 +53,9 @@ void help_info_show(void) {
     // (The window dialog will handle hiding them)
     WIN_DIALOG_RESTORE_SPRITES_AFTER_NO;
 
+    if (megaduck_laptop_detected)
+        win_dialog_show_message(INTRO_DIALOG_WIN_Y, __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR, NULL);
+
     // Controls popup
     win_dialog_show_message(INTRO_DIALOG_WIN_Y, __INTRO_MESSAGE_STR, NULL);
 

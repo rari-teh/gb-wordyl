@@ -34,6 +34,23 @@
     "  JOGAR"
 
 
+#undef __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR
+#define __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR \
+/*  |------------------| Available space (18 chars wide) */\
+    "MEGADUCK JC.QUIQUE\n" \
+    "\n" \
+    "ABRIR MENU:\n" \
+    "  HELP.AYUDA.HILFE\n" \
+    "\n" \
+    "MOVER CURSOR:\n" \
+    "  < > ^ /\n" \
+    "\n" \
+    "COPIAR ACERTOS:\n" \
+    "  ESC.SALDIA\n" \
+    "\n" \
+    "APERTE A PARA\n" \
+    "  JOGAR"
+
 // #undef HELP_LEGEND_MAP_Y
 // #undef HELP_LEGEND_MAP_Y_GAP
 // #define HELP_LEGEND_MAP_Y (2u)     // Start Win Y for color key board letters

@@ -32,6 +32,23 @@
     "PULSA OTRA TECLA"
 
 
+#undef __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR
+#define __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR \
+/*  |------------------| Available space (18 chars wide) */\
+    "MEGADUCK JC.QUIQUE\n" \
+    "\n" \
+    "VER MENU:\n" \
+    "  HELP.AYUDA.HILFE\n" \
+    "\n" \
+    "MOVER CURSOR:\n" \
+    "  < > ^ /\n" \
+    "\n" \
+    "AUTORELLENAR:\n" \
+    "  ESC.SALDIA\n" \
+    "\n" \
+    "PULSA OTRA TECLA"
+
+
 // #undef HELP_LEGEND_MAP_Y
 #undef HELP_LEGEND_MAP_Y_GAP
 // #define HELP_LEGEND_MAP_Y (2u)     // Start Win Y for color key board letters

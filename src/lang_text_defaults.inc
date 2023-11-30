@@ -32,6 +32,21 @@
         "\n" \
         "PRESS ANY KEY"
 
+    #define __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR \
+    /*  |------------------| Available space (18 chars wide) */\
+        "MEGADUCK JC.QUIQUE\n" \
+        "\n" \
+        "IN GAME MENU:\n" \
+        "  HELP.AYUDA.HILFE\n" \
+        "\n" \
+        "BOARD/MENU CURSOR:\n" \
+        "  < > ^ /\n" \
+        "\n" \
+        "AUTO FILL:\n" \
+        "  ESC.SALDIA\n" \
+        "\n" \
+        "PRESS ANY KEY"
+
 #else
 
     #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(12)
@@ -50,6 +65,20 @@
         "\n" \
         "PRESS ANY KEY"
 
+    #define __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR \
+    /*  |------------------| Available space (18 chars wide) */\
+        "MEGADUCK JC.QUIQUE\n" \
+        "\n" \
+        "IN GAME MENU:\n" \
+        "  HELP.AYUDA.HILFE\n" \
+        "\n" \
+        "BOARD+MENU CURSOR:\n" \
+        "  < > ^ /\n" \
+        "\n" \
+        "AUTO FILL:\n" \
+        "  ESC.SALDIA\n" \
+        "\n" \
+        "PRESS ANY KEY"
 #endif
 
 
