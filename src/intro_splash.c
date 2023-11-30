@@ -114,7 +114,7 @@ void splash_init_maps(void) {
     print_gotoxy(2u, DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
     print_str("BBBBBR");
     print_gotoxy(DEVICE_SCREEN_WIDTH - 5u - 1u, DEVICE_SCREEN_HEIGHT - 2u, PRINT_BKG);
-    print_str("2022");
+    print_str("2023");
 }
 
 #define CHR_NUM(c) (c - 'A')
