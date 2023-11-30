@@ -14,7 +14,6 @@ volatile uint8_t serial_rx_data;
          uint8_t serial_rx_buf[MEGADUCK_RX_MAX_PAYLOAD_LEN];
          uint8_t serial_rx_buf_len;
 
-         uint8_t serial_system_status;
          uint8_t serial_cmd_0x09_reply_data; // In original hardware it's requested, but used for nothing?
 
 
@@ -43,11 +42,10 @@ static void delay_1_msec(void) {
 
 // Waits for a serial transfer to complete with a timeout
 //
-// - Timeout is about ~ 103 msec or 6.14
+// - Timeout length is roughly in msec (100 is about ~ 103 msec or 6.14 frames)
 // - Serial ISR populates status var if anything was received
-void serial_io_wait_for_transfer_w_timeout_100msec(void) {
-    uint8_t counter = 0x64u;
-    while (counter--) {
+void serial_io_wait_for_transfer_with_timeout(uint8_t timeout_len_ms) {
+    while (timeout_len_ms--) {
         delay_1_msec();
         if (serial_byte_recieved)
             return;
@@ -96,34 +94,26 @@ uint8_t serial_io_read_byte_no_timeout(void) {
 }
 
 
-// Waits for a byte from Serial IO with a timeout (100 msec)
+// Waits for a byte from Serial IO with a timeout
 // Returns:
+// - Timeout length is roughly in msec (100 is about ~ 103 msec or 6.14 frames)
 // - If timed out: false
 // - If successful: true (rx byte will be in serial_rx_data global)
-bool serial_io_wait_receive_timeout_100msec(void) {
+bool serial_io_read_byte_with_msecs_timeout(uint8_t timeout_len_ms) {
+    uint8_t msec_counter;
     CRITICAL {
         serial_byte_recieved = false;
     }
 
     serial_io_enable_receive_byte();
-    serial_io_wait_for_transfer_w_timeout_100msec();
-    return serial_byte_recieved;
-}
 
-
-// Waits for a byte from Serial IO with a timeout (200 msec)
-// Returns:
-// - If timed out: false
-// - If successful: true (rx byte will be in serial_rx_data global)
-bool serial_io_wait_receive_timeout_200msec(void) {
-    CRITICAL {
-        serial_byte_recieved = false;
-    }
-    serial_io_enable_receive_byte();
-
-    uint8_t timeout = 2u;
-    while (timeout-- & (!serial_byte_recieved)) {
-        serial_io_wait_for_transfer_w_timeout_100msec();
+    while (timeout_len_ms--) {
+        // Each full run of the inner loop is ~ 1msec
+        msec_counter = 75u;
+        while (msec_counter--) {
+            if (serial_byte_recieved)
+                return true;
+        }
     }
 
     return serial_byte_recieved;
@@ -152,7 +142,7 @@ bool serial_io_send_command_and_receive_buffer(uint8_t io_cmd) {
     serial_io_send_byte(io_cmd);
     
     // Fail if first rx byte timed out
-    if (serial_io_wait_receive_timeout_100msec()) {
+    if (serial_io_read_byte_with_msecs_timeout(TIMEOUT_100_MSEC)) {
 
         // First rx byte will be length of all incoming bytes
         if (serial_rx_data <= MEGADUCK_RX_MAX_PAYLOAD_LEN) {
@@ -164,7 +154,7 @@ bool serial_io_send_command_and_receive_buffer(uint8_t io_cmd) {
 
             while (packet_length--) {
                 // Wait for next rx byte
-                if (serial_io_wait_receive_timeout_100msec()) {
+                if (serial_io_read_byte_with_msecs_timeout(TIMEOUT_100_MSEC)) {
                     // Save rx byte to buffer and add to checksum
                     checksum_calc                     += serial_rx_data;
                     serial_rx_buf[serial_rx_buf_len++] = serial_rx_data;
@@ -198,11 +188,11 @@ bool serial_io_send_command_and_receive_buffer(uint8_t io_cmd) {
 //
 // - Needs to be done any time system is powered on or a cartridge is booted
 // - Sends count up sequence + some commands, waits for and checks a count down sequence in reverse
-void serial_external_controller_init(void) {
+bool megaduck_laptop_controller_init(void) {
     uint8_t counter;
 
     IE_REG = SIO_IFLAG;
-    serial_system_status = SYS_REPLY__BOOT_UNSET;
+    bool serial_system_init_is_ok = true;
 
     // Send a count up sequence through the serial IO (0,1,2,3...255)
     // Exit on 8 bit unsigned wraparound to 0x00
@@ -211,38 +201,47 @@ void serial_external_controller_init(void) {
         serial_io_send_byte(counter++);
     } while (counter != 0u);
 
-    // Then wait for a response with no timeout
-    if (serial_io_read_byte_no_timeout() != SYS_REPLY_BOOT_OK) {
-        serial_system_status |= SYS_REPLY__BOOT_FAIL;
-    }
+    // Then wait for a response
+    // Fail if reply back timed out or was not expected response
+    if (serial_io_read_byte_with_msecs_timeout(TIMEOUT_2_MSEC)) {
+        if (serial_rx_data != SYS_REPLY_BOOT_OK) serial_system_init_is_ok = false;
+    } else
+        serial_system_init_is_ok = false;
 
     // Send a command that seems to request a 255..0 countdown sequence from the external controller
-    serial_io_send_byte(SYS_CMD_INIT_SEQ_REQUEST);
+    if (serial_system_init_is_ok)  {
+        serial_io_send_byte(SYS_CMD_INIT_SEQ_REQUEST);
 
-    // Expects a reply sequence through the serial IO of (255,254,253...0)
-    counter = 255u;
+        // Expects a reply sequence through the serial IO of (255,254,253...0)
+        counter = 255u;
 
-    // Exit on 8 bit unsigned wraparound to 0xFFu
-    do {
-        if (counter != serial_io_read_byte_no_timeout()) {
-            // This is for serial_system_status_set_fail() { ... }
-            serial_system_status |= SYS_REPLY__BOOT_FAIL;
-        }
-        counter--;
-    } while (counter != 255u);
+        // Exit on 8 bit unsigned wraparound to 0xFFu
+        do {
+            // Fail if reply back timed out or did not match expected counter
+            // TODO: OEM approach doesn't break out once a failure occurs, 
+            //       but maybe that's possible + sending the abort command early?
+            if (serial_io_read_byte_with_msecs_timeout(TIMEOUT_2_MSEC)) {
+                if (counter != serial_rx_data) serial_system_init_is_ok = false;
+            } else
+                serial_system_init_is_ok = false;
+            counter--;
+        } while (counter != 255u);
 
-    // Check for failures during the reply sequence
-    // and send reply byte based on that
-    if (serial_system_status & SYS_REPLY__BOOT_FAIL)
-        serial_io_send_byte(SYS_CMD_ABORT_OR_FAIL);
-    else
-        serial_io_send_byte(SYS_CMD_DONE_OR_OK);
+        // Check for failures during the reply sequence
+        // and send reply byte based on that
+        if (serial_system_init_is_ok)
+            serial_io_send_byte(SYS_CMD_DONE_OR_OK);
+        else
+            serial_io_send_byte(SYS_CMD_ABORT_OR_FAIL);
+    }
+
+    return serial_system_init_is_ok;
 }
 
 
-
-void serial_startup(void) {
+bool megaduck_laptop_init(void) {
     uint8_t int_enables_saved;
+    bool laptop_init_is_ok = true;
 
     disable_interrupts();
     int_enables_saved = IE_REG;
@@ -250,21 +249,20 @@ void serial_startup(void) {
     SB_REG = 0x00u;
 
     // Initialize Serially attached peripheral
-    serial_external_controller_init();
-    while (serial_system_status & SYS_REPLY__BOOT_FAIL);
-
-    // Save response from some command
-    // (so far not seen being used in 32K Bank 0)
-    serial_io_send_byte(SYS_CMD_INIT_UNKNOWN_0x09);
-    serial_io_read_byte_no_timeout();
-    serial_cmd_0x09_reply_data = serial_rx_data;
+    laptop_init_is_ok = megaduck_laptop_controller_init();
+    if (laptop_init_is_ok) {
+        // Save response from some command
+        // (so far not seen being used in 32K Bank 0)
+        serial_io_send_byte(SYS_CMD_INIT_UNKNOWN_0x09);
+        serial_io_read_byte_no_timeout();
+        serial_cmd_0x09_reply_data = serial_rx_data;
+    }
 
     // Ignore the RTC init check for now
 
-    // general_init__97A_
-    // vram_init__752_
-
     IE_REG = int_enables_saved;
     enable_interrupts();
+
+    return (laptop_init_is_ok);
 }
 

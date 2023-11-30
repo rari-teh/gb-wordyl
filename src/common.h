@@ -3,6 +3,7 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+#include <stdint.h>
 #include <stdbool.h>
 
 // Controls whether debug test code is compiled
@@ -92,6 +93,7 @@ extern char prev_guess[WORD_LENGTH+1];
 extern char guess[WORD_LENGTH+1];
 extern char word[WORD_LENGTH+1];
 
+extern bool megaduck_laptop_detected;
 
 // Save record signature check
 #define STATS_SIG_CHECK_0 0xA50Fu

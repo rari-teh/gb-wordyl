@@ -66,7 +66,7 @@ void main() {
     #endif
 
     #if defined(MEGADUCK)
-        serial_startup();
+        megaduck_laptop_detected = megaduck_laptop_init();
     #endif
 
     fade_out();

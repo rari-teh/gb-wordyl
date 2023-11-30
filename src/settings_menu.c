@@ -227,7 +227,7 @@ void menu_run(void) {
         #if defined(MEGADUCK)
             // Poll for keyboard keys every other frame
             // (Polling intervals below 20ms may cause keyboard lockup)
-            if (sys_time & 0x01u) {
+            if ((sys_time & 0x01u) && (megaduck_laptop_detected)) {
                 if (megaduck_keyboard_poll_keys()) {
 
                     megaduck_keyboard_process_keys();

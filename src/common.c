@@ -20,6 +20,8 @@ uint8_t guess_eval[WORD_LENGTH];
 bool answer_letter_used[WORD_LENGTH];
 bool guess_letter_used[WORD_LENGTH];
 
+bool megaduck_laptop_detected;
+
 uint8_t guess_num;
 uint8_t guess_letter_cursor;
 
