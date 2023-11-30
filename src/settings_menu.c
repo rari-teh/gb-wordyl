@@ -262,10 +262,11 @@ void menu_run(void) {
                                               break; // redundant
                     }
                 }
-            }
+            }            
         #endif
 
         UPDATE_KEYS();
+        UPDATE_KEYS_TICKED();
         switch (KEYS_GET_TICKED()) {
 
             case J_UP: menu_update_cursor(MENU_MOVE_UP);
