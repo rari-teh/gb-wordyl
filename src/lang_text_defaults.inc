@@ -34,7 +34,7 @@
 
     #define __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR \
     /*  |------------------| Available space (18 chars wide) */\
-        "MEGADUCK JC.QUIQUE\n" \
+        "MEGADUCK LAPTOP\n" \
         "\n" \
         "IN GAME MENU:\n" \
         "  HELP.AYUDA.HILFE\n" \
@@ -67,7 +67,7 @@
 
     #define __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR \
     /*  |------------------| Available space (18 chars wide) */\
-        "MEGADUCK JC.QUIQUE\n" \
+        "MEGADUCK LAPTOP\n" \
         "\n" \
         "IN GAME MENU:\n" \
         "  HELP.AYUDA.HILFE\n" \
@@ -116,7 +116,8 @@
     " FORFEIT ROUND\n" \
     " RESET STATS\n" \
     "\n" \
-    " HELP"
+    " HELP" \
+    " M.DUCK GER KEYBD^\n"
 
 // Changes here also need to be applied in settings_menu.c
 //       menu_cursor_y_ids[] = {

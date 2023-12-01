@@ -35,7 +35,7 @@
 #undef __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR
 #define __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR \
 /*  |------------------| Available space (18 chars wide) */\
-    "MEGADUCK JC.QUIQUE\n" \
+    "MEGADUCK LAPTOP\n" \
     "\n" \
     "OPTIEMENU:        \n" \
     "  HELP.AYUDA.HILFE\n" \

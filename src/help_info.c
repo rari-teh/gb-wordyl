@@ -17,6 +17,10 @@
 
 #include <lang_text.h>
 
+#if (defined(MEGADUCK))
+    #include "megaduck_laptop/megaduck_model.h"
+#endif
+
 
 static void help_info_draw_color_legend(void);
 
@@ -53,8 +57,19 @@ void help_info_show(void) {
     // (The window dialog will handle hiding them)
     WIN_DIALOG_RESTORE_SPRITES_AFTER_NO;
 
-    if (megaduck_laptop_detected)
-        win_dialog_show_message(INTRO_DIALOG_WIN_Y, __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR, NULL);
+    #if defined(MEGADUCK)
+        if (megaduck_laptop_detected) {
+            win_dialog_show_message(INTRO_DIALOG_WIN_Y, __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR, NULL);
+        }
+
+        // For Debug
+        if (megaduck_model == MEGADUCK_HANDHELD_STANDARD)
+            win_dialog_show_message(INTRO_DIALOG_WIN_Y, "MEGADUCK_HANDHELD", NULL);
+        if (megaduck_model == MEGADUCK_LAPTOP_SPANISH)
+            win_dialog_show_message(INTRO_DIALOG_WIN_Y, "DUCK_LAP_SPANISH", NULL);
+        if (megaduck_model == MEGADUCK_LAPTOP_GERMAN)
+            win_dialog_show_message(INTRO_DIALOG_WIN_Y, "DUCK_LAP_GERMAN", NULL);
+    #endif
 
     // Controls popup
     win_dialog_show_message(INTRO_DIALOG_WIN_Y, __INTRO_MESSAGE_STR, NULL);
