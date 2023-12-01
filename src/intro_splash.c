@@ -19,6 +19,10 @@
 
 #include <lang_text.h>
 
+#if (defined(MEGADUCK))
+    #include "megaduck_laptop/megaduck_keyboard.h"
+#endif
+
 
 void splash_run(void) {
 
@@ -269,6 +273,7 @@ void splash_animate_title(void) {
     uint8_t row = 0;
     uint8_t col = 0;
     bool skip_anim = false;
+    bool keyboard_press_occurred = false;
 
     // BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_FAST);
     BOARD_SET_FLIP_SPEED(BOARD_TILE_FLIP_SLOW);
@@ -283,6 +288,30 @@ void splash_animate_title(void) {
             // 1) Don't want to gate by that, 2) options haven't yet been loaded from Flash ROM / SRAM
             CBTFX_init(SFX_list[(SFX_TILE_REVEAL_RESULT)]);
         }
+
+        #if defined(MEGADUCK)
+            // Poll for keyboard keys every other frame
+            // (Polling intervals below 20ms may cause keyboard lockup)
+            // The usual (sys_time & 0x01u) doesn't work here due to some of the loop timing
+            // so use 2 x vsync to ensure enough time has elapsed instead
+            vsync();
+            vsync();
+            if (megaduck_laptop_detected) {
+
+                if (megaduck_keyboard_poll_keys()) {
+                    megaduck_keyboard_process_keys();
+
+                    // Prevent passing through any key press by flagging the press
+                    // and then returning once no keys are pressed
+                    if (megaduck_key_pressed) {
+                        skip_anim = true;
+                        // Don't use play_sfx() since that checks if sound is enabled
+                        // 1) Don't want to gate by that, 2) options haven't yet been loaded from Flash ROM / SRAM
+                        CBTFX_init(SFX_list[(SFX_TILE_REVEAL_RESULT)]);
+                    }
+                }
+            }
+        #endif
 
         // Don't show letter flip animation for space chars
         // and don't change their board tile color
