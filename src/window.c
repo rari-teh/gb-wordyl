@@ -15,6 +15,11 @@
 #include "lang_text.h"
 #include "gameplay.h"
 
+#if (defined(MEGADUCK))
+    #include "megaduck_laptop/megaduck_keyboard.h"
+#endif
+
+
 // Var for calling a function from within the popup window
 void (*p_win_func_run)(void) = NULL;
 bool win_restore_sprites_after = true;
@@ -99,6 +104,15 @@ uint8_t win_dialog_show_message(uint8_t win_y_moveto, uint8_t * str_1, uint8_t *
 
     // Reset the optional function that runs in the popup
     WIN_DIALOG_CLEAR_FUNC_RUN();
+
+    // Handle keyboard confirmation via up arrow
+    #if defined(MEGADUCK)
+        if (megaduck_laptop_detected) {
+            if (megaduck_key_pressed == KEY_ARROW_UP) {
+                ret_keys_ticked = DIALOG_CONFIRM_BUTTON;
+            }
+        }
+    #endif
 
     return ret_keys_ticked;
 }
