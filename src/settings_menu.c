@@ -232,7 +232,7 @@ void menu_run(void) {
 
                     megaduck_keyboard_process_keys();
 
-                    switch (keyboard_key_pressed) {
+                    switch (megaduck_key_pressed) {
                         case ' ':           // Fall through, same as Enter
                         case KEY_ENTER:     // Apply action for current menu item
                                             // If it has a variable, invert it and redraw

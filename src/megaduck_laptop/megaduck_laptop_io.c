@@ -9,10 +9,11 @@
 
 volatile SFR __at(0xFF60) FF60_REG;
 
+// TODO: namespace to megaduck
 volatile bool    serial_byte_recieved;
-volatile uint8_t serial_rx_data;
-         uint8_t serial_rx_buf[MEGADUCK_RX_MAX_PAYLOAD_LEN];
-         uint8_t serial_rx_buf_len;
+volatile uint8_t megaduck_serial_rx_data;
+         uint8_t megaduck_serial_rx_buf[MEGADUCK_RX_MAX_PAYLOAD_LEN];
+         uint8_t megaduck_serial_rx_buf_len;
 
          uint8_t serial_cmd_0x09_reply_data; // In original hardware it's requested, but used for nothing?
 
@@ -25,7 +26,7 @@ void sio_isr(void) CRITICAL INTERRUPT {
 
     // Save received data and update status flag
     // Turn Serial ISR back off
-    serial_rx_data = SB_REG;
+    megaduck_serial_rx_data = SB_REG;
     serial_byte_recieved = true;
     set_interrupts(IE_REG & ~SIO_IFLAG);
 }
@@ -90,7 +91,7 @@ uint8_t serial_io_read_byte_no_timeout(void) {
 
     serial_io_enable_receive_byte();
     while (!serial_byte_recieved);
-    return serial_rx_data;
+    return megaduck_serial_rx_data;
 }
 
 
@@ -98,7 +99,7 @@ uint8_t serial_io_read_byte_no_timeout(void) {
 // Returns:
 // - Timeout length is roughly in msec (100 is about ~ 103 msec or 6.14 frames)
 // - If timed out: false
-// - If successful: true (rx byte will be in serial_rx_data global)
+// - If successful: true (rx byte will be in megaduck_serial_rx_data global)
 bool serial_io_read_byte_with_msecs_timeout(uint8_t timeout_len_ms) {
     uint8_t msec_counter;
     CRITICAL {
@@ -122,7 +123,7 @@ bool serial_io_read_byte_with_msecs_timeout(uint8_t timeout_len_ms) {
 
 // Sends a command and then receives a multi-byte buffer over Serial IO
 //
-// - Receive buffer globals: serial_rx_buf, size in: serial_rx_buf_len
+// - Receive buffer globals: megaduck_serial_rx_buf, size in: megaduck_serial_rx_buf_len
 // - Length of serial transfer: Determined by sender
 // - Returns: true if succeeded
 //
@@ -132,7 +133,7 @@ bool serial_io_send_command_and_receive_buffer(uint8_t io_cmd) {
     uint8_t checksum_calc  = 0x00u;
 
     // Reset global rx buffer length
-    serial_rx_buf_len      = 0u;
+    megaduck_serial_rx_buf_len      = 0u;
 
     // Save interrupt enables and then set only Serial to ON
     uint8_t int_enables_saved = IE_REG;
@@ -145,19 +146,19 @@ bool serial_io_send_command_and_receive_buffer(uint8_t io_cmd) {
     if (serial_io_read_byte_with_msecs_timeout(TIMEOUT_100_MSEC)) {
 
         // First rx byte will be length of all incoming bytes
-        if (serial_rx_data <= MEGADUCK_RX_MAX_PAYLOAD_LEN) {
+        if (megaduck_serial_rx_data <= MEGADUCK_RX_MAX_PAYLOAD_LEN) {
 
             // Save rx byte as length and use to initialize checksum
             // Reduce length by 1 (since it includes length byte already received)
-            checksum_calc = serial_rx_data;
-            packet_length     = serial_rx_data - 1u;
+            checksum_calc = megaduck_serial_rx_data;
+            packet_length     = megaduck_serial_rx_data - 1u;
 
             while (packet_length--) {
                 // Wait for next rx byte
                 if (serial_io_read_byte_with_msecs_timeout(TIMEOUT_100_MSEC)) {
                     // Save rx byte to buffer and add to checksum
-                    checksum_calc                     += serial_rx_data;
-                    serial_rx_buf[serial_rx_buf_len++] = serial_rx_data;
+                    checksum_calc                     += megaduck_serial_rx_data;
+                    megaduck_serial_rx_buf[megaduck_serial_rx_buf_len++] = megaduck_serial_rx_data;
                 } else {
                     // Error: Break out and set checksum so it fails test below (causing return with failure)
                     checksum_calc = 0xFFu;
@@ -204,7 +205,7 @@ bool megaduck_laptop_controller_init(void) {
     // Then wait for a response
     // Fail if reply back timed out or was not expected response
     if (serial_io_read_byte_with_msecs_timeout(TIMEOUT_2_MSEC)) {
-        if (serial_rx_data != SYS_REPLY_BOOT_OK) serial_system_init_is_ok = false;
+        if (megaduck_serial_rx_data != SYS_REPLY_BOOT_OK) serial_system_init_is_ok = false;
     } else
         serial_system_init_is_ok = false;
 
@@ -221,7 +222,7 @@ bool megaduck_laptop_controller_init(void) {
             // TODO: OEM approach doesn't break out once a failure occurs, 
             //       but maybe that's possible + sending the abort command early?
             if (serial_io_read_byte_with_msecs_timeout(TIMEOUT_2_MSEC)) {
-                if (counter != serial_rx_data) serial_system_init_is_ok = false;
+                if (counter != megaduck_serial_rx_data) serial_system_init_is_ok = false;
             } else
                 serial_system_init_is_ok = false;
             counter--;
@@ -255,7 +256,7 @@ bool megaduck_laptop_init(void) {
         // (so far not seen being used in 32K Bank 0)
         serial_io_send_byte(SYS_CMD_INIT_UNKNOWN_0x09);
         serial_io_read_byte_no_timeout();
-        serial_cmd_0x09_reply_data = serial_rx_data;
+        serial_cmd_0x09_reply_data = megaduck_serial_rx_data;
     }
 
     // Ignore the RTC init check for now

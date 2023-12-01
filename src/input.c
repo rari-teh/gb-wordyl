@@ -22,7 +22,7 @@ uint8_t key_repeat_count = 0x00;
 void waitpadreleased_lowcpu(uint8_t button_mask) {
 
     #if defined(MEGADUCK)
-        while ((joypad() & button_mask) || (keyboard_key_pressed)) {
+        while ((joypad() & button_mask) || (megaduck_key_pressed)) {
             vsync();
 
             // Poll for keyboard keys every other frame
@@ -74,7 +74,7 @@ void waitpadticked_lowcpu(uint8_t button_mask) {
 
                     // Prevent passing through any key press by flagging the press
                     // and then returning once no keys are pressed
-                    if (keyboard_key_pressed)
+                    if (megaduck_key_pressed)
                         keyboard_press_occurred = true;
                     else if (keyboard_press_occurred)
                         return;

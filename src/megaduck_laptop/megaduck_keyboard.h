@@ -32,16 +32,16 @@
 
 
 // Raw key data
-extern uint8_t serial_io_packet_length;
-extern uint8_t serial_key_flags;
-extern uint8_t serial_key_code;
-extern uint8_t serial_io_checksum_calc;
+extern uint8_t megaduck_io_packet_length;
+extern uint8_t megaduck_key_flags;
+extern uint8_t megaduck_key_code;
+extern uint8_t megaduck_io_checksum_calc;
 
 
 // Post-Processed key data
-extern char    keyboard_key_pressed;
-extern char    keyboard_key_previous;
-extern uint8_t keyboard_flags;
+extern char    megaduck_key_pressed;
+extern char    megaduck_key_previous;
+extern uint8_t megaduck_key_flags;
 
 
 bool megaduck_keyboard_poll_keys(void);

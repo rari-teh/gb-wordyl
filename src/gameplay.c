@@ -294,7 +294,7 @@ void gameplay_run(void)
 
                     megaduck_keyboard_process_keys();
 
-                    switch (keyboard_key_pressed) {
+                    switch (megaduck_key_pressed) {
                         case NO_KEY: break;
 
                         // case KEY_ARROW_UP:    keyboard_move_cursor(J_UP);    break;
@@ -331,13 +331,13 @@ void gameplay_run(void)
 
                         default: // Try to add a letter from the keyboard
                                  // Force a-z lowercase to upper-case
-                                 if ((keyboard_key_pressed >= 'a') && (keyboard_key_pressed <= 'z'))
-                                        keyboard_key_pressed -= ('a' - 'A');
+                                 if ((megaduck_key_pressed >= 'a') && (megaduck_key_pressed <= 'z'))
+                                        megaduck_key_pressed -= ('a' - 'A');
 
                                  // Only allow A-Z
-                                 if ( (keyboard_key_pressed >= 'A') && (keyboard_key_pressed <= 'Z')) {
+                                 if ( (megaduck_key_pressed >= 'A') && (megaduck_key_pressed <= 'Z')) {
                                     play_sfx(SFX_TILE_ADD);
-                                    board_add_guess_letter(keyboard_key_pressed);
+                                    board_add_guess_letter(megaduck_key_pressed);
                                  }
                                  break;
 

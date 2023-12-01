@@ -35,11 +35,10 @@
 
 extern uint8_t serial_cmd_0x09_reply_data;
 
-extern          uint8_t serial_tx_data;
-extern volatile uint8_t serial_rx_data;
-extern volatile uint8_t serial_status;
-extern          uint8_t serial_rx_buf[MEGADUCK_RX_MAX_PAYLOAD_LEN];
-extern          uint8_t serial_rx_buf_len;
+extern volatile uint8_t megaduck_serial_rx_data;
+extern volatile uint8_t megaduck_serial_status;
+extern          uint8_t megaduck_serial_rx_buf[MEGADUCK_RX_MAX_PAYLOAD_LEN];
+extern          uint8_t megaduck_serial_rx_buf_len;
 
 void serial_io_wait_for_transfer_with_timeout(uint8_t);
 void serial_io_send_byte(uint8_t);
