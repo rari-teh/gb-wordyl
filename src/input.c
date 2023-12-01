@@ -22,15 +22,21 @@ uint8_t key_repeat_count = 0x00;
 void waitpadreleased_lowcpu(uint8_t button_mask) {
 
     #if defined(MEGADUCK)
-        while ((joypad() & button_mask) || (megaduck_key_pressed)) {
+        do {
+            UPDATE_KEYS();
             vsync();
 
             // Poll for keyboard keys every other frame
             // (Polling intervals below 20ms may cause keyboard lockup)
             if ((sys_time & 0x01u) && (megaduck_laptop_detected)) {
-                if (megaduck_keyboard_poll_keys()) megaduck_keyboard_process_keys();
+                if (megaduck_keyboard_poll_keys()) {
+                    megaduck_keyboard_process_keys();
+
+                    if ((!megaduck_key_pressed) &&
+                        (!KEY_PRESSED(button_mask))) break;
+                }
             }
-        }
+        } while (KEY_PRESSED(button_mask));
     #else
         while (joypad() & button_mask) {
             vsync();
@@ -45,7 +51,8 @@ void waitpadreleased_lowcpu(uint8_t button_mask) {
 // Allows a loop control to be passed in
 void waitpadticked_lowcpu(uint8_t button_mask) {
 
-    bool keyboard_press_occurred = false;
+    bool keyboard_checked = false;
+    uint8_t megaduck_key_pressed_last = 0u;
 
     while (1) {
 
@@ -74,10 +81,17 @@ void waitpadticked_lowcpu(uint8_t button_mask) {
 
                     // Prevent passing through any key press by flagging the press
                     // and then returning once no keys are pressed
-                    if (megaduck_key_pressed)
-                        keyboard_press_occurred = true;
-                    else if (keyboard_press_occurred)
-                        return;
+                    if (keyboard_checked) {
+                        if ((megaduck_key_pressed) && (!megaduck_key_pressed_last))
+                            return;
+                    }
+`
+                    // Only register a non-pressed key if key repeat is not active)
+                    // (otherwise the gaps between repeated keys might look like non-keypresses
+                    if (!(megaduck_key_flags & KEY_FLAG_KEY_REPEAT)) {
+                        keyboard_checked = true;
+                        megaduck_key_pressed_last = megaduck_key_pressed;
+                    }
                 }
             }
         #endif
