@@ -1,6 +1,6 @@
 # gb-wordyl
 
-A Wordle clone for the Nintendo Game Boy / Color, Analogue Pocket and Mega Duck!
+A Wordle clone for the Nintendo Game Boy / Color, Analogue Pocket and MegaDuck Handheld and Laptops!
 
 This is a re-written and greatly expanded fork (by [bbbbbr](https://github.com/bbbbbr/gb-wordle)) of the original version by [stacksmashing](https://github.com/stacksmashing/gb-wordle) ([twitter](http://twitter.com/ghidraninja)).
 
@@ -22,7 +22,10 @@ Downloads and online playable version are at: https://bbbbbr.itch.io/gb-wordyl
 
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo_cgb.gif)
 
-### Features
+### Special MegaDuck Features
+  - Physical Keyboard support for the CEFA Super QuiQue and Hartung Super Junior Computer models
+
+### Wordle Features
   - Game stats: Won, Lost, Streak & Win Percentage
   - Hard mode
   - Auto-fill letters of previous exact matches
@@ -74,7 +77,7 @@ Additional code and contributions from:
   - [zeta_two](https://github.com/ZetaTwo/gb-wordle) : Previous dictionary compression
   - [stacksmashing](https://github.com/stacksmashing/gb-wordle) : original base code (mostly now rewritten)
 
-Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020) (4.0.6 / 4.1.0-Pre+)
+Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020) (4.2.0)
 
 ![GB-Wordyl gameplay](/info/gb-wordyl_demo.gif)
 
@@ -83,7 +86,7 @@ Built using [GBDK-2020](https://github.com/gbdk-2020/gbdk-2020) (4.0.6 / 4.1.0-P
 
   - Compress the dictionaries: `make dictionaries`
   - Build the ROM: `make` (default language `en` and default cart `31k_1kflash`)
-    - Language option: `make LANG_CODE=<lowercase 2 letter language code>`
-    - Cart option: `CART_TYPE=<cart type>` (`mbc5`, `31k_1kflash`. `32k_nosave`)
+    - Language option: `make LANG_CODE=<lowercase 2 letter language code>`, or `langs` to build all
+    - Cart option: `CART_TYPE=<cart type>` (`mbc5`, `31k_1kflash`. `32k_nosave`), or `carts` to build all
 
 
