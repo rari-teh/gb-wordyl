@@ -51,7 +51,7 @@ bool is_first_run = true;
 fixed rand_seed = {.w = 0x0000u};
 
 
-void main() {
+void main(void) {
 
     #if defined(CART_mbc5)
         // Initialize MBC bank defaults

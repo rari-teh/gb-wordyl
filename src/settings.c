@@ -16,7 +16,7 @@
 
 
 // Defaults for power-on or save not present
-void options_reset() {
+void options_reset(void) {
     game_settings.opt_hard_mode_enabled = false;
     game_settings.opt_autofill_enabled = false;
     game_settings.opt_sound_fx_enabled = true;
