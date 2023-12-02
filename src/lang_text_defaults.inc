@@ -116,8 +116,7 @@
     " FORFEIT ROUND\n" \
     " RESET STATS\n" \
     "\n" \
-    " HELP" \
-    " M.DUCK GER KEYBD^\n"
+    " HELP"
 
 // Changes here also need to be applied in settings_menu.c
 //       menu_cursor_y_ids[] = {
