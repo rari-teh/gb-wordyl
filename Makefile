@@ -1,10 +1,11 @@
 # If you move this project you can change the directory
 # to match your GBDK root directory (ex: GBDK_HOME = "C:/GBDK/"
-GBDK_HOME = ../../../../gbdk2020/gbdk-2020-git/build/gbdk/
-# GBDK_HOME = ../../../
+ifndef GBDK_HOME
+	GBDK_HOME = ~/git/gbdev/gbdk2020/gbdk-2020-git/build/gbdk/
+endif
 LCC = $(GBDK_HOME)bin/lcc
 
-VERSION=1.0.4
+VERSION=1.0.5
 
 # Alternate languages can be passed in as follows
 # de en es fr it nl pt-br
@@ -33,7 +34,7 @@ CFLAGS += -DCART_$(CART_TYPE)
 
 
 # Configure platform specific LCC flags here:
-LCCFLAGS_gb      = -Wm-yc # ColorNo MBC  Wl-yt0x1B # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
+LCCFLAGS_gb      = -Wm-yc # Color No MBC  Wl-yt0x1B # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
 LCCFLAGS_pocket  = -Wm-yc # No MBC -Wl-yt0x1B # Usually the same as required for .gb
 LCCFLAGS_duck    = # No MBC -Wl-yt0x1B # Usually the same as required for .gb
 LCCFLAGS_gbc     = # No MBC -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
@@ -93,7 +94,7 @@ LCCFLAGS += -debug # Uncomment to enable debug output
 PROJECTNAME = gb-wordyl_$(VERSION)_$(CART_TYPE)_$(LANG_CODE)
 
 CFLAGS += -debug
-CFLAGS += -Wf-MMD
+CFLAGS += -Wf-MMD -Wf-Wp-MP
 # Add include path for type of flash cart if enabled
 CFLAGS += -Wf-I"$(CART_TYPE_DIR)/"
 # Add language directory to include path
