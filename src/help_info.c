@@ -62,13 +62,13 @@ void help_info_show(void) {
             win_dialog_show_message(INTRO_DIALOG_WIN_Y, __INTRO_MEGADUCK_LAPTOP_MESSAGE_STR, NULL);
         }
 
-        // For Debug
-        if (megaduck_model == MEGADUCK_HANDHELD_STANDARD)
-            win_dialog_show_message(INTRO_DIALOG_WIN_Y, "MEGADUCK_HANDHELD", NULL);
-        if (megaduck_model == MEGADUCK_LAPTOP_SPANISH)
-            win_dialog_show_message(INTRO_DIALOG_WIN_Y, "DUCK_LAP_SPANISH", NULL);
-        if (megaduck_model == MEGADUCK_LAPTOP_GERMAN)
-            win_dialog_show_message(INTRO_DIALOG_WIN_Y, "DUCK_LAP_GERMAN", NULL);
+        // For MegaDuck Model Debug
+        // if (megaduck_model == MEGADUCK_HANDHELD_STANDARD)
+        //     win_dialog_show_message(INTRO_DIALOG_WIN_Y, "MEGADUCK_HANDHELD", NULL);
+        // if (megaduck_model == MEGADUCK_LAPTOP_SPANISH)
+        //     win_dialog_show_message(INTRO_DIALOG_WIN_Y, "DUCK_LAP_SPANISH", NULL);
+        // if (megaduck_model == MEGADUCK_LAPTOP_GERMAN)
+        //     win_dialog_show_message(INTRO_DIALOG_WIN_Y, "DUCK_LAP_GERMAN", NULL);
     #endif
 
     // Controls popup
