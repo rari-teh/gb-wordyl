@@ -244,6 +244,7 @@
     "ARPRUSS\n" \
     "COFFEE 'VALEN' BAT\n" \
     "STACKSMASHING\n" \
+    "EUCAL.BB\n" \
     "ZERAPHY\n" \
     "BRUNO MAESTRINI\n" \
     "\n" \

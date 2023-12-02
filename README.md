@@ -70,6 +70,7 @@ Language / UI Translation credits:
     - For this repo see the [lang_catalan branch](https://github.com/bbbbbr/gb-wordle/tree/feature/lang_catalan)
 
 Additional code and contributions from:
+  - Eucal.BB : Help with Megaduck Laptop testing and research
   - Daeo : Cart and box Graphics
   - [Coffee "Valen" Bat](https://twitter.com/cofebbat) : Game Sound FX and [CBTFX Driver](https://github.com/datguywitha3ds/CBT-FX)
   - [toxa](https://github.com/untoxa/) : Ferrante Crafts 31k ROM + 1k Flash cart support

@@ -243,7 +243,7 @@
 
 // X, Y controls upper-left corner coordinates
 #define __INTRO_CREDITS_X  0u
-#define __INTRO_CREDITS_Y  (DEVICE_SCREEN_HEIGHT - 9u) / 2u
+#define __INTRO_CREDITS_Y  (DEVICE_SCREEN_HEIGHT - 12u) / 2u
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
     "THX TO:\n" \
@@ -252,6 +252,7 @@
     "ARPRUSS\n" \
     "COFFEE 'VALEN' BAT\n" \
     "STACKSMASHING\n" \
+    "EUCAL.BB\n" \
     "\n" \
     "GBDK2020\n" \
     "EMULICIOUS\n" \

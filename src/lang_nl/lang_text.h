@@ -238,6 +238,7 @@
     "ARPRUSS\n" \
     "COFFEE 'VALEN' BAT\n" \
     "STACKSMASHING\n" \
+    "EUCAL.BB\n" \
     "FERRANTE CRAFTS\n" \
     "\n" \
     "GBDK2020\n" \

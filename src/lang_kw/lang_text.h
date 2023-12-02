@@ -236,17 +236,18 @@
 #undef __INTRO_CREDITS_STR
 #define __INTRO_CREDITS_STR \
 /*  |--------------------| */\
-        "MEUR RAS DHE :\n" \
-        "TOXA\n" \
-        "DAEO\n" \
-        "ARPRUSS\n" \
-        "COFFEE 'VALEN' BAT\n" \
-        "STACKSMASHING\n" \
-        "SJD\n" \
-        "\n" \
-        "GBDK2020\n" \
-        "EMULICIOUS\n" \
-        "FERRANTE CRAFTS"
+    "MEUR RAS DHE :\n" \
+    "TOXA\n" \
+    "DAEO\n" \
+    "ARPRUSS\n" \
+    "COFFEE 'VALEN' BAT\n" \
+    "STACKSMASHING\n" \
+    "EUCAL.BB\n" \
+    "SJD\n" \
+    "\n" \
+    "GBDK2020\n" \
+    "EMULICIOUS\n" \
+    "FERRANTE CRAFTS"
 
 
 #endif

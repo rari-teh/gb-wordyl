@@ -245,6 +245,7 @@
     "ARPRUSS\n" \
     "COFFEE 'VALEN' BAT\n" \
     "STACKSMASHING\n" \
+    "EUCAL.BB\n" \
     "SKITE2001\n" \
     "\n" \
     "GBDK2020\n" \
