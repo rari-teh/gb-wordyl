@@ -11,6 +11,7 @@
 // == #define overrides for language strings go here
 
 // Brazilian Portuguese: Translation by Daniel Tolentino, revision by Bruno Maestrini
+// Expanded word list (with accented words) by rari_teh
 
 #undef INTRO_DIALOG_WIN_Y
 #define INTRO_DIALOG_WIN_Y DIALOG_TEXT_HEIGHT_LINES(15)
@@ -18,8 +19,8 @@
 #define __INTRO_MESSAGE_STR \
 /*  |------------------| Available space (18 chars wide) */\
     "IDIOMA: " STR(LANG_CODE) "\n" \
-    "  APENAS PALAVRAS\n" \
-    "  SEM ACENTO\n" \
+    "BANCO DE PALAVRAS\n" \
+    "EXPANDIDO POR RARI\n" \
     "\n" \
     "ABRIR MENU:\n" \
     "  3 x SELECT\n" \
@@ -247,7 +248,8 @@
     "EUCAL.BB\n" \
     "ZERAPHY\n" \
     "BRUNO MAESTRINI\n" \
-    "\n" \
+    "RARITEH\n" \
+	"\n" \
     "GBDK2020\n" \
     "EMULICIOUS\n" \
     "FERRANTE CRAFTS"

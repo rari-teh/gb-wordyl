@@ -1616,6 +1616,7 @@ bushy
 busks
 busky
 bussu
+bussy
 busti
 busts
 busty
@@ -1970,6 +1971,7 @@ chola
 choli
 cholo
 chomp
+chonk
 chons
 choof
 chook
@@ -2498,6 +2500,7 @@ cundy
 cunei
 cunit
 cunts
+cunty
 cupel
 cupid
 cuppa
@@ -3056,6 +3059,8 @@ dowps
 dowry
 dowse
 dowts
+doxai
+doxas
 doxed
 doxes
 doxie
@@ -3246,6 +3251,7 @@ dyers
 dying
 dyked
 dykes
+dykey
 dykon
 dynel
 dynes
@@ -3277,6 +3283,7 @@ eaved
 eaves
 ebbed
 ebbet
+ebola
 ebons
 ebony
 ebook
@@ -3455,6 +3462,7 @@ ering
 erned
 ernes
 erode
+eroge
 erose
 erred
 error
@@ -3572,6 +3580,7 @@ faena
 faery
 faffs
 faffy
+faggy
 fagin
 fagot
 faiks
@@ -3621,6 +3630,7 @@ faros
 farro
 farse
 farts
+farty
 fasci
 fasti
 fasts
@@ -3933,6 +3943,7 @@ flyby
 flyer
 flype
 flyte
+fnord
 foals
 foams
 foamy
@@ -4072,6 +4083,7 @@ frory
 frosh
 frost
 froth
+frots
 frown
 frows
 frowy
@@ -4138,6 +4150,7 @@ fusks
 fussy
 fusts
 fusty
+futch
 futon
 fuzed
 fuzee
@@ -4535,6 +4548,7 @@ gooey
 goofs
 goofy
 googs
+gooks
 gooky
 goold
 gools
@@ -4765,6 +4779,7 @@ guyse
 gwine
 gyals
 gyans
+gyatt
 gybed
 gybes
 gyeld
@@ -5115,6 +5130,7 @@ homes
 homey
 homie
 homme
+homos
 honan
 honda
 honds
@@ -5410,6 +5426,7 @@ ionic
 iotas
 ippon
 irade
+iraqi
 irate
 irids
 iring
@@ -6284,6 +6301,7 @@ ligan
 liger
 ligge
 light
+ligma
 ligne
 liked
 liken
@@ -6312,6 +6330,7 @@ limns
 limos
 limpa
 limps
+limpy
 linac
 linch
 linds
@@ -7174,6 +7193,7 @@ moyls
 mozed
 mozes
 mozos
+mpreg
 mpret
 mucho
 mucic
@@ -7349,6 +7369,7 @@ naric
 naris
 narks
 narky
+narmy
 narre
 nasal
 nashi
@@ -7461,6 +7482,7 @@ niffs
 niffy
 nifty
 niger
+nigga
 nighs
 night
 nihil
@@ -7470,6 +7492,7 @@ nikau
 nills
 nimbi
 nimbs
+nimby
 nimps
 niner
 nines
@@ -7716,6 +7739,7 @@ ollas
 ollav
 oller
 ollie
+olmec
 ology
 olpae
 olpes
@@ -8673,6 +8697,7 @@ punce
 punch
 punga
 pungs
+punic
 punji
 punka
 punks
@@ -8766,6 +8791,7 @@ quayd
 quays
 qubit
 quean
+queef
 queen
 queer
 quell
@@ -8895,9 +8921,11 @@ ranis
 ranke
 ranks
 rants
+ranty
 raped
 raper
 rapes
+rapey
 raphe
 rapid
 rappe
@@ -9234,6 +9262,7 @@ rives
 rivet
 riyal
 rizas
+rizzy
 roach
 roads
 roams
@@ -10555,6 +10584,8 @@ spewy
 spial
 spica
 spice
+spick
+spics
 spicy
 spide
 spied
@@ -10564,6 +10595,7 @@ spies
 spiff
 spifs
 spike
+spiks
 spiky
 spile
 spill
@@ -10894,6 +10926,7 @@ surra
 sused
 suses
 sushi
+sussy
 susus
 sutor
 sutra
@@ -11246,6 +11279,7 @@ terek
 teres
 terfe
 terfs
+terfy
 terga
 terms
 terne
@@ -12574,6 +12608,7 @@ woker
 wokka
 wolds
 wolfs
+wolfy
 wolly
 wolve
 woman
@@ -12699,6 +12734,7 @@ yampy
 yamun
 yangs
 yanks
+yanny
 yapok
 yapon
 yapps
@@ -12769,9 +12805,12 @@ yexed
 yexes
 yfere
 yield
+yiffs
+yiffy
 yiked
 yikes
 yills
+yimby
 yince
 yipes
 yippy
