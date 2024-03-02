@@ -28,7 +28,7 @@ endif
 CFLAGS += -DLANG_CODE=$(LANG_CODE)
 CFLAGS += -DCART_$(CART_TYPE)
 # CFLAGS += -Wf--max-allocs-per-node50000
-# CFLAGS += -Wf--max-allocs-per-node150000 # diminishing (but present) size returns after this
+CFLAGS += -Wf--max-allocs-per-node150000 # diminishing (but present) size returns after this
 # CFLAGS += -Wf--max-allocs-per-node500000
 # CFLAGS += -Wf--opt-code-size # This doesn't shrink code size much vs -Wf--max-allocs-per-node150000
 
