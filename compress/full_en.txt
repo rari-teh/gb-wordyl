@@ -494,6 +494,7 @@ arbas
 arbor
 arced
 archi
+archy
 arcos
 arcus
 ardeb
@@ -1096,6 +1097,7 @@ bings
 bingy
 binit
 binks
+binky
 bints
 biogs
 biome
@@ -5426,6 +5428,7 @@ ionic
 iotas
 ippon
 irade
+irani
 iraqi
 irate
 irids
@@ -5669,6 +5672,7 @@ kadai
 kades
 kadis
 kafir
+kagan
 kagos
 kagus
 kahal
@@ -6053,6 +6057,7 @@ laded
 laden
 lader
 lades
+ladin
 ladle
 laers
 laevo
@@ -10691,6 +10696,7 @@ stand
 stane
 stang
 stank
+stans
 staph
 staps
 stare
@@ -11177,6 +11183,7 @@ tauld
 taunt
 tauon
 taupe
+taurs
 tauts
 tavah
 tavas

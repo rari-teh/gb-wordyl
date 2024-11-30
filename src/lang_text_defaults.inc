@@ -43,7 +43,7 @@
         "  < > ^ /\n" \
         "\n" \
         "AUTO FILL:\n" \
-        "  ESC.SALDIA\n" \
+        "  ESC.SALIDA\n" \
         "\n" \
         "PRESS ANY KEY"
 
@@ -76,7 +76,7 @@
         "  < > ^ /\n" \
         "\n" \
         "AUTO FILL:\n" \
-        "  ESC.SALDIA\n" \
+        "  ESC.SALIDA\n" \
         "\n" \
         "PRESS ANY KEY"
 #endif

@@ -5156,6 +5156,7 @@ kayak
 kebab
 kendo
 khmer
+kibar
 kispo
 kraft
 krill
