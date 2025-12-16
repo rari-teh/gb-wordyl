@@ -47,7 +47,7 @@
     "  < > ^ /\n" \
     "\n" \
     "COPIAR ACERTOS:\n" \
-    "  ESC.SALDIA\n" \
+    "  ESC.SALIDA\n" \
     "\n" \
     "APERTE A PARA\n" \
     "  JOGAR"

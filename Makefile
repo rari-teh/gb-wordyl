@@ -20,8 +20,8 @@ endif
 # - mbc5
 # make CART_TYPE=<cart type>
 ifndef CART_TYPE
-#	CART_TYPE=32k_nosave
-	CART_TYPE=mbc5
+	CART_TYPE=32k_nosave
+#	CART_TYPE=mbc5
 #	CART_TYPE=31k_1kflash
 endif
 
